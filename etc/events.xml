@@ -1,0 +1,21 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="payment_method_assign_data_worldline">
+        <observer name="worldline_data_assign" instance="Worldline\Connect\Observer\DataAssignObserver"/>
+    </event>
+    <event name="payment_method_assign_data">
+        <observer name="worldline_data_assign" instance="Worldline\Connect\Observer\AdditionalDataAssignObserver"/>
+    </event>
+    <event name="payment_method_assign_data_worldline_visa">
+        <observer name="worldline_data_assign" instance="Worldline\Connect\Observer\DataAssignObserver"/>
+    </event>
+    <event name="sales_order_payment_place_end">
+        <observer name="worldline_sales_order_payment_place_end" instance="Worldline\Connect\Observer\SalesOrderPaymentPlaceEnd" />
+    </event>
+    <!--
+        Default events for adding the default comment to the order, sending e-mail, etc.:
+    -->
+    <event name="restore_quote">
+        <observer name="magento_customerbalance" disabled="true"/>
+    </event>
+</config>

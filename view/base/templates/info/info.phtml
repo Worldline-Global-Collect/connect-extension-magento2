@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+/** @var Escaper $escaper */
+/** @var Info $block */
+
+use Magento\Framework\Escaper;
+use Worldline\Connect\Block\Info;
+
+?>
+<p><?= $escaper->escapeHtml($block->getMethodTitle()) ?>  <?= $escaper->escapeHtml($block->getProductLabel()) ?></p>

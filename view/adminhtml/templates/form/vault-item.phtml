@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\TemplateEngine\Php;
+use Magento\Vault\Model\Ui\TokenUiComponentProviderInterface;
+
+/** @var Escaper $escaper */
+/** @var Template $block */
+/** @var Php $this */
+
+$details = $block->getData(TokenUiComponentProviderInterface::COMPONENT_DETAILS);
+?>
+<option value="<?= $escaper->escapeHtmlAttr($block->getData(TokenUiComponentProviderInterface::COMPONENT_PUBLIC_HASH)) ?>">
+    ending <?= $escaper->escapeHtml($details['card']) ?> (<?= $escaper->escapeHtml($details['type']) ?>, <?= $escaper->escapeHtml($details['expiry']) ?>)
+</option>

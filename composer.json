@@ -1,0 +1,50 @@
+{
+    "name": "worldline-global-collect/connect-extension-magento2",
+    "description": "Accept Worldline Connect payments on the Magento 2 platform",
+    "license": "MIT",
+    "require": {
+        "php": "~8.2.0",
+        "ext-json": "*",
+        "magento/module-backend": "^102.0.0",
+        "magento/module-catalog": "^104.0.0",
+        "magento/module-checkout": "^100.4.4",
+        "magento/module-config": "^101.2.4",
+        "magento/module-customer": "^103.0.4",
+        "magento/module-directory": "^100.4.4",
+        "magento/framework": "^103.0.4",
+        "magento/module-payment": "^100.4.4",
+        "magento/module-quote": "^101.2.4",
+        "magento/module-sales": "^103.0.4",
+        "magento/module-store": "^101.1.4",
+        "magento/module-vault": "^101.2.4",
+        "worldline-global-collect/connect-sdk-php": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.2",
+        "squizlabs/php_codesniffer": "3.*",
+        "symfony/console": "4.*",
+        "slevomat/coding-standard": "^8.8.0",
+        "phpstan/phpstan": "^1.10"
+    },
+    "type": "magento2-module",
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Worldline\\Connect\\": ""
+        }
+    },
+    "replace": {
+        "nrepayments/module-epayments-m2": ">=1.6.1",
+        "ingenico/module-epayments-m2": ">=1.5.0"
+    },
+    "authors": [
+        {
+            "name": "Worldline Connect",
+            "email": "connect@worldline.com",
+            "homepage": "https://docs.connect.worldline-solutions.com/",
+            "role": "Developer"
+        }
+    ]
+}

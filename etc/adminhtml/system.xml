@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="worldline_connect" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
+                <comment><![CDATA[<div class="worldline-payment-logo"></div><div class="worldline-payment-text"><strong>Worldline Global Collect (Connect)</strong> <br/>Accept online payments globally, while offering your consumers a local experience with Worldline Global Collect’s Magento shopping cart solution (previously known as Ingenico ePayments).</div>]]></comment>
+                <fieldset_css>complex worldline-section</fieldset_css>
+                <frontend_model>Magento\Paypal\Block\Adminhtml\System\Config\Fieldset\Payment</frontend_model>
+                <include path="Worldline_Connect::methods/settings.xml"/>
+                <group id="payment_products" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payment product selection</label>
+                    <group id="card" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Card</label>
+                        <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=CARDS_DEBIT_AND_CREDIT">Cards</a> payment method.]]></comment>
+                        <include path="Worldline_Connect::methods/cards.xml"/>
+                        <include path="Worldline_Connect::methods/vault.xml"/>
+                        <include path="Worldline_Connect::methods/card/american_express.xml"/>
+                        <include path="Worldline_Connect::methods/card/bc_card.xml"/>
+                        <include path="Worldline_Connect::methods/card/carte_bancaire.xml"/>
+                        <include path="Worldline_Connect::methods/card/diners_club.xml"/>
+                        <include path="Worldline_Connect::methods/card/discover.xml"/>
+                        <include path="Worldline_Connect::methods/card/hyundai_card.xml"/>
+                        <include path="Worldline_Connect::methods/card/jcb.xml"/>
+                        <include path="Worldline_Connect::methods/card/kb_kookmin_card.xml"/>
+                        <include path="Worldline_Connect::methods/card/keb_hana_card.xml"/>
+                        <include path="Worldline_Connect::methods/card/lotte_card.xml"/>
+                        <include path="Worldline_Connect::methods/card/maestro.xml"/>
+                        <include path="Worldline_Connect::methods/card/mastercard.xml"/>
+                        <include path="Worldline_Connect::methods/card/mastercard_debit.xml"/>
+                        <include path="Worldline_Connect::methods/card/nh_card.xml"/>
+                        <include path="Worldline_Connect::methods/card/samsung_card.xml"/>
+                        <include path="Worldline_Connect::methods/card/shinhan_card.xml"/>
+                        <include path="Worldline_Connect::methods/card/unionpay_expresspay.xml"/>
+                        <include path="Worldline_Connect::methods/card/unionpay_international_securepay.xml"/>
+                        <include path="Worldline_Connect::methods/card/visa.xml"/>
+                        <include path="Worldline_Connect::methods/card/visa_debit.xml"/>
+                        <include path="Worldline_Connect::methods/card/visa_electron.xml"/>
+                    </group>
+                    <group id="instant_purchase" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Mobile</label>
+                        <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=MOBILE">Mobile</a> payment method.]]></comment>
+                        <include path="Worldline_Connect::methods/instant_purchase/apple_pay.xml"/>
+                        <include path="Worldline_Connect::methods/instant_purchase/google_pay.xml"/>
+                    </group>
+                    <group id="redirect" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Real-time banking</label>
+                        <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=REAL-TIME_BANKING">Real-time banking</a> payment method.]]></comment>
+                        <include path="Worldline_Connect::methods/redirect/giropay.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/ideal.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/account_to_account.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/paypal.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/paysafecard.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/sofort.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/trustly.xml"/>
+                    </group>
+                </group>
+                <include path="Worldline_Connect::methods/link_plus.xml"/>
+                <include path="Worldline_Connect::methods/hpp.xml"/>
+            </group>
+        </section>
+    </system>
+</config>
