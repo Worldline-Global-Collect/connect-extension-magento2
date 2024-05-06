@@ -25,6 +25,8 @@ class Config implements ConfigInterface
     public const CONFIG_WORLDLINE_TRUSTLY_PAYMENT_FLOW_TYPE = 'worldline_connect/trustly/payment_flow_type';
     public const CONFIG_WORLDLINE_GIROPAY_PAYMENT_FLOW_TYPE = 'worldline_connect/giropay/payment_flow_type';
 
+    public const CONFIG_WORLDLINE_THREE_DS_REQUEST_EXEMPTIONS = 'worldline_connect/three_ds/request_exemptions';
+
     public const CONFIG_WORLDLINE_API_ENDPOINT = 'worldline_connect/settings/api_endpoint';
     public const CONFIG_WORLDLINE_API_ENDPOINT_SANDBOX = 'sandbox';
     public const CONFIG_WORLDLINE_API_ENDPOINT_PRE_PROD = 'preprod';
@@ -125,6 +127,11 @@ class Config implements ConfigInterface
     public function getValue(string $field, mixed $storeId = null): mixed
     {
         return $this->scopeConfig->getValue($field, ScopeInterface::SCOPE_STORE, $storeId);
+    }
+
+    public function get3DSRequestExemptions(mixed $storeId = null): string
+    {
+        return (string) $this->scopeConfig->getValue(self::CONFIG_WORLDLINE_THREE_DS_REQUEST_EXEMPTIONS);
     }
 
     /**

@@ -18,6 +18,9 @@ class PendingApproval extends AbstractHandler implements HandlerInterface
      */
     public function resolveStatus(Order $order, Payment $status)
     {
+        $order->setState(Order::STATE_PROCESSING);
+        $order->setStatus(Order::STATE_PROCESSING);
+
         /** @var OrderPayment $orderPayment */
         $orderPayment = $order->getPayment();
         $orderPayment->setIsTransactionClosed(false);

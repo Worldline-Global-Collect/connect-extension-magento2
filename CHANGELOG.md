@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 4.1.0 - 2024-05-06
+
+- Add BC support for PHP 8.1 (next to 8.2)
+- Do not remove vault tokens from other modules
+- Add support for 3D Secure request exemptions
+- Set order state to processing for pending approval (order can be approved by capturing the invoice)
+
 ## 4.0.0 - 2024-04-10
 
 - Rename module from `ingenico-epayments/connect-extension-magento2` to `worldline-global-collect/connect-extension-magento2`

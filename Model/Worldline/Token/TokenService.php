@@ -13,6 +13,7 @@ use Magento\Vault\Model\Ui\VaultConfigProvider;
 use Worldline\Connect\Model\ConfigProvider;
 use Worldline\Connect\Model\Worldline\Api\ClientInterface;
 use Worldline\Connect\Model\Worldline\StatusInterface;
+use Worldline\Connect\PaymentMethod\PaymentMethods;
 use Worldline\Connect\Sdk\V1\Domain\CardPaymentMethodSpecificOutput;
 use Worldline\Connect\Sdk\V1\Domain\Payment;
 
@@ -42,7 +43,8 @@ class TokenService implements TokenServiceInterface
         private readonly PaymentTokenManagement $paymentTokenManagement,
         private readonly PaymentTokenRepository $paymentTokenRepository,
         private readonly ClientInterface $client,
-        private readonly PaymentTokenFactory $paymentTokenFactory
+        private readonly PaymentTokenFactory $paymentTokenFactory,
+        private readonly PaymentMethods $paymentMethods,
     ) {
     }
 
@@ -57,6 +59,9 @@ class TokenService implements TokenServiceInterface
         /** @var PaymentTokenInterface[] $paymentTokens */
         $paymentTokens = $this->paymentTokenManagement->getVisibleAvailableTokens($customerId);
         foreach ($paymentTokens as $paymentToken) {
+            if (!$this->paymentMethods->isWorldlinePaymentMethod($paymentToken->getPaymentMethodCode())) {
+                continue;
+            }
             if ($paymentToken->getIsActive() && $paymentToken->getIsVisible()) {
                 $tokens[] = $paymentToken->getGatewayToken();
             }
@@ -81,6 +86,10 @@ class TokenService implements TokenServiceInterface
             /** @var PaymentTokenInterface[] $paymentTokens */
             $paymentTokens = $this->paymentTokenManagement->getVisibleAvailableTokens($customerId);
             foreach ($paymentTokens as $paymentToken) {
+                if (!$this->paymentMethods->isWorldlinePaymentMethod($paymentToken->getPaymentMethodCode())) {
+                    continue;
+                }
+
                 if (in_array($paymentToken->getGatewayToken(), $tokens)) {
                     $this->paymentTokenRepository->delete($paymentToken);
                 }
@@ -94,6 +103,10 @@ class TokenService implements TokenServiceInterface
         /** @var Order\Payment $orderPayment */
         $orderPayment = $order->getPayment();
         if (!$orderPayment->getAdditionalInformation('tokenize')) {
+            return;
+        }
+
+        if (!$this->paymentMethods->isWorldlinePaymentMethod($orderPayment->getMethod())) {
             return;
         }
 

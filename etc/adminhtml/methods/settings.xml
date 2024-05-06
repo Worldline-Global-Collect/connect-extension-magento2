@@ -75,111 +75,123 @@
             <backend_model>Magento\Framework\App\Config\Value</backend_model>
             <config_path>worldline_connect/settings/api_endpoint</config_path>
         </field>
-        <group id="api_endpoint_sandbox" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1">
-            <label>Sandbox settings</label>
-            <comment><![CDATA[Try out our free testing environment. Sign up <a target="_blank" href="https://docs.connect.worldline-solutions.com/signup-for-sandbox/index">here</a>.]]></comment>
-            <field id="merchant_id" translate="label tooltip" type="text" sortOrder="5" showInDefault="1" showInWebsite="1">
-                <label>Merchant ID (MID)</label>
-                <config_path>worldline_connect/settings/merchant_id_sandbox</config_path>
-            </field>
-            <field id="api_url" translate="label tooltip" type="text" sortOrder="6" showInDefault="1" showInWebsite="1">
-                <label>API URL</label>
-                <config_path>worldline_connect/settings/api_url_sandbox</config_path>
-            </field>
-            <field id="api_key" translate="label tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1">
-                <label>API key ID</label>
-                <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
-                <config_path>worldline_connect/settings/api_key_sandbox</config_path>
-            </field>
-            <field id="api_secret" translate="label tooltip" type="obscure" sortOrder="15" showInDefault="1" showInWebsite="1">
-                <label>API secret</label>
-                <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                <config_path>worldline_connect/settings/api_secret_sandbox</config_path>
-            </field>
-            <field id="webhooks_key_id" translate="label tooltip" type="text" sortOrder="20" showInDefault="1" showInWebsite="1">
-                <label>Webhooks key ID</label>
-                <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
-                <config_path>worldline_connect/webhook/webhooks_key_id_sandbox</config_path>
-            </field>
-            <field id="webhooks_secret_key" translate="label tooltip" type="obscure" sortOrder="25" showInDefault="1" showInWebsite="1">
-                <label>Webhooks secret key</label>
-                <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                <config_path>worldline_connect/webhook/webhooks_secret_key_sandbox</config_path>
-            </field>
-            <field id="test_api_connection" translate="label" type="button" sortOrder="30" showInDefault="1" showInWebsite="1">
-                <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\TestApiConnectionSandbox</frontend_model>
-                <label>API Connection</label>
-            </field>
+        <group id="environments" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1">
+            <label>Environments</label>
+            <group id="api_endpoint_sandbox" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1">
+                <label>Sandbox settings</label>
+                <comment><![CDATA[Try out our free testing environment. Sign up <a target="_blank" href="https://docs.connect.worldline-solutions.com/signup-for-sandbox/index">here</a>.]]></comment>
+                <field id="merchant_id" translate="label tooltip" type="text" sortOrder="5" showInDefault="1" showInWebsite="1">
+                    <label>Merchant ID (MID)</label>
+                    <config_path>worldline_connect/settings/merchant_id_sandbox</config_path>
+                </field>
+                <field id="api_url" translate="label tooltip" type="text" sortOrder="6" showInDefault="1" showInWebsite="1">
+                    <label>API URL</label>
+                    <config_path>worldline_connect/settings/api_url_sandbox</config_path>
+                </field>
+                <field id="api_key" translate="label tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1">
+                    <label>API key ID</label>
+                    <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
+                    <config_path>worldline_connect/settings/api_key_sandbox</config_path>
+                </field>
+                <field id="api_secret" translate="label tooltip" type="obscure" sortOrder="15" showInDefault="1" showInWebsite="1">
+                    <label>API secret</label>
+                    <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <config_path>worldline_connect/settings/api_secret_sandbox</config_path>
+                </field>
+                <field id="webhooks_key_id" translate="label tooltip" type="text" sortOrder="20" showInDefault="1" showInWebsite="1">
+                    <label>Webhooks key ID</label>
+                    <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
+                    <config_path>worldline_connect/webhook/webhooks_key_id_sandbox</config_path>
+                </field>
+                <field id="webhooks_secret_key" translate="label tooltip" type="obscure" sortOrder="25" showInDefault="1" showInWebsite="1">
+                    <label>Webhooks secret key</label>
+                    <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <config_path>worldline_connect/webhook/webhooks_secret_key_sandbox</config_path>
+                </field>
+                <field id="test_api_connection" translate="label" type="button" sortOrder="30" showInDefault="1" showInWebsite="1">
+                    <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\TestApiConnectionSandbox</frontend_model>
+                    <label>API Connection</label>
+                </field>
+            </group>
+            <group id="api_endpoint_pre_prod" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1">
+                <label>Pre-Production settings</label>
+                <field id="merchant_id" translate="label tooltip" type="text" sortOrder="5" showInDefault="1" showInWebsite="1">
+                    <label>Merchant ID (MID)</label>
+                    <config_path>worldline_connect/settings/merchant_id_pre_prod</config_path>
+                </field>
+                <field id="api_url" translate="label tooltip" type="text" sortOrder="6" showInDefault="1" showInWebsite="1">
+                    <label>API URL</label>
+                    <config_path>worldline_connect/settings/api_url_pre_prod</config_path>
+                </field>
+                <field id="api_key" translate="label tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1">
+                    <label>API key ID</label>
+                    <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
+                    <config_path>worldline_connect/settings/api_key_pre_prod</config_path>
+                </field>
+                <field id="api_secret" translate="label tooltip" type="obscure" sortOrder="15" showInDefault="1" showInWebsite="1">
+                    <label>API secret</label>
+                    <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <config_path>worldline_connect/settings/api_secret_pre_prod</config_path>
+                </field>
+                <field id="webhooks_key_id" translate="label tooltip" type="text" sortOrder="20" showInDefault="1" showInWebsite="1">
+                    <label>Webhooks key ID</label>
+                    <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
+                    <config_path>worldline_connect/webhook/webhooks_key_id_pre_prod</config_path>
+                </field>
+                <field id="webhooks_secret_key" translate="label tooltip" type="obscure" sortOrder="25" showInDefault="1" showInWebsite="1">
+                    <label>Webhooks secret key</label>
+                    <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <config_path>worldline_connect/webhook/webhooks_secret_key_pre_prod</config_path>
+                </field>
+                <field id="test_api_connection" translate="label" type="button" sortOrder="30" showInDefault="1" showInWebsite="1">
+                    <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\TestApiConnectionPreProduction</frontend_model>
+                    <label>API Connection</label>
+                </field>
+            </group>
+            <group id="api_endpoint_prod" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1">
+                <label>Production settings</label>
+                <field id="merchant_id" translate="label tooltip" type="text" sortOrder="5" showInDefault="1" showInWebsite="1">
+                    <label>Merchant ID (MID)</label>
+                    <config_path>worldline_connect/settings/merchant_id_prod</config_path>
+                </field>
+                <field id="api_url" translate="label tooltip" type="text" sortOrder="6" showInDefault="1" showInWebsite="1">
+                    <label>API URL</label>
+                    <config_path>worldline_connect/settings/api_url_prod</config_path>
+                </field>
+                <field id="api_key" translate="label tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1">
+                    <label>API key ID</label>
+                    <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
+                    <config_path>worldline_connect/settings/api_key_prod</config_path>
+                </field>
+                <field id="api_secret" translate="label tooltip" type="obscure" sortOrder="15" showInDefault="1" showInWebsite="1">
+                    <label>API secret</label>
+                    <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <tooltip>You will receive this information from Worldline.</tooltip>
+                    <config_path>worldline_connect/settings/api_secret_prod</config_path>
+                </field>
+                <field id="webhooks_key_id" translate="label tooltip" type="text" sortOrder="20" showInDefault="1" showInWebsite="1">
+                    <label>Webhooks key ID</label>
+                    <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
+                    <config_path>worldline_connect/webhook/webhooks_key_id_prod</config_path>
+                </field>
+                <field id="webhooks_secret_key" translate="label tooltip" type="obscure" sortOrder="25" showInDefault="1" showInWebsite="1">
+                    <label>Webhooks secret key</label>
+                    <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <config_path>worldline_connect/webhook/webhooks_secret_key_prod</config_path>
+                </field>
+                <field id="test_api_connection" translate="label" type="button" sortOrder="30" showInDefault="1" showInWebsite="1">
+                    <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\TestApiConnectionProduction</frontend_model>
+                    <label>API Connection</label>
+                </field>
+            </group>
         </group>
-        <group id="api_endpoint_pre_prod" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1">
-            <label>Pre-Production settings</label>
-            <field id="merchant_id" translate="label tooltip" type="text" sortOrder="5" showInDefault="1" showInWebsite="1">
-                <label>Merchant ID (MID)</label>
-                <config_path>worldline_connect/settings/merchant_id_pre_prod</config_path>
-            </field>
-            <field id="api_url" translate="label tooltip" type="text" sortOrder="6" showInDefault="1" showInWebsite="1">
-                <label>API URL</label>
-                <config_path>worldline_connect/settings/api_url_pre_prod</config_path>
-            </field>
-            <field id="api_key" translate="label tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1">
-                <label>API key ID</label>
-                <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
-                <config_path>worldline_connect/settings/api_key_pre_prod</config_path>
-            </field>
-            <field id="api_secret" translate="label tooltip" type="obscure" sortOrder="15" showInDefault="1" showInWebsite="1">
-                <label>API secret</label>
-                <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                <config_path>worldline_connect/settings/api_secret_pre_prod</config_path>
-            </field>
-            <field id="webhooks_key_id" translate="label tooltip" type="text" sortOrder="20" showInDefault="1" showInWebsite="1">
-                <label>Webhooks key ID</label>
-                <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
-                <config_path>worldline_connect/webhook/webhooks_key_id_pre_prod</config_path>
-            </field>
-            <field id="webhooks_secret_key" translate="label tooltip" type="obscure" sortOrder="25" showInDefault="1" showInWebsite="1">
-                <label>Webhooks secret key</label>
-                <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                <config_path>worldline_connect/webhook/webhooks_secret_key_pre_prod</config_path>
-            </field>
-            <field id="test_api_connection" translate="label" type="button" sortOrder="30" showInDefault="1" showInWebsite="1">
-                <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\TestApiConnectionPreProduction</frontend_model>
-                <label>API Connection</label>
-            </field>
-        </group>
-        <group id="api_endpoint_prod" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1">
-            <label>Production settings</label>
-            <field id="merchant_id" translate="label tooltip" type="text" sortOrder="5" showInDefault="1" showInWebsite="1">
-                <label>Merchant ID (MID)</label>
-                <config_path>worldline_connect/settings/merchant_id_prod</config_path>
-            </field>
-            <field id="api_url" translate="label tooltip" type="text" sortOrder="6" showInDefault="1" showInWebsite="1">
-                <label>API URL</label>
-                <config_path>worldline_connect/settings/api_url_prod</config_path>
-            </field>
-            <field id="api_key" translate="label tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1">
-                <label>API key ID</label>
-                <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
-                <config_path>worldline_connect/settings/api_key_prod</config_path>
-            </field>
-            <field id="api_secret" translate="label tooltip" type="obscure" sortOrder="15" showInDefault="1" showInWebsite="1">
-                <label>API secret</label>
-                <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                <tooltip>You will receive this information from Worldline.</tooltip>
-                <config_path>worldline_connect/settings/api_secret_prod</config_path>
-            </field>
-            <field id="webhooks_key_id" translate="label tooltip" type="text" sortOrder="20" showInDefault="1" showInWebsite="1">
-                <label>Webhooks key ID</label>
-                <backend_model>Worldline\Connect\Model\Config\Backend\ApiKey</backend_model>
-                <config_path>worldline_connect/webhook/webhooks_key_id_prod</config_path>
-            </field>
-            <field id="webhooks_secret_key" translate="label tooltip" type="obscure" sortOrder="25" showInDefault="1" showInWebsite="1">
-                <label>Webhooks secret key</label>
-                <backend_model>\Magento\Config\Model\Config\Backend\Encrypted</backend_model>
-                <config_path>worldline_connect/webhook/webhooks_secret_key_prod</config_path>
-            </field>
-            <field id="test_api_connection" translate="label" type="button" sortOrder="30" showInDefault="1" showInWebsite="1">
-                <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\TestApiConnectionProduction</frontend_model>
-                <label>API Connection</label>
+        <group id="three_ds" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1">
+            <label>3D Secure</label>
+            <field id="request_exemptions" translate="label" type="select" sortOrder="40" showInDefault="1">
+                <label>Request exemptions</label>
+                <source_model>Worldline\Connect\Model\Config\Source\ExemptionRequest</source_model>
+                <comment><![CDATA[Our team needs to configure additional settings to enable 3D Secure exemptions at Worldline. Please ensure you review our guides and align with our teams beforehand. For the "automatic" mode with TRA eligibility, provide the transactionRiskLevel property for each transaction from your risk analysis. Check <a target="_blank" href="https://apireference.connect.worldline-solutions.com/s2sapi/v1/en_US/java/payments/create.html?paymentPlatform=ALL">our documentation</a> for more information on exemptionRequest and transactionRiskLevel.]]></comment>
+                <config_path>worldline_connect/three_ds/request_exemptions</config_path>
             </field>
         </group>
     </group>

@@ -7,7 +7,6 @@ namespace Worldline\Connect\PaymentMethod;
 use Exception;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Locale\Resolver;
-use Magento\Payment\Api\Data\PaymentMethodInterface;
 use Magento\Payment\Api\PaymentMethodListInterface;
 use Magento\Payment\Helper\Data;
 use Magento\Payment\Model\MethodInterface;
@@ -18,52 +17,55 @@ use Worldline\Connect\Sdk\V1\Domain\PaymentProduct;
 use function array_map;
 use function in_array;
 use function round;
+use function str_starts_with;
 
 class PaymentMethods
 {
-    public const CARDS_VAULT = 'worldline_vault';
-    public const AMERICAN_EXPRESS_VAULT = 'worldline_americanexpress_vault';
+    public const PREFIX = 'worldline_';
+
+    public const CARDS_VAULT = self::PREFIX . 'vault';
+    public const AMERICAN_EXPRESS_VAULT = self::PREFIX . 'americanexpress_vault';
     public const DISCOVER_VAULT = self::DISCOVER . '_vault';
-    public const CARTE_BANCAIRE_VAULT = 'worldline_cartebancaire_vault';
-    public const MAESTRO_VAULT = 'worldline_maestro_vault';
-    public const MASTERCARD_VAULT = 'worldline_mastercard_vault';
-    public const MASTERCARD_DEBIT_VAULT = 'worldline_mastercard_debit_vault';
-    public const VISA_VAULT = 'worldline_visa_vault';
-    public const VISA_DEBIT_VAULT = 'worldline_visa_debit_vault';
-    public const VISA_ELECTRON_VAULT = 'worldline_visa_electron_vault';
-    public const CARDS = 'worldline_cards';
-    public const AMERICAN_EXPRESS = 'worldline_americanexpress';
-    public const BC_CARD = 'worldline_bc_card';
-    public const CARTE_BANCAIRE = 'worldline_cartebancaire';
-    public const DINERS_CLUB = 'worldline_dinersclub';
-    public const DISCOVER = 'worldline_discover';
-    public const HYUNDAI_CARD = 'worldline_hyundai_card';
-    public const JCB = 'worldline_jcb';
-    public const KB_KOOKMIN_CARD = 'worldline_kb_kookmin_card';
-    public const KEB_HANA_CARD = 'worldline_keb_hana_card';
-    public const LOTTE_CARD = 'worldline_lotte_card';
-    public const UNIONPAY_INTERNATIONAL_SECUREPAY = 'worldline_unionpay_international_securepay';
-    public const MASTERCARD = 'worldline_mastercard';
-    public const MASTERCARD_DEBIT = 'worldline_mastercard_debit';
-    public const NH_CARD = 'worldline_nh_card';
-    public const SAMSUNG_CARD = 'worldline_samsung_card';
-    public const SHINHAN_CARD = 'worldline_shinhan_card';
-    public const UNIONPAY_EXPRESSPAY = 'worldline_unionpay_expresspay';
-    public const VISA = 'worldline_visa';
-    public const VISA_DEBIT = 'worldline_visa_debit';
-    public const VISA_ELECTRON = 'worldline_visa_electron';
-    public const GIROPAY = 'worldline_giropay';
-    public const MAESTRO = 'worldline_maestro';
-    public const LINK_PLUS_PAYMENT_LINK = 'worldline_link_plus_payment_link';
-    public const IDEAL = 'worldline_ideal';
-    public const ACCOUNT_TO_ACCOUNT = 'worldline_account_to_account';
-    public const PAYPAL = 'worldline_paypal';
-    public const PAYSAFECARD = 'worldline_paysafecard';
-    public const SOFORT = 'worldline_sofort';
-    public const TRUSTLY = 'worldline_trustly';
-    public const HOSTED = 'worldline_hpp';
-    public const APPLE_PAY = 'worldline_apple_pay';
-    public const GOOGLE_PAY = 'worldline_google_pay';
+    public const CARTE_BANCAIRE_VAULT = self::PREFIX . 'cartebancaire_vault';
+    public const MAESTRO_VAULT = self::PREFIX . 'maestro_vault';
+    public const MASTERCARD_VAULT = self::PREFIX . 'mastercard_vault';
+    public const MASTERCARD_DEBIT_VAULT = self::PREFIX . 'mastercard_debit_vault';
+    public const VISA_VAULT = self::PREFIX . 'visa_vault';
+    public const VISA_DEBIT_VAULT = self::PREFIX . 'visa_debit_vault';
+    public const VISA_ELECTRON_VAULT = self::PREFIX . 'visa_electron_vault';
+    public const CARDS = self::PREFIX . 'cards';
+    public const AMERICAN_EXPRESS = self::PREFIX . 'americanexpress';
+    public const BC_CARD = self::PREFIX . 'bc_card';
+    public const CARTE_BANCAIRE = self::PREFIX . 'cartebancaire';
+    public const DINERS_CLUB = self::PREFIX . 'dinersclub';
+    public const DISCOVER = self::PREFIX . 'discover';
+    public const HYUNDAI_CARD = self::PREFIX . 'hyundai_card';
+    public const JCB = self::PREFIX . 'jcb';
+    public const KB_KOOKMIN_CARD = self::PREFIX . 'kb_kookmin_card';
+    public const KEB_HANA_CARD = self::PREFIX . 'keb_hana_card';
+    public const LOTTE_CARD = self::PREFIX . 'lotte_card';
+    public const UNIONPAY_INTERNATIONAL_SECUREPAY = self::PREFIX . 'unionpay_international_securepay';
+    public const MASTERCARD = self::PREFIX . 'mastercard';
+    public const MASTERCARD_DEBIT = self::PREFIX . 'mastercard_debit';
+    public const NH_CARD = self::PREFIX . 'nh_card';
+    public const SAMSUNG_CARD = self::PREFIX . 'samsung_card';
+    public const SHINHAN_CARD = self::PREFIX . 'shinhan_card';
+    public const UNIONPAY_EXPRESSPAY = self::PREFIX . 'unionpay_expresspay';
+    public const VISA = self::PREFIX . 'visa';
+    public const VISA_DEBIT = self::PREFIX . 'visa_debit';
+    public const VISA_ELECTRON = self::PREFIX . 'visa_electron';
+    public const GIROPAY = self::PREFIX . 'giropay';
+    public const MAESTRO = self::PREFIX . 'maestro';
+    public const LINK_PLUS_PAYMENT_LINK = self::PREFIX . 'link_plus_payment_link';
+    public const IDEAL = self::PREFIX . 'ideal';
+    public const ACCOUNT_TO_ACCOUNT = self::PREFIX . 'account_to_account';
+    public const PAYPAL = self::PREFIX . 'paypal';
+    public const PAYSAFECARD = self::PREFIX . 'paysafecard';
+    public const SOFORT = self::PREFIX . 'sofort';
+    public const TRUSTLY = self::PREFIX . 'trustly';
+    public const HOSTED = self::PREFIX . 'hpp';
+    public const APPLE_PAY = self::PREFIX . 'apple_pay';
+    public const GOOGLE_PAY = self::PREFIX . 'google_pay';
 
     public function __construct(
         private readonly ClientInterface $client,
@@ -73,15 +75,29 @@ class PaymentMethods
     ) {
     }
 
+    public function isWorldlinePaymentMethod(string $paymentMethodCode): bool
+    {
+        return str_starts_with($paymentMethodCode, self::PREFIX);
+    }
+
     /**
      * @return array<MethodInterface>
      * @throws LocalizedException
      */
     public function getPaymentMethods(int $storeId): array
     {
-        return array_map(function (PaymentMethodInterface $paymentMethod) {
-            return $this->paymentHelper->getMethodInstance($paymentMethod->getCode());
-        }, $this->paymentMethodList->getList($storeId));
+        $allPaymentMethods = $this->paymentMethodList->getList($storeId);
+
+        $methodInstances = [];
+        foreach ($allPaymentMethods as $paymentMethod) {
+            if (!$this->isWorldlinePaymentMethod($paymentMethod->getCode())) {
+                continue;
+            }
+
+            $methodInstances[] = $this->paymentHelper->getMethodInstance($paymentMethod->getCode());
+        }
+
+        return $methodInstances;
     }
 
     /**

@@ -63,7 +63,8 @@ class SessionManager implements SessionManagerInterface
      */
     protected function createSession($customerId = null): SessionInterface
     {
-        $tokens = $customerId === null ? [] : $this->tokenService->find($customerId);
+        $tokens = $customerId !== null ? $this->tokenService->find($customerId) : [];
+
         $createSessionRequest = $this->createSessionRequestBuilder->build($tokens);
         $createSessionResponse = $this->worldlineClient->worldlineCreateSession($createSessionRequest);
 

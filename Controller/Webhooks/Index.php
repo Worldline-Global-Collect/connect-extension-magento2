@@ -7,7 +7,10 @@ use Exception;
 use Laminas\Http\Request;
 use Magento\Framework\App\Action\Action as CoreAction;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\CsrfAwareActionInterface;
 use Magento\Framework\App\Request\Http;
+use Magento\Framework\App\Request\InvalidRequestException;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Raw;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Webapi\Exception as WebApiException;
@@ -22,7 +25,7 @@ use function strlen;
 /**
  * Webhook class encapsulating general request validation functionality for webhooks
  */
-class Index extends CoreAction
+class Index extends CoreAction implements CsrfAwareActionInterface
 {
     /**
      * @var Unmarshaller
@@ -138,5 +141,16 @@ class Index extends CoreAction
         }
 
         return $request->getContent();
+    }
+
+    public function validateForCsrf(RequestInterface $request): ?bool
+    {
+        return true;
+    }
+
+    public function createCsrfValidationException(
+        RequestInterface $request
+    ): ?InvalidRequestException {
+        return null;
     }
 }

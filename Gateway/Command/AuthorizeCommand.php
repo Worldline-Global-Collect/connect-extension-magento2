@@ -138,6 +138,10 @@ class AuthorizeCommand implements CommandInterface
                 $checkoutSubdomain = $this->config->getHostedCheckoutSubDomain($order->getStoreId());
                 $worldlineRedirectUrl = $checkoutSubdomain . $response->partialRedirectUrl;
 
+                $payment->setData('order_state', Order::STATE_PENDING_PAYMENT);
+                $payment->setIsTransactionClosed(false);
+                $payment->setIsTransactionPending(true);
+
                 $payment->setTransactionId($response->hostedCheckoutId);
                 $payment->setAdditionalInformation(Config::REDIRECT_URL_KEY, $worldlineRedirectUrl);
                 $payment->setAdditionalInformation(Config::HOSTED_CHECKOUT_ID_KEY, $response->hostedCheckoutId);

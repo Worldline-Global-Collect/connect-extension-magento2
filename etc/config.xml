@@ -301,7 +301,7 @@
                 <sort_order>184</sort_order>
                 <order_status>pending</order_status>
                 <payment_flow>0</payment_flow>
-                <payment_flow>184</payment_flow>
+                <product_id>184</product_id>
             </worldline_lotte_card>
             <worldline_unionpay_international_securepay>
                 <model>Worldline\Connect\PaymentMethod\UnionPayInternationalSecurePay</model>
@@ -1252,6 +1252,9 @@
             <pending_orders_cancellation>
                 <days>3</days>
             </pending_orders_cancellation>
+            <three_ds>
+                <request_exemptions>none</request_exemptions>
+            </three_ds>
         </worldline_connect>
         <worldline_cc_vault>
             <general>

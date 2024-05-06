@@ -141,7 +141,7 @@ class CreateHostedCheckoutRequestBuilder implements CreatePaymentRequestBuilder
         $order = $payment->getOrder();
 
         $input = $this->cardPaymentMethodSpecificInputFactory->create();
-        $input->threeDSecure = $this->threeDSecureBuilder->create();
+        $input->threeDSecure = $this->threeDSecureBuilder->create($payment);
         $input->transactionChannel = 'ECOMMERCE';
         $input->requiresApproval = $requiresApproval;
         $input->tokenize = $payment->getAdditionalInformation('tokenize');

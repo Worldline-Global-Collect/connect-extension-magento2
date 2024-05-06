@@ -7,6 +7,8 @@ interface ConfigInterface
 {
     public function getValue(string $field, mixed $storeId = null): mixed;
 
+    public function get3DSRequestExemptions(mixed $storeId = null): string;
+
     /**
      * Returns Api Key
      *
@@ -111,7 +113,7 @@ interface ConfigInterface
      * Return Hosted Checkout Variant
      *
      * @param null|int $storeId
-     * @return string
+     * @return string|null
      */
     public function getHostedCheckoutVariant($storeId = null);
 
@@ -119,7 +121,7 @@ interface ConfigInterface
      * Return Hosted Checkout Guest Variant
      *
      * @param null|int $storeId
-     * @return string
+     * @return string|null
      */
     public function getHostedCheckoutGuestVariant($storeId = null);
 

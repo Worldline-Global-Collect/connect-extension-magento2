@@ -2,7 +2,9 @@
 
 namespace Worldline\Connect\Model\Worldline\RequestBuilder\MethodSpecificInput\Card;
 
-use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Model\Order\Payment;
+use Worldline\Connect\Model\Config\Source\ExemptionRequest;
+use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Model\Worldline\RequestBuilder\MethodSpecificInput\Card\ThreeDSecure\RedirectionDataBuilder;
 use Worldline\Connect\Sdk\V1\Domain\ThreeDSecure;
 use Worldline\Connect\Sdk\V1\Domain\ThreeDSecureFactory;
@@ -11,33 +13,23 @@ class ThreeDSecureBuilder
 {
     public const AUTHENTICATION_FLOW_BROWSER = 'browser';
 
-    /**
-     * @var ThreeDSecureFactory
-     */
-    // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
-    private $threeDSecureFactory;
-
-    /**
-     * @var RedirectionDataBuilder
-     */
-    // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
-    private $redirectionDataBuilder;
-
     public function __construct(
-        ThreeDSecureFactory $threeDSecureFactory,
-        RedirectionDataBuilder $redirectionDataBuilder
+        private readonly ThreeDSecureFactory $threeDSecureFactory,
+        private readonly RedirectionDataBuilder $redirectionDataBuilder,
+        private readonly ConfigInterface $config,
     ) {
-        $this->threeDSecureFactory = $threeDSecureFactory;
-        $this->redirectionDataBuilder = $redirectionDataBuilder;
     }
 
-    public function create(
-        OrderInterface $order
-    ): ThreeDSecure {
+    public function create(Payment $payment): ThreeDSecure
+    {
         $threeDSecure = $this->threeDSecureFactory->create();
-        $threeDSecure->redirectionData = $this->redirectionDataBuilder->create($order);
-
+        $threeDSecure->redirectionData = $this->redirectionDataBuilder->create($payment);
         $threeDSecure->authenticationFlow = self::AUTHENTICATION_FLOW_BROWSER;
+
+        $requestExemptions = $this->config->get3DSRequestExemptions();
+        $threeDSecure->exemptionRequest = $requestExemptions;
+        $threeDSecure->transactionRiskLevel = $requestExemptions === ExemptionRequest::AUTOMATIC ? '' : null;
+
         return $threeDSecure;
     }
 }

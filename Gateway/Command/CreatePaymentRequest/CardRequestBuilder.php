@@ -92,7 +92,7 @@ class CardRequestBuilder implements CreatePaymentRequestBuilder
         $request->encryptedCustomerInput = $payment->getAdditionalInformation('input');
 
         $input = $this->cardPaymentMethodSpecificInputFactory->create();
-        $input->threeDSecure = $this->threeDSecureBuilder->create($order);
+        $input->threeDSecure = $this->threeDSecureBuilder->create($payment);
         $input->transactionChannel = self::TRANSACTION_CHANNEL;
         $input->paymentProductId = $payment->getAdditionalInformation('product');
         $input->requiresApproval = $requiresApproval;

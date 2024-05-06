@@ -4,13 +4,23 @@ declare(strict_types=1);
 
 namespace Worldline\Connect\Block\Customer\Vault;
 
+use Magento\Framework\View\Element\Template\Context;
+use Magento\Payment\Model\CcConfigProvider;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Magento\Vault\Block\AbstractCardRenderer;
-
-use function str_starts_with;
+use Worldline\Connect\PaymentMethod\PaymentMethods;
 
 class WorldlineTokenRenderer extends AbstractCardRenderer
 {
+    public function __construct(
+        Context $context,
+        CcConfigProvider $iconsProvider,
+        private readonly PaymentMethods $paymentMethods,
+        array $data = []
+    ) {
+        parent::__construct($context, $iconsProvider, $data);
+    }
+
     public function getNumberLast4Digits(): string
     {
         return (string) $this->getTokenDetails()['card'];
@@ -38,6 +48,6 @@ class WorldlineTokenRenderer extends AbstractCardRenderer
 
     public function canRender(PaymentTokenInterface $token): bool
     {
-        return str_starts_with($token->getPaymentMethodCode(), 'worldline_');
+        return $this->paymentMethods->isWorldlinePaymentMethod($token->getPaymentMethodCode());
     }
 }

@@ -2,9 +2,8 @@
 
 namespace Worldline\Connect\Model\Worldline\RequestBuilder\MethodSpecificInput\Card\ThreeDSecure;
 
-use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\UrlInterface;
-use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Model\Order\Payment;
 use Worldline\Connect\Gateway\Command\CreatePaymentRequest\RedirectRequestBuilder;
 use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Sdk\V1\Domain\RedirectionData;
@@ -40,29 +39,22 @@ class RedirectionDataBuilder
         $this->urlBuilder = $urlBuilder;
     }
 
-    public function create(OrderInterface $order): RedirectionData
+    public function create(Payment $payment): RedirectionData
     {
         $redirectionData = $this->redirectionDataFactory->create();
-
-        $redirectionData->variant = $this->getHostedCheckoutVariant($order);
-        try {
-            $redirectionData->returnUrl = $this->urlBuilder->getUrl(
-                RedirectRequestBuilder::REDIRECT_PAYMENT_RETURN_URL
-            );
-        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
-        } catch (NotFoundException $exception) {
-            // Do nothing
-        }
+        $redirectionData->variant = $this->getHostedCheckoutVariant($payment);
+        $redirectionData->returnUrl = $this->urlBuilder->getUrl(RedirectRequestBuilder::REDIRECT_PAYMENT_RETURN_URL);
 
         return $redirectionData;
     }
 
-    // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint
-    private function getHostedCheckoutVariant(OrderInterface $order)
+    private function getHostedCheckoutVariant(Payment $payment): ?string
     {
-        if ($order->getCustomerIsGuest()) {
-            return $this->config->getHostedCheckoutGuestVariant(($order->getStoreId()));
-        }
-        return $this->config->getHostedCheckoutVariant($order->getStoreId());
+        $order = $payment->getOrder();
+        $storeId = $order->getStoreId();
+
+        return $order->getCustomerIsGuest() ?
+            $this->config->getHostedCheckoutGuestVariant($storeId) :
+            $this->config->getHostedCheckoutVariant($storeId);
     }
 }
