@@ -15,10 +15,10 @@ This module is compatible with Magento 2.4.5 to 2.4.7 and PHP 8.1 to 8.2.
 Installation requires [Composer](https://getcomposer.org).
 
 Run the following commands in your development environment:
-* `composer require worldline-epayments/connect-extension-magento2`
+* `composer require worldline-global-collect/connect-extension-magento2`
 * `bin/magento module:enable Worldline_Connect`
 * `bin/magento setup:upgrade`
-* `npm install --prefix vendor/worldline-epayments/connect-extension-magento2`
+* `npm install --prefix vendor/worldline-global-collect/connect-extension-magento2`
 
 ## Configuration
 
