@@ -8,6 +8,7 @@ use Magento\Customer\Model\Session;
 use Magento\Framework\Locale\Resolver;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\Repository;
+use Magento\Store\Model\Information;
 use Magento\Store\Model\StoreManagerInterface;
 use Worldline\Connect\CustomerData\ConnectSession;
 use Worldline\Connect\PaymentMethod\PaymentMethods;
@@ -180,6 +181,7 @@ class ConfigProvider implements ConfigProviderInterface
                         'buttonLocale' => $this->config->getValue('payment/worldline_apple_pay/button_locale'),
                         'buttonStyle' => $this->config->getValue('payment/worldline_apple_pay/button_style'),
                         'buttonType' => $this->config->getValue('payment/worldline_apple_pay/button_type'),
+                        'displayName' => $this->config->getValue(Information::XML_PATH_STORE_INFO_NAME),
                     ],
                     'googlePay' => [
                         'merchantId' => $this->config->getValue('payment/worldline_google_pay/merchant_id'),

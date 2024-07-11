@@ -48,10 +48,10 @@ define(
                             totalAmount: totalAmount,
                             countryCode: countryCode,
                             currency: currencyCode,
-                            displayName: 'TEST'
+                            displayName: window.checkoutConfig.payment.worldline.applePay.displayName
                         };
 
-                        sdkClient.createApplePayPayment(payload, { merchantName: 'TEST'}, me.product.paymentProduct302SpecificData.json.networks).then(function (token) {
+                        sdkClient.createApplePayPayment(payload, { merchantName: window.checkoutConfig.payment.worldline.applePay.displayName }, me.product.paymentProduct302SpecificData.json.networks).then(function (token) {
                             let encryptor = sdkClient.getEncryptor();
                             let request = sdkClient.getPaymentRequest();
                             let tokenString = JSON.stringify(token.data.paymentData);

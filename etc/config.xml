@@ -623,7 +623,7 @@
                 <payment_action>authorize</payment_action>
                 <sort_order>302</sort_order>
                 <order_status>pending</order_status>
-                <payment_flow>0</payment_flow>
+                <payment_flow>1</payment_flow>
                 <product_id>302</product_id>
                 <button_locale>en-US</button_locale>
                 <button_style>black</button_style>
