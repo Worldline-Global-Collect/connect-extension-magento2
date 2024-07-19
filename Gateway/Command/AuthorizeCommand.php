@@ -180,16 +180,14 @@ class AuthorizeCommand implements CommandInterface
                 break;
             case StatusInterface::PENDING_APPROVAL:
             case StatusInterface::AUTHORIZATION_REQUESTED:
-                $order->setState(Order::STATE_PENDING_PAYMENT);
-                $order->setStatus(Order::STATE_PENDING_PAYMENT);
+                $payment->setData('order_state', Order::STATE_PENDING_PAYMENT);
 
                 $this->tokenService->createByOrderAndPayment($order, $paymentResponse);
 
                 $payment->registerAuthorizationNotification($amount);
                 break;
             case StatusInterface::CAPTURE_REQUESTED:
-                $order->setState(Order::STATE_PROCESSING);
-                $order->setStatus(Order::STATE_PROCESSING);
+                $payment->setData('order_state', Order::STATE_PROCESSING);
 
                 $this->tokenService->createByOrderAndPayment($order, $paymentResponse);
 
