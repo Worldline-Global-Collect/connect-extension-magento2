@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="troy_debit" translate="label" type="text" sortOrder="189" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>Troy Debit</label>
+        <field id="active" translate="label comment" type="Worldline\Connect\Data\Form\Element\Toggle" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Enabled</label>
+            <config_path>payment/worldline_troy_debit/active</config_path>
+        </field>
+        <field id="sort_order" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Sort Order</label>
+            <config_path>payment/worldline_troy_debit/sort_order</config_path>
+        </field>
+        <field id="min_order_total" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1">
+            <label>Minimum Order Total</label>
+            <validate>validate-number validate-zero-or-greater</validate>
+            <config_path>payment/worldline_troy_debit/min_order_total</config_path>
+        </field>
+        <field id="max_order_total" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1">
+            <label>Maximum Order Total</label>
+            <validate>validate-number validate-zero-or-greater</validate>
+            <config_path>payment/worldline_troy_debit/max_order_total</config_path>
+        </field>
+        <field id="payment_action" translate="label" type="select" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Payment Action</label>
+            <source_model>Worldline\Connect\Model\Config\Source\PaymentAction</source_model>
+            <config_path>payment/worldline_troy_debit/payment_action</config_path>
+        </field>
+        <field id="payment_flow" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Payment flow type</label>
+            <source_model>Worldline\Connect\Model\Config\Source\PaymentFlowType</source_model>
+            <config_path>payment/worldline_troy_debit/payment_flow</config_path>
+        </field>
+    </group>
+</include>

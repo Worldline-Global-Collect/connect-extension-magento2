@@ -6,7 +6,7 @@ namespace Worldline\Connect\Model\Worldline\Action;
 
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
-use Worldline\Connect\Gateway\Command\CreateHostedCheckoutRequestBuilder;
+use Worldline\Connect\Gateway\Command\CreatePaymentRequest\CreateHostedCheckoutRequestBuilder;
 use Worldline\Connect\Model\Config;
 use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Model\StatusResponseManager;

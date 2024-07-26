@@ -1,6 +1,6 @@
 <?php // phpcs:ignore SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing
 
-namespace Worldline\Connect\Gateway\Command;
+namespace Worldline\Connect\Gateway\Command\CreatePaymentRequest;
 
 use Exception;
 use Magento\Framework\Locale\ResolverInterface;
@@ -8,7 +8,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\UrlInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
-use Worldline\Connect\Gateway\Command\CreatePaymentRequest\RedirectRequestBuilder;
+use Worldline\Connect\Gateway\Command\CreatePaymentRequestBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\FraudFieldsBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\MerchantBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\OrderBuilder;

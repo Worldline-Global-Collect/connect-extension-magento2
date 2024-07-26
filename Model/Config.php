@@ -23,7 +23,6 @@ class Config implements ConfigInterface
     public const CONFIG_WORLDLINE_CREDIT_CARDS_PAYMENT_FLOW_TYPE = 'worldline_connect/credit_cards/payment_flow_type';
     public const CONFIG_WORLDLINE_IDEAL_PAYMENT_FLOW_TYPE = 'worldline_connect/ideal/payment_flow_type';
     public const CONFIG_WORLDLINE_TRUSTLY_PAYMENT_FLOW_TYPE = 'worldline_connect/trustly/payment_flow_type';
-    public const CONFIG_WORLDLINE_GIROPAY_PAYMENT_FLOW_TYPE = 'worldline_connect/giropay/payment_flow_type';
 
     public const CONFIG_WORLDLINE_THREE_DS_REQUEST_EXEMPTIONS = 'worldline_connect/three_ds/request_exemptions';
 

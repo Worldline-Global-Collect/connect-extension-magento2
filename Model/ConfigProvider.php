@@ -34,7 +34,6 @@ class ConfigProvider implements ConfigProviderInterface
         'cards' => Config::CONFIG_WORLDLINE_CREDIT_CARDS_PAYMENT_FLOW_TYPE,
         806 => Config::CONFIG_WORLDLINE_TRUSTLY_PAYMENT_FLOW_TYPE,
         809 => Config::CONFIG_WORLDLINE_IDEAL_PAYMENT_FLOW_TYPE,
-        816 => Config::CONFIG_WORLDLINE_GIROPAY_PAYMENT_FLOW_TYPE,
     ];
 
     /**

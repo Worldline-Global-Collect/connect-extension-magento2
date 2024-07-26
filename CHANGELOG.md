@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 4.2.0 - 2024-07-26
+
+- Add support for the following payment products:
+  - Card:
+    - Troy
+    - Troy Debit
+  - Redirect:
+    - KB Kookmin (authenticated)
+    - KEB Hana (authenticated)
+    - Lotte Card (authenticated)
+    - NH Card (authenticated)
+    - Samsung Card (authenticated)
+    - Shinhan Card (authenticated)
+- Remove support for the Giropay payment product
+- Align workflows between Card, Instant Purchase, Redirect and HPP
+
 ## 4.1.3 - 2024-07-19
 
 - Set instance purchase orders to correct state

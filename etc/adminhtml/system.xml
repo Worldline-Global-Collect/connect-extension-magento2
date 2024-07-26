@@ -30,6 +30,8 @@
                         <include path="Worldline_Connect::methods/card/nh_card.xml"/>
                         <include path="Worldline_Connect::methods/card/samsung_card.xml"/>
                         <include path="Worldline_Connect::methods/card/shinhan_card.xml"/>
+                        <include path="Worldline_Connect::methods/card/troy.xml"/>
+                        <include path="Worldline_Connect::methods/card/troy_debit.xml"/>
                         <include path="Worldline_Connect::methods/card/unionpay_expresspay.xml"/>
                         <include path="Worldline_Connect::methods/card/unionpay_international_securepay.xml"/>
                         <include path="Worldline_Connect::methods/card/visa.xml"/>
@@ -45,13 +47,20 @@
                     <group id="redirect" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Real-time banking</label>
                         <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=REAL-TIME_BANKING">Real-time banking</a> payment method.]]></comment>
-                        <include path="Worldline_Connect::methods/redirect/giropay.xml"/>
                         <include path="Worldline_Connect::methods/redirect/ideal.xml"/>
                         <include path="Worldline_Connect::methods/redirect/account_to_account.xml"/>
                         <include path="Worldline_Connect::methods/redirect/paypal.xml"/>
                         <include path="Worldline_Connect::methods/redirect/paysafecard.xml"/>
                         <include path="Worldline_Connect::methods/redirect/sofort.xml"/>
                         <include path="Worldline_Connect::methods/redirect/trustly.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/hyundai_card_authenticated.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/bc_card_authenticated.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/kb_kookmin_card_authenticated.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/keb_hana_card_authenticated.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/nh_card_authenticated.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/lotte_card_authenticated.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/samsung_card_authenticated.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/shinhan_card_authenticated.xml"/>
                     </group>
                 </group>
                 <include path="Worldline_Connect::methods/link_plus.xml"/>

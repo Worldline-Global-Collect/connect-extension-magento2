@@ -12,7 +12,7 @@ use Worldline\Connect\Sdk\V1\Domain\CreatePaymentRequestFactory;
 use Worldline\Connect\Sdk\V1\Domain\MobilePaymentMethodSpecificInput;
 use Worldline\Connect\Sdk\V1\Domain\MobilePaymentMethodSpecificInputFactory;
 
-class MobileRequestBuilder implements CreatePaymentRequestBuilder
+class InstantPurchaseRequestBuilder implements CreatePaymentRequestBuilder
 {
     public const TRANSACTION_CHANNEL = 'ECOMMERCE';
     public const UNSCHEDULED_CARD_ON_FILE_SEQUENCE_INDICATOR_FIRST = 'first';

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Worldline\Connect\Gateway\Command\Card;
+namespace Worldline\Connect\Gateway\Command;
 
 use LogicException;
 use Magento\Payment\Gateway\CommandInterface;

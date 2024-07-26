@@ -39,6 +39,10 @@ define(
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
             {
+                type: 'worldline_bc_card_authenticated',
+                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
+            },
+            {
                 type: 'worldline_cartebancaire',
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
@@ -55,6 +59,10 @@ define(
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
             {
+                type: 'worldline_hyundai_card_authenticated',
+                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
+            },
+            {
                 type: 'worldline_jcb',
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
@@ -63,11 +71,23 @@ define(
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
             {
+                type: 'kb_kookmin_card_authenticated',
+                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
+            },
+            {
                 type: 'worldline_keb_hana_card',
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
             {
+                type: 'worldline_keb_hana_card_authenticated',
+                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
+            },
+            {
                 type: 'worldline_lotte_card',
+                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
+            },
+            {
+                type: 'worldline_lotte_card_authenticated',
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
             {
@@ -91,11 +111,31 @@ define(
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
             {
+                type: 'worldline_nh_card_authenticated',
+                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
+            },
+            {
                 type: 'worldline_samsung_card',
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
             {
+                type: 'worldline_samsung_card_authenticated',
+                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
+            },
+            {
                 type: 'worldline_shinhan_card',
+                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
+            },
+            {
+                type: 'worldline_shinhan_card_authenticated',
+                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
+            },
+            {
+                type: 'worldline_troy',
+                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
+            },
+            {
+                type: 'worldline_troy_debit',
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
             {
@@ -112,10 +152,6 @@ define(
             },
             {
                 type: 'worldline_visa_electron',
-                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
-            },
-            {
-                type: 'worldline_giropay',
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
             {

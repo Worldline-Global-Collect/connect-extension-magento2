@@ -7,7 +7,7 @@ namespace Worldline\Connect\Model\Worldline\Action;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
 use Worldline\Connect\Gateway\Command\ApiErrorHandler;
-use Worldline\Connect\Gateway\Command\CreatePaymentRequest\CardRequestBuilder;
+use Worldline\Connect\Gateway\Command\CreatePaymentRequestBuilder;
 use Worldline\Connect\Model\Config;
 use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Model\StatusResponseManager;
@@ -25,7 +25,7 @@ class CreatePayment extends AbstractAction
         ClientInterface $worldlineClient,
         TransactionManager $transactionManager,
         ConfigInterface $config,
-        private readonly CardRequestBuilder $cardRequestBuilder,
+        private readonly CreatePaymentRequestBuilder $createPaymentRequestBuilder,
         private readonly TokenService $tokenService,
         private readonly MerchantAction $merchantAction,
         private readonly ApiErrorHandler $apiErrorHandler,
@@ -41,7 +41,7 @@ class CreatePayment extends AbstractAction
     public function process(Payment $payment, bool $requiresApproval): void
     {
         try {
-            $request = $this->cardRequestBuilder->build($payment, $requiresApproval);
+            $request = $this->createPaymentRequestBuilder->build($payment, $requiresApproval);
             $response = $this->worldlineClient->createPayment($request);
             $this->postProcess($payment, $response->payment);
 

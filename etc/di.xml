@@ -17,6 +17,102 @@
         </arguments>
     </type>
 
+    <virtualType name="Worldline\Connect\Model\Worldline\Action\CreatePayment\Card" type="Worldline\Connect\Model\Worldline\Action\CreatePayment">
+        <arguments>
+            <argument name="createPaymentRequestBuilder" xsi:type="object">Worldline\Connect\Gateway\Command\CreatePaymentRequest\CardRequestBuilder</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Model\Worldline\Action\CreatePayment\InstantPurchase" type="Worldline\Connect\Model\Worldline\Action\CreatePayment">
+        <arguments>
+            <argument name="createPaymentRequestBuilder" xsi:type="object">Worldline\Connect\Gateway\Command\CreatePaymentRequest\InstantPurchaseRequestBuilder</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Model\Worldline\Action\CreatePayment\Redirect" type="Worldline\Connect\Model\Worldline\Action\CreatePayment">
+        <arguments>
+            <argument name="createPaymentRequestBuilder" xsi:type="object">Worldline\Connect\Gateway\Command\CreatePaymentRequest\RedirectRequestBuilder</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Model\Worldline\Action\CreatePayment\Hpp" type="Worldline\Connect\Model\Worldline\Action\CreatePayment">
+        <arguments>
+            <argument name="createPaymentRequestBuilder" xsi:type="object">Worldline\Connect\Gateway\Command\CreatePaymentRequest\CreateHostedCheckoutRequestBuilder</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\Card\AuthorizeCaptureCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCaptureCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Card</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\Card\AuthorizeCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Card</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\Card\CaptureCommand" type="Worldline\Connect\Gateway\Command\CaptureCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Card</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\InstantPurchase\AuthorizeCaptureCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCaptureCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\InstantPurchase</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\InstantPurchase\AuthorizeCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\InstantPurchase</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\InstantPurchase\CaptureCommand" type="Worldline\Connect\Gateway\Command\CaptureCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\InstantPurchase</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\Redirect\AuthorizeCaptureCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCaptureCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Redirect</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\Redirect\AuthorizeCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Redirect</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\Redirect\CaptureCommand" type="Worldline\Connect\Gateway\Command\CaptureCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Redirect</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\Hpp\AuthorizeCaptureCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCaptureCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Hpp</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\Hpp\AuthorizeCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Hpp</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\Gateway\Command\Hpp\CaptureCommand" type="Worldline\Connect\Gateway\Command\CaptureCommand">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Hpp</argument>
+        </arguments>
+    </virtualType>
+
     <!-- Command pools -->
     <virtualType name="WorldlineCardsCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
         <arguments>
@@ -37,9 +133,41 @@
     <virtualType name="WorldlineRedirectCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="initialize" xsi:type="string">WorldlineInitializeRedirectCommand</item>
-                <item name="authorize" xsi:type="string">WorldlineInitializeRedirectCommand</item>
-                <item name="capture" xsi:type="string">WorldlineInitializeRedirectCommand</item>
+                <item name="authorize" xsi:type="string">Worldline\Connect\Gateway\Command\Redirect\AuthorizeCommand</item>
+                <item name="capture" xsi:type="string">Worldline\Connect\Gateway\Command\Redirect\CaptureCommand</item>
+                <item name="authorize_capture" xsi:type="string">Worldline\Connect\Gateway\Command\Redirect\AuthorizeCaptureCommand</item>
+                <item name="void" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
+                <item name="cancel" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
+                <item name="refund" xsi:type="string">Worldline\Connect\Gateway\Command\RefundCommand</item>
+                <item name="accept_payment" xsi:type="string">Worldline\Connect\Gateway\Command\AcceptPaymentCommand</item>
+                <item name="deny_payment" xsi:type="string">Worldline\Connect\Gateway\Command\DenyPaymentCommand</item>
+                <item name="fetch_transaction_information" xsi:type="string">Worldline\Connect\Gateway\Command\FetchTransactionInfoCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineInstantPurchaseCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">Worldline\Connect\Gateway\Command\InstantPurchase\AuthorizeCommand</item>
+                <item name="capture" xsi:type="string">Worldline\Connect\Gateway\Command\InstantPurchase\CaptureCommand</item>
+                <item name="authorize_capture" xsi:type="string">Worldline\Connect\Gateway\Command\InstantPurchase\AuthorizeCaptureCommand</item>
+                <item name="void" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
+                <item name="cancel" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
+                <item name="refund" xsi:type="string">Worldline\Connect\Gateway\Command\RefundCommand</item>
+                <item name="accept_payment" xsi:type="string">Worldline\Connect\Gateway\Command\AcceptPaymentCommand</item>
+                <item name="deny_payment" xsi:type="string">Worldline\Connect\Gateway\Command\DenyPaymentCommand</item>
+                <item name="fetch_transaction_information" xsi:type="string">Worldline\Connect\Gateway\Command\FetchTransactionInfoCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineHppCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="authorize" xsi:type="string">Worldline\Connect\Gateway\Command\Hpp\AuthorizeCommand</item>
+                <item name="capture" xsi:type="string">Worldline\Connect\Gateway\Command\Hpp\CaptureCommand</item>
+                <item name="authorize_capture" xsi:type="string">Worldline\Connect\Gateway\Command\Hpp\AuthorizeCaptureCommand</item>
                 <item name="void" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
                 <item name="cancel" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
                 <item name="refund" xsi:type="string">Worldline\Connect\Gateway\Command\RefundCommand</item>
@@ -82,24 +210,6 @@
             </argument>
         </arguments>
     </type>
-
-    <virtualType name="WorldlineAuthorizeCardCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCommand">
-        <arguments>
-            <argument name="createPaymentRequestBuilder" xsi:type="object">Worldline\Connect\Gateway\Command\CreatePaymentRequest\CardRequestBuilder</argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="WorldlineInitializeRedirectCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCommand">
-        <arguments>
-            <argument name="createPaymentRequestBuilder" xsi:type="object">Worldline\Connect\Gateway\Command\CreatePaymentRequest\RedirectRequestBuilder</argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="WorldlineInitializeHppCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCommand">
-        <arguments>
-            <argument name="createPaymentRequestBuilder" xsi:type="object">Worldline\Connect\Gateway\Command\CreateHostedCheckoutRequestBuilder</argument>
-        </arguments>
-    </virtualType>
 
     <virtualType name="WorldlineInitializeLinkPlusPaymentLinkCommand" type="Worldline\Connect\Gateway\Command\InitializeLinkPlusPaymentLinkCommand" />
 
@@ -238,6 +348,52 @@
     <virtualType name="WorldlineBCCardConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
             <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::BC_CARD</argument>
+        </arguments>
+    </virtualType>
+
+    <!--  BC Card (Authenticated) -->
+    <virtualType name="Worldline\Connect\PaymentMethod\BCCardAuthenticated" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::BC_CARD_AUTHENTICATED</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineBCCardAuthenticatedValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineRedirectCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">WorldlineBCCardAuthenticatedValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineBCCardAuthenticatedValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">WorldlineBCCardAuthenticatedCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineBCCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">WorldlineBCCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineBCCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">WorldlineBCCardAuthenticatedConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineBCCardAuthenticatedConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineBCCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineBCCardAuthenticatedConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::BC_CARD_AUTHENTICATED</argument>
         </arguments>
     </virtualType>
 
@@ -425,6 +581,52 @@
         </arguments>
     </virtualType>
 
+    <!-- Hyundai Card (Authenticated) -->
+    <virtualType name="Worldline\Connect\PaymentMethod\HyundaiCardAuthenticated" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::HYUNDAI_CARD_AUTHENTICATED</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineHyundaiCardAuthenticatedValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineRedirectCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">WorldlineHyundaiCardAuthenticatedValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineHyundaiCardAuthenticatedValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">WorldlineHyundaiCardAuthenticatedCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineHyundaiCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">WorldlineHyundaiCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineHyundaiCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">WorldlineHyundaiCardAuthenticatedConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineHyundaiCardAuthenticatedConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineHyundaiCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineHyundaiCardAuthenticatedConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::HYUNDAI_CARD_AUTHENTICATED</argument>
+        </arguments>
+    </virtualType>
+
     <!-- JCB -->
     <virtualType name="Worldline\Connect\PaymentMethod\JCB" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
@@ -517,6 +719,52 @@
         </arguments>
     </virtualType>
 
+    <!-- KB Kookmin Card (Authenticated) -->
+    <virtualType name="Worldline\Connect\PaymentMethod\KBKookminCardAuthenticated" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::KB_KOOKMIN_CARD_AUTHENTICATED</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineKBKookminCardAuthenticatedValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineRedirectCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">WorldlineKBKookminCardAuthenticatedValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineKBKookminCardAuthenticatedValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">WorldlineKBKookminCardAuthenticatedCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineKBKookminCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">WorldlineKBKookminCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineKBKookminCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">WorldlineKBKookminCardAuthenticatedConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineKBKookminCardAuthenticatedConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineKBKookminCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineKBKookminCardAuthenticatedConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::KB_KOOKMIN_CARD_AUTHENTICATED</argument>
+        </arguments>
+    </virtualType>
+
     <!-- KEB Hana Card -->
     <virtualType name="Worldline\Connect\PaymentMethod\KEBHanaCard" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
@@ -560,6 +808,52 @@
     <virtualType name="WorldlineKEBHanaCardConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
             <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::KEB_HANA_CARD</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- KEB Hana Card (Authenticated)-->
+    <virtualType name="Worldline\Connect\PaymentMethod\KEBHanaCardAuthenticated" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::KEB_HANA_CARD_AUTHENTICATED</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineKEBHanaCardAuthenticatedValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineRedirectCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">WorldlineKEBHanaCardAuthenticatedValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineKEBHanaCardAuthenticatedValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">WorldlineKEBHanaCardAuthenticatedCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineKEBHanaCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">WorldlineKEBHanaCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineKEBHanaCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">WorldlineKEBHanaCardAuthenticatedConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineKEBHanaCardAuthenticatedConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineKEBHanaCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineKEBHanaCardAuthenticatedConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::KEB_HANA_CARD_AUTHENTICATED</argument>
         </arguments>
     </virtualType>
 
@@ -609,13 +903,59 @@
         </arguments>
     </virtualType>
 
+    <!-- Lotte Card (Authenticated)-->
+    <virtualType name="Worldline\Connect\PaymentMethod\LotteCardAuthenticated" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::LOTTE_CARD_AUTHENTICATED</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineLotteCardAuthenticatedValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineRedirectCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">WorldlineLotteCardAuthenticatedValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineLotteCardAuthenticatedValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">WorldlineLotteCardAuthenticatedCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineLotteCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">WorldlineLotteCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineLotteCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">WorldlineLotteCardAuthenticatedConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineLotteCardAuthenticatedConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineLotteCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineLotteCardAuthenticatedConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::LOTTE_CARD_AUTHENTICATED</argument>
+        </arguments>
+    </virtualType>
+
     <!-- UnionPay International - SecurePay -->
     <virtualType name="Worldline\Connect\PaymentMethod\UnionPayInternationalSecurePay" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
             <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::UNIONPAY_INTERNATIONAL_SECUREPAY</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
-            <argument name="valueHandlerPool" xsi:type="object">WorldlineLotteCardValueHandlerPool</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineUnionPayInternationalSecurePayCardValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">WorldlineCardsCommandPool</argument>
             <argument name="validatorPool" xsi:type="object">WorldlineUnionPayInternationalSecurePayCardValidatorPool</argument>
         </arguments>
@@ -793,6 +1133,52 @@
         </arguments>
     </virtualType>
 
+    <!-- NH Card (Authenticated)-->
+    <virtualType name="Worldline\Connect\PaymentMethod\NHCardAuthenticated" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::NH_CARD_AUTHENTICATED</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineNHCardAuthenticatedValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineRedirectCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">WorldlineNHCardAuthenticatedValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineNHCardAuthenticatedValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">WorldlineNHCardAuthenticatedCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineNHCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">WorldlineNHCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineNHCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">WorldlineNHCardAuthenticatedConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineNHCardAuthenticatedConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineNHCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineNHCardAuthenticatedConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::NH_CARD_AUTHENTICATED</argument>
+        </arguments>
+    </virtualType>
+
     <!-- Samsung Card -->
     <virtualType name="Worldline\Connect\PaymentMethod\SamsungCard" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
@@ -839,6 +1225,52 @@
         </arguments>
     </virtualType>
 
+    <!-- Samsung Card (Authenticated)-->
+    <virtualType name="Worldline\Connect\PaymentMethod\SamsungCardAuthenticated" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::SAMSUNG_CARD_AUTHENTICATED</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineSamsungCardAuthenticatedValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineRedirectCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">WorldlineSamsungCardAuthenticatedValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineSamsungCardAuthenticatedValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">WorldlineSamsungCardAuthenticatedCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineSamsungCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">WorldlineSamsungCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineSamsungCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">WorldlineSamsungCardAuthenticatedConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineSamsungCardAuthenticatedConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineSamsungCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineSamsungCardAuthenticatedConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::SAMSUNG_CARD_AUTHENTICATED</argument>
+        </arguments>
+    </virtualType>
+
     <!-- Shinhan Card -->
     <virtualType name="Worldline\Connect\PaymentMethod\ShinhanCard" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
@@ -882,6 +1314,144 @@
     <virtualType name="WorldlineShinhanCardConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
             <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::SHINHAN_CARD</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Troy -->
+    <virtualType name="Worldline\Connect\PaymentMethod\Troy" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::TROY</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineTroyValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineCardsCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">WorldlineTroyValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineTroyValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">WorldlineTroyCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineTroyCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">WorldlineTroyCardConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineTroyValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">WorldlineTroyConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineTroyConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineTroyCardConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineTroyCardConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::TROY</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Troy Debit -->
+    <virtualType name="Worldline\Connect\PaymentMethod\TroyDebit" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::TROY_DEBIT</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineTroyDebitValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineCardsCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">WorldlineTroyDebitValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineTroyDebitValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">WorldlineTroyDebitCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineTroyDebitCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">WorldlineTroyDebitCardConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineTroyDebitValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">WorldlineTroyDebitConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineTroyDebitConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineTroyDebitCardConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineTroyDebitCardConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::TROY_DEBIT</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Shinhan Card (Authenticated)-->
+    <virtualType name="Worldline\Connect\PaymentMethod\ShinhanCardAuthenticated" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::SHINHAN_CARD_AUTHENTICATED</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineShinhanCardAuthenticatedValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineRedirectCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">WorldlineShinhanCardAuthenticatedValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineShinhanCardAuthenticatedValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">WorldlineShinhanCardAuthenticatedCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineShinhanCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">WorldlineShinhanCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineShinhanCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">WorldlineShinhanCardAuthenticatedConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineShinhanCardAuthenticatedConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineShinhanCardAuthenticatedConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineShinhanCardAuthenticatedConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::SHINHAN_CARD_AUTHENTICATED</argument>
         </arguments>
     </virtualType>
 
@@ -1115,52 +1685,6 @@
         </arguments>
     </virtualType>
 
-    <!-- Giropay -->
-    <virtualType name="Worldline\Connect\PaymentMethod\Giropay" type="Magento\Payment\Model\Method\Adapter">
-        <arguments>
-            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::GIROPAY</argument>
-            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
-            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
-            <argument name="valueHandlerPool" xsi:type="object">WorldlineGiropayValueHandlerPool</argument>
-            <argument name="commandPool" xsi:type="object">WorldlineRedirectCommandPool</argument>
-            <argument name="validatorPool" xsi:type="object">WorldlineGiropayValidatorPool</argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="WorldlineGiropayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
-        <arguments>
-            <argument name="validators" xsi:type="array">
-                <item name="country" xsi:type="string">WorldlineGiropayCountryValidator</item>
-            </argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="WorldlineGiropayCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
-        <arguments>
-            <argument name="config" xsi:type="object">WorldlineGiropayConfig</argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="WorldlineGiropayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
-        <arguments>
-            <argument name="handlers" xsi:type="array">
-                <item name="default" xsi:type="string">WorldlineGiropayConfigValueHandler</item>
-            </argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="WorldlineGiropayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
-        <arguments>
-            <argument name="configInterface" xsi:type="object">WorldlineGiropayConfig</argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="WorldlineGiropayConfig" type="Magento\Payment\Gateway\Config\Config">
-        <arguments>
-            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::GIROPAY</argument>
-        </arguments>
-    </virtualType>
-
     <!-- Apple Pay -->
 
     <virtualType name="Worldline\Connect\PaymentMethod\ApplePay" type="Magento\Payment\Model\Method\Adapter">
@@ -1169,22 +1693,8 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
             <argument name="valueHandlerPool" xsi:type="object">WorldlineApplePayValueHandlerPool</argument>
-            <argument name="commandPool" xsi:type="object">WorldlineApplePayCommandPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineInstantPurchaseCommandPool</argument>
             <argument name="validatorPool" xsi:type="object">WorldlineApplePayValidatorPool</argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="WorldlineApplePayCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
-        <arguments>
-            <argument name="commands" xsi:type="array">
-                <item name="initialize" xsi:type="string">WorldlineInitializeMobileCommand</item>
-                <item name="void" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
-                <item name="cancel" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
-                <item name="refund" xsi:type="string">Worldline\Connect\Gateway\Command\RefundCommand</item>
-                <item name="accept_payment" xsi:type="string">Worldline\Connect\Gateway\Command\AcceptPaymentCommand</item>
-                <item name="deny_payment" xsi:type="string">Worldline\Connect\Gateway\Command\DenyPaymentCommand</item>
-                <item name="fetch_transaction_information" xsi:type="string">Worldline\Connect\Gateway\Command\FetchTransactionInfoCommand</item>
-            </argument>
         </arguments>
     </virtualType>
 
@@ -1310,28 +1820,8 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
             <argument name="valueHandlerPool" xsi:type="object">WorldlineGooglePayValueHandlerPool</argument>
-            <argument name="commandPool" xsi:type="object">WorldlineGooglePlayCommandPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineInstantPurchaseCommandPool</argument>
             <argument name="validatorPool" xsi:type="object">WorldlineGooglePayValidatorPool</argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="WorldlineGooglePlayCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
-        <arguments>
-            <argument name="commands" xsi:type="array">
-                <item name="initialize" xsi:type="string">WorldlineInitializeMobileCommand</item>
-                <item name="void" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
-                <item name="cancel" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
-                <item name="refund" xsi:type="string">Worldline\Connect\Gateway\Command\RefundCommand</item>
-                <item name="accept_payment" xsi:type="string">Worldline\Connect\Gateway\Command\AcceptPaymentCommand</item>
-                <item name="deny_payment" xsi:type="string">Worldline\Connect\Gateway\Command\DenyPaymentCommand</item>
-                <item name="fetch_transaction_information" xsi:type="string">Worldline\Connect\Gateway\Command\FetchTransactionInfoCommand</item>
-            </argument>
-        </arguments>
-    </virtualType>
-
-    <virtualType name="WorldlineInitializeMobileCommand" type="Worldline\Connect\Gateway\Command\AuthorizeCommand">
-        <arguments>
-            <argument name="createPaymentRequestBuilder" xsi:type="object">Worldline\Connect\Gateway\Command\CreatePaymentRequest\MobileRequestBuilder</argument>
         </arguments>
     </virtualType>
 
@@ -1767,20 +2257,7 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="WorldlineHppCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
-        <arguments>
-            <argument name="commands" xsi:type="array">
-                <item name="initialize" xsi:type="string">WorldlineInitializeHppCommand</item>
-                <item name="capture" xsi:type="string">Worldline\Connect\Gateway\Command\Hpp\CaptureCommand</item>
-                <item name="void" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
-                <item name="cancel" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
-                <item name="refund" xsi:type="string">Worldline\Connect\Gateway\Command\RefundCommand</item>
-                <item name="accept_payment" xsi:type="string">Worldline\Connect\Gateway\Command\AcceptPaymentCommand</item>
-                <item name="deny_payment" xsi:type="string">Worldline\Connect\Gateway\Command\DenyPaymentCommand</item>
-                <item name="fetch_transaction_information" xsi:type="string">Worldline\Connect\Gateway\Command\FetchTransactionInfoCommand</item>
-            </argument>
-        </arguments>
-    </virtualType>
+
 
     <!-- LinkPlus -->
     <virtualType name="Worldline\Connect\PaymentMethod\LinkPlusPaymentLink" type="Magento\Payment\Model\Method\Adapter">
@@ -1892,6 +2369,24 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="Worldline\Connect\PaymentMethod\TroyVault" type="Worldline\Connect\Model\Method\Vault">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::TROY_VAULT</argument>
+            <argument name="config" xsi:type="object">WorldlineVaultConfig</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineTroyValueHandlerPool</argument>
+            <argument name="vaultProvider" xsi:type="object">Worldline\Connect\PaymentMethod\Troy</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Worldline\Connect\PaymentMethod\TroyDebitVault" type="Worldline\Connect\Model\Method\Vault">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::TROY_DEBIT_VAULT</argument>
+            <argument name="config" xsi:type="object">WorldlineVaultConfig</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineTroyDebitValueHandlerPool</argument>
+            <argument name="vaultProvider" xsi:type="object">Worldline\Connect\PaymentMethod\TroyDebit</argument>
+        </arguments>
+    </virtualType>
+
     <virtualType name="Worldline\Connect\PaymentMethod\VisaVault" type="Worldline\Connect\Model\Method\Vault">
         <arguments>
             <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::VISA_VAULT</argument>
@@ -1941,14 +2436,14 @@
 
     <virtualType name="WorldlineVaultSaleCommand" type="Worldline\Connect\Gateway\Command\VaultCommand">
         <arguments>
-            <argument name="initializeCommand" xsi:type="object">WorldlineAuthorizeCardCommand</argument>
+            <argument name="initializeCommand" xsi:type="object">Worldline\Connect\Gateway\Command\Card\AuthorizeCommand</argument>
             <argument name="paymentAction" xsi:type="const">Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineVaultAuthorizeCommand" type="Worldline\Connect\Gateway\Command\VaultCommand">
         <arguments>
-            <argument name="initializeCommand" xsi:type="object">WorldlineAuthorizeCardCommand</argument>
+            <argument name="initializeCommand" xsi:type="object">Worldline\Connect\Gateway\Command\Card\AuthorizeCommand</argument>
             <argument name="paymentAction" xsi:type="const">Magento\Sales\Model\Order\Payment\Transaction::TYPE_AUTH</argument>
         </arguments>
     </virtualType>
@@ -1987,6 +2482,8 @@
                 <item name="worldline_nh_card" xsi:type="string">WorldlineVaultCommandManager</item>
                 <item name="worldline_samsung_card" xsi:type="string">WorldlineVaultCommandManager</item>
                 <item name="worldline_shinhan_card" xsi:type="string">WorldlineVaultCommandManager</item>
+                <item name="worldline_troy" xsi:type="string">WorldlineVaultCommandManager</item>
+                <item name="worldline_troy_debit" xsi:type="string">WorldlineVaultCommandManager</item>
                 <item name="worldline_unionpay_expresspay" xsi:type="string">WorldlineVaultCommandManager</item>
                 <item name="worldline_unionpay_international_securepay" xsi:type="string">WorldlineVaultCommandManager</item>
                 <item name="worldline_visa" xsi:type="string">WorldlineVaultCommandManager</item>
