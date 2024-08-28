@@ -11,7 +11,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\ResourceModel\Order\Address\Collection;
 use Magento\Sales\Model\ResourceModel\Order\Address\CollectionFactory;
 use Worldline\Connect\Helper\Format;
-use Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\Shipping\AddressBuilder;
+use Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\Shipping\AddressBuilder as ShippingAddressBuilder;
 use Worldline\Connect\Sdk\V1\Domain\Shipping;
 use Worldline\Connect\Sdk\V1\Domain\ShippingFactory;
 
@@ -41,10 +41,10 @@ class ShippingBuilder
     private $dateTimeFactory;
 
     /**
-     * @var AddressBuilder
+     * @var ShippingAddressBuilder
      */
     // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
-    private $addressBuilder;
+    private $shippingAddressBuilder;
 
     /**
      * @var Format
@@ -56,20 +56,23 @@ class ShippingBuilder
         ShippingFactory $shippingFactory,
         CollectionFactory $addressCollectionFactory,
         DateTimeFactory $dateTimeFactory,
-        AddressBuilder $addressBuilder,
+        ShippingAddressBuilder $shippingAddressBuilder,
         Format $format
     ) {
         $this->shippingFactory = $shippingFactory;
         $this->addressCollectionFactory = $addressCollectionFactory;
         $this->dateTimeFactory = $dateTimeFactory;
-        $this->addressBuilder = $addressBuilder;
+        $this->shippingAddressBuilder = $shippingAddressBuilder;
         $this->format = $format;
     }
 
+    /**
+     * @throws LocalizedException
+     */
     public function create(Order $order): Shipping
     {
         $shipping = $this->shippingFactory->create();
-        $shipping->address = $this->addressBuilder->create($order);
+        $shipping->address = $this->shippingAddressBuilder->create($order);
 
         $shippingAddress = $order->getShippingAddress();
         $shipping->addressIndicator = $this->getAddressIndicator($order);
