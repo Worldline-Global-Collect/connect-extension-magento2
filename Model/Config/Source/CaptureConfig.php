@@ -9,7 +9,7 @@ use Magento\Payment\Model\MethodInterface;
 
 use function __;
 
-class PaymentAction implements ArrayInterface
+class CaptureConfig implements ArrayInterface
 {
     public function toOptionArray(): array
     {

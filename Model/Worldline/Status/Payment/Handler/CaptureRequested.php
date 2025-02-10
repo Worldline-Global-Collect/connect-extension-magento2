@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Worldline\Connect\Model\Worldline\Status\Payment\Handler;
 
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Quote\Model\QuoteFactory;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Worldline\Connect\Model\ConfigInterface;
@@ -21,14 +22,20 @@ class CaptureRequested extends AbstractHandler implements HandlerInterface
      */
     // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
     private $tokenService;
+    /**
+     * @var QuoteFactory
+     */
+    private $quoteFactory;
 
     public function __construct(
         ManagerInterface $eventManager,
         ConfigInterface $config,
-        TokenService $tokenService
+        TokenService $tokenService,
+        QuoteFactory $quoteFactory
     ) {
         parent::__construct($eventManager, $config);
         $this->tokenService = $tokenService;
+        $this->quoteFactory = $quoteFactory;
     }
 
     /**
@@ -45,6 +52,14 @@ class CaptureRequested extends AbstractHandler implements HandlerInterface
         $orderPayment->setIsTransactionClosed(true);
 
         $orderPayment->registerCaptureNotification($order->getBaseGrandTotal());
+        $order->setCanSendNewEmailFlag(true);
+        $this->eventManager->dispatch(
+            'sales_model_service_quote_submit_success',
+            [
+                'order' => $order,
+                'quote' => $this->quoteFactory->create()->load($order->getQuoteId()),
+            ]
+        );
 
         $this->tokenService->createByOrderAndPayment($order, $status);
 

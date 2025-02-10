@@ -43,6 +43,12 @@ class CreatePayment extends AbstractAction
         try {
             $request = $this->createPaymentRequestBuilder->build($payment, $requiresApproval);
             $response = $this->worldlineClient->createPayment($request);
+
+            if (in_array($response->payment->status, StatusInterface::APPROVED_STATUSES, true)) {
+                $payment->registerCaptureNotification($payment->getOrder()->getBaseGrandTotal());
+                $payment->setData('is_transaction_approved', true);
+            }
+
             $this->postProcess($payment, $response->payment);
 
             $this->tokenService->createByOrderAndPayment($payment->getOrder(), $response->payment);

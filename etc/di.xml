@@ -119,7 +119,7 @@
             <argument name="commands" xsi:type="array">
                 <item name="authorize" xsi:type="string">Worldline\Connect\Gateway\Command\Card\AuthorizeCommand</item>
                 <item name="capture" xsi:type="string">Worldline\Connect\Gateway\Command\Card\CaptureCommand</item>
-                <item name="authorize_capture" xsi:type="string">Worldline\Connect\Gateway\Command\Card\AuthorizeCaptureCommand</item>
+                <item name="authorize_capture" xsi:type="string">Worldline\Connect\Gateway\Command\Card\AuthorizeCommand</item>
                 <item name="void" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
                 <item name="cancel" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
                 <item name="refund" xsi:type="string">Worldline\Connect\Gateway\Command\RefundCommand</item>
@@ -135,7 +135,7 @@
             <argument name="commands" xsi:type="array">
                 <item name="authorize" xsi:type="string">Worldline\Connect\Gateway\Command\Redirect\AuthorizeCommand</item>
                 <item name="capture" xsi:type="string">Worldline\Connect\Gateway\Command\Redirect\CaptureCommand</item>
-                <item name="authorize_capture" xsi:type="string">Worldline\Connect\Gateway\Command\Redirect\AuthorizeCaptureCommand</item>
+                <item name="authorize_capture" xsi:type="string">Worldline\Connect\Gateway\Command\Redirect\AuthorizeCommand</item>
                 <item name="void" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
                 <item name="cancel" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
                 <item name="refund" xsi:type="string">Worldline\Connect\Gateway\Command\RefundCommand</item>
@@ -151,7 +151,7 @@
             <argument name="commands" xsi:type="array">
                 <item name="authorize" xsi:type="string">Worldline\Connect\Gateway\Command\InstantPurchase\AuthorizeCommand</item>
                 <item name="capture" xsi:type="string">Worldline\Connect\Gateway\Command\InstantPurchase\CaptureCommand</item>
-                <item name="authorize_capture" xsi:type="string">Worldline\Connect\Gateway\Command\InstantPurchase\AuthorizeCaptureCommand</item>
+                <item name="authorize_capture" xsi:type="string">Worldline\Connect\Gateway\Command\InstantPurchase\AuthorizeCommand</item>
                 <item name="void" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
                 <item name="cancel" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
                 <item name="refund" xsi:type="string">Worldline\Connect\Gateway\Command\RefundCommand</item>
@@ -167,7 +167,7 @@
             <argument name="commands" xsi:type="array">
                 <item name="authorize" xsi:type="string">Worldline\Connect\Gateway\Command\Hpp\AuthorizeCommand</item>
                 <item name="capture" xsi:type="string">Worldline\Connect\Gateway\Command\Hpp\CaptureCommand</item>
-                <item name="authorize_capture" xsi:type="string">Worldline\Connect\Gateway\Command\Hpp\AuthorizeCaptureCommand</item>
+                <item name="authorize_capture" xsi:type="string">Worldline\Connect\Gateway\Command\Hpp\AuthorizeCommand</item>
                 <item name="void" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
                 <item name="cancel" xsi:type="string">Worldline\Connect\Gateway\Command\CancelCommand</item>
                 <item name="refund" xsi:type="string">Worldline\Connect\Gateway\Command\RefundCommand</item>

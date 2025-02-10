@@ -58,6 +58,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
         if (version_compare($context->getVersion(), '3.0.3') < 0) {
             $this->dropEventIdAndOrderIncrementId($setup);
         }
+
+        if (version_compare($context->getVersion(), '4.4.0') < 0) {
+            $this->updatePaymentActionPath($setup);
+        }
     }
 
     /**
@@ -212,7 +216,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $version = $setup->getConnection()->fetchOne('SELECT VERSION()');
             if (version_compare($version, '5.6.4', '>=')) {
                 $setup->getConnection()->query(
-                    // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+                // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
                     sprintf(
                         'ALTER TABLE %1$s MODIFY COLUMN %2$s TIMESTAMP(4) NULL COMMENT \'%3$s\';',
                         $tableName,
@@ -236,5 +240,14 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $setup->getConnection()->dropColumn($tableName, 'event_id');
             $setup->getConnection()->dropColumn($tableName, 'order_increment_id');
         }
+    }
+
+    private function updatePaymentActionPath(SchemaSetupInterface $setup)
+    {
+        $tableName = $setup->getTable('core_config_data');
+        $sql = "UPDATE $tableName
+        SET path = REPLACE(path, 'payment_action', 'capture_config')
+        WHERE path LIKE 'payment/worldline%/payment_action'";
+        $setup->getConnection()->query($sql);
     }
 }

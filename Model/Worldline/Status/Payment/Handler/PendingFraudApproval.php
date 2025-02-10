@@ -85,7 +85,7 @@ class PendingFraudApproval extends AbstractHandler implements HandlerInterface
                  *
                  * @see Payment::place()
                  */
-                if ($payment->getMethodInstance()->getConfigPaymentAction() === AbstractMethod::ACTION_AUTHORIZE) {
+                if ($payment->getMethodInstance()->getConfigCaptureConfig() === AbstractMethod::ACTION_AUTHORIZE) {
                     $payment->registerCaptureNotification($amount);
                 } else {
                     $payment->registerAuthorizationNotification($amount);

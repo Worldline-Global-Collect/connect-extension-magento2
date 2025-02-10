@@ -19,6 +19,7 @@ define(
           },
 
           title: function () {
+              config.init(window.checkoutConfig.payment['worldline']);
               return config.getHostedCheckoutTitle();
           },
 
