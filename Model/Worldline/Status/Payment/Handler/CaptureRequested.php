@@ -52,14 +52,17 @@ class CaptureRequested extends AbstractHandler implements HandlerInterface
         $orderPayment->setIsTransactionClosed(true);
 
         $orderPayment->registerCaptureNotification($order->getBaseGrandTotal());
-        $order->setCanSendNewEmailFlag(true);
-        $this->eventManager->dispatch(
-            'sales_model_service_quote_submit_success',
-            [
-                'order' => $order,
-                'quote' => $this->quoteFactory->create()->load($order->getQuoteId()),
-            ]
-        );
+
+        if (!$order->getEmailSent()) {
+            $order->setCanSendNewEmailFlag(true);
+            $this->eventManager->dispatch(
+                'sales_model_service_quote_submit_success',
+                [
+                    'order' => $order,
+                    'quote' => $this->quoteFactory->create()->load($order->getQuoteId()),
+                ]
+            );
+        }
 
         $this->tokenService->createByOrderAndPayment($order, $status);
 
