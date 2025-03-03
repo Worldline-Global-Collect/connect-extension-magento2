@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Worldline\Connect\Model\Worldline\Status\Payment\Handler;
 
 use Magento\Framework\Event\ManagerInterface;
+use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Sales\Model\Order;
-use Magento\Quote\Model\QuoteFactory;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
 use Worldline\Connect\Model\ConfigInterface;
+use Worldline\Connect\Model\Worldline\EmailSender;
 use Worldline\Connect\Model\Worldline\Status\Payment\HandlerInterface;
 use Worldline\Connect\Sdk\V1\Domain\Payment;
 
@@ -21,17 +22,23 @@ class Captured extends AbstractHandler implements HandlerInterface
 {
     protected const EVENT_STATUS = 'captured';
     /**
-     * @var QuoteFactory
+     * @var EmailSender
      */
-    private $quoteFactory;
+    private $emailSender;
+    /**
+     * @var CartRepositoryInterface
+     */
+    private $quoteRepository;
 
     public function __construct(
         ManagerInterface $eventManager,
         ConfigInterface $config,
-        QuoteFactory $quoteFactory
+        EmailSender $emailSender,
+        CartRepositoryInterface $quoteRepository
     ) {
         parent::__construct($eventManager, $config);
-        $this->quoteFactory = $quoteFactory;
+        $this->emailSender = $emailSender;
+        $this->quoteRepository = $quoteRepository;
     }
 
     /**
@@ -44,18 +51,15 @@ class Captured extends AbstractHandler implements HandlerInterface
         $orderPayment->setIsTransactionPending(false);
         $orderPayment->setIsTransactionClosed(true);
 
-        $orderPayment->registerCaptureNotification($order->getBaseGrandTotal());
+        if ($order->getEmailSent()) {
+            $order->setCanSendNewEmailFlag(false);
+        }
 
+        $orderPayment->registerCaptureNotification($order->getBaseGrandTotal());
 
         if (!$order->getEmailSent()) {
             $order->setCanSendNewEmailFlag(true);
-            $this->eventManager->dispatch(
-                'sales_model_service_quote_submit_success',
-                [
-                    'order' => $order,
-                    'quote' => $this->quoteFactory->create()->load($order->getQuoteId()),
-                ]
-            );
+            $this->emailSender->sendEmails($order, $this->quoteRepository->get($order->getQuoteId()));
         }
 
         $this->dispatchEvent($order, $status);

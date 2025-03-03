@@ -24,6 +24,9 @@ class FetchTransactionInfoCommand implements CommandInterface
         $payment = $commandSubject['payment']->getPayment();
         $worldlinePayment = $this->worldlineClient->worldlinePayment($commandSubject['transactionId']);
         if (in_array($worldlinePayment->status, StatusInterface::APPROVED_STATUSES, true)) {
+            if ($payment->getOrder()->getEmailSent()) {
+                $payment->getOrder()->setCanSendNewEmailFlag(false);
+            }
             $payment->registerCaptureNotification($payment->getOrder()->getBaseGrandTotal());
             $payment->setData('is_transaction_approved', true);
         }

@@ -45,6 +45,10 @@ class CreatePayment extends AbstractAction
             $response = $this->worldlineClient->createPayment($request);
 
             if (in_array($response->payment->status, StatusInterface::APPROVED_STATUSES, true)) {
+                if ($payment->getOrder()->getEmailSent()) {
+                    $payment->getOrder()->setCanSendNewEmailFlag(false);
+                }
+
                 $payment->registerCaptureNotification($payment->getOrder()->getBaseGrandTotal());
                 $payment->setData('is_transaction_approved', true);
             }
