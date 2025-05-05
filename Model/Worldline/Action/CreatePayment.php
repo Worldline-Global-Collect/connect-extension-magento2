@@ -53,6 +53,11 @@ class CreatePayment extends AbstractAction
                 $payment->setData('is_transaction_approved', true);
             }
 
+            if ($response->payment->status === StatusInterface::REDIRECTED) {
+                $payment->getOrder()->setCanSendNewEmailFlag(false);
+                $payment->registerCaptureNotification($payment->getOrder()->getBaseGrandTotal());
+            }
+
             $this->postProcess($payment, $response->payment);
 
             $this->tokenService->createByOrderAndPayment($payment->getOrder(), $response->payment);

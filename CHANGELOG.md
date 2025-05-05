@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 4.8.0 - 2025-05-05
+
+- Fix inline flow with redirect response type doesn't send emails as expected
+- Add compatibility with PHP 8.3
+
 ## 4.7.0 - 2025-03-13
 
 - Fix missing order summary content in invoice emails
