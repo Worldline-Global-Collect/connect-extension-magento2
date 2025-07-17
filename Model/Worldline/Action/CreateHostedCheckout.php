@@ -28,7 +28,7 @@ class CreateHostedCheckout extends AbstractAction
 
     public function process(Payment $payment, bool $requiresApproval): void
     {
-        $payment->getOrder()->setCanSendNewEmailFlag($requiresApproval);
+        $payment->getOrder()->setCanSendNewEmailFlag(false);
         $storeId = $payment->getOrder()->getStoreId();
 
         $response = $this->client->createHostedCheckout(
