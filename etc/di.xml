@@ -2496,8 +2496,6 @@
     <preference for="Worldline\Connect\Model\ConfigInterface" type="Worldline\Connect\Model\Config"/>
     <preference for="Worldline\Connect\Model\Worldline\Token\TokenServiceInterface" type="Worldline\Connect\Model\Worldline\Token\TokenService"/>
     <preference for="Worldline\Connect\Model\Worldline\Api\ClientInterface" type="Worldline\Connect\Model\Worldline\Client"/>
-    <preference for="Worldline\Connect\Model\OrderUpdate\OrderInterface" type="Worldline\Connect\Model\OrderUpdate\Order"/>
-    <preference for="Worldline\Connect\Model\OrderUpdate\SchedulerInterface" type="Worldline\Connect\Model\OrderUpdate\Scheduler"/>
     <preference for="Worldline\Connect\Model\Worldline\Status\Payment\ResolverInterface" type="Worldline\Connect\Model\Worldline\Status\Payment\Resolver"/>
     <preference for="Worldline\Connect\Model\Worldline\Status\Refund\ResolverInterface" type="Worldline\Connect\Model\Worldline\Status\Refund\Resolver"/>
     <preference for="Worldline\Connect\Model\StatusResponseManagerInterface" type="Worldline\Connect\Model\StatusResponseManager"/>
@@ -2506,14 +2504,11 @@
     <preference for="Worldline\Connect\Model\Order\OrderServiceInterface" type="Worldline\Connect\Model\Order\OrderService"/>
     <preference for="Worldline\Connect\Model\Transaction\TransactionManagerInterface" type="Worldline\Connect\Model\Transaction\TransactionManager"/>
     <preference for="Worldline\Connect\Api\EventRepositoryInterface" type="Worldline\Connect\Model\Event\EventRepository"/>
-    <preference for="Worldline\Connect\Api\EventManagerInterface" type="Worldline\Connect\Model\Event\EventManager"/>
     <preference for="Worldline\Connect\Api\Data\EventInterface" type="Worldline\Connect\Model\Event\DataModel"/>
     <preference for="Worldline\Connect\Api\Data\EventSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
     <preference for="Worldline\Connect\Api\SessionManagerInterface" type="Worldline\Connect\Model\Worldline\Session\SessionManager"/>
     <preference for="Worldline\Connect\Api\Data\SessionInterface" type="Worldline\Connect\Model\Worldline\Session\Session"/>
     <preference for="Worldline\Connect\Api\OrderPaymentManagementInterface" type="Worldline\Connect\Model\Order\Payment\OrderPaymentManagement"/>
-    <preference for="Worldline\Connect\Api\RefundManagementInterface" type="Worldline\Connect\Model\Worldline\Action\Refund\RefundManagement"/>
-    <preference for="Worldline\Connect\Api\PaymentManagementInterface" type="Worldline\Connect\Model\Worldline\Action\Payment\PaymentManagement"/>
     <preference for="Worldline\Connect\Api\FrontendLoggerInterface" type="Worldline\Connect\Logger\FrontendLogger"/>
 
     <virtualType name="WorldlineAdminTokenPaymentValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -2610,24 +2605,6 @@
             </argument>
         </arguments>
     </virtualType>
-
-    <type name="Worldline\Connect\Model\OrderUpdate\Order">
-        <arguments>
-            <argument name="logger" xsi:type="object">realTimeLogger</argument>
-        </arguments>
-    </type>
-
-    <type name="Worldline\Connect\Model\OrderUpdate\Processor">
-        <arguments>
-            <argument name="logger" xsi:type="object">realTimeLogger</argument>
-        </arguments>
-    </type>
-
-    <type name="Worldline\Connect\Model\OrderUpdate\Scheduler">
-        <arguments>
-            <argument name="logger" xsi:type="object">realTimeLogger</argument>
-        </arguments>
-    </type>
 
     <type name="Magento\Framework\Console\CommandList">
         <arguments>
