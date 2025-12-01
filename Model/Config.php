@@ -71,6 +71,10 @@ class Config implements ConfigInterface
     // phpcs:ignore SlevomatCodingStandard.Files.LineLength.LineTooLong
     public const CONFIG_WORLDLINE_HOSTED_CHECKOUT_GUEST_VARIANT = 'worldline_connect/checkout/hosted_checkout_guest_variant';
     public const CONFIG_WORLDLINE_HOSTED_CHECKOUT_TITLE = 'payment/worldline_hpp/title';
+    // phpcs:ignore Generic.Files.LineLength.TooLong
+    public const CONFIG_ORDER_CREATION_FLOW_KEY = 'worldline_connect/settings/order_creation_flow';
+    public const CONFIG_ORDER_CREATION_FLOW_BEFORE = 'worldline_connect/settings/order_creation_flow/before';
+    public const CONFIG_ORDER_CREATION_FLOW_AFTER = 'worldline_connect/settings/order_creation_flow/after';
 
     /** AdditionalInformation keys */
     public const PAYMENT_ID_KEY = 'worldline_payment_id';
@@ -86,6 +90,7 @@ class Config implements ConfigInterface
     public const TRANSACTION_RESULTS_KEY = 'worldline_transaction_results';
     public const REDIRECT_URL_KEY = 'worldline_redirect_url';
     public const HOSTED_CHECKOUT_ID_KEY = 'worldline_hosted_checkout_id';
+    public const HOSTED_CHECKOUT_ID_TIMESTAMP_KEY = 'worldline_hosted_checkout_id_timestamp';
     public const RETURNMAC_KEY = 'worldline_returnmac';
     public const IDEMPOTENCE_KEY = 'worldline_idempotence_key';
 
@@ -384,7 +389,7 @@ class Config implements ConfigInterface
     public function getPaymentStatusInfo($status, $storeId = null)
     {
         return $this->getValue(
-            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+        // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
             mb_strtolower(self::CONFIG_WORLDLINE_PAYMENT_STATUS . '/' . $status),
             $storeId
         );
@@ -396,7 +401,7 @@ class Config implements ConfigInterface
     public function getRefundStatusInfo($status, $storeId = null)
     {
         return $this->getValue(
-            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+        // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
             mb_strtolower(self::CONFIG_WORLDLINE_REFUND_STATUS . '/' . $status),
             $storeId
         );
@@ -408,5 +413,29 @@ class Config implements ConfigInterface
     public function getLimitAPIFieldLength(): bool
     {
         return $this->scopeConfig->isSetFlag(self::CONFIG_WORLDLINE_LIMIT_API_FIELD_LENGTH);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOrderCreationFlow(int $storeId): string
+    {
+        return $this->getValue(self::CONFIG_ORDER_CREATION_FLOW_KEY, $storeId) ?? self::CONFIG_ORDER_CREATION_FLOW_BEFORE;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOrderCreationFlowBefore(): string
+    {
+        return self::CONFIG_ORDER_CREATION_FLOW_BEFORE;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOrderCreationFlowAfter(): string
+    {
+        return self::CONFIG_ORDER_CREATION_FLOW_AFTER;
     }
 }

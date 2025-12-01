@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order;
 
 use Magento\Framework\Intl\DateTimeFactory;
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\AdditionalInput\TypeInformationBuilder;
 use Worldline\Connect\Sdk\V1\Domain\AdditionalOrderInput;
@@ -47,6 +48,17 @@ class AdditionalInputBuilder
 
         $additionalInput->orderDate = $dateTime->format('YmdHis');
         $additionalInput->typeInformation = $this->typeInformationBuilder->create($order);
+
+        return $additionalInput;
+    }
+
+    public function createNew(Quote $quote): AdditionalOrderInput
+    {
+        $additionalInput = $this->additionalOrderInputFactory->create();
+        $dateTime = $this->dateTimeFactory->create($quote->getCreatedAt() ?? '');
+
+        $additionalInput->orderDate = $dateTime->format('YmdHis');
+        $additionalInput->typeInformation = $this->typeInformationBuilder->createNew($quote);
 
         return $additionalInput;
     }

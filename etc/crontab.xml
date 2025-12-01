@@ -5,5 +5,9 @@
         <job name="process_webhook_events" instance="Worldline\Connect\Cron\ProcessEvents" method="execute">
             <schedule>* * * * *</schedule>
         </job>
+
+        <job name="transaction_fallback_mechanism" instance="Worldline\Connect\Cron\TransactionFallbackTask" method="execute">
+            <schedule>*/10 * * * *</schedule>
+        </job>
     </group>
 </config>

@@ -4,6 +4,7 @@ namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\Customer
 
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Quote\Model\Quote;
 use Psr\Log\LoggerInterface;
 use Worldline\Connect\Sdk\V1\Domain\CompanyInformation;
 use Worldline\Connect\Sdk\V1\Domain\CompanyInformationFactory;
@@ -44,10 +45,31 @@ class CompanyInformationBuilder
         return $companyInformation;
     }
 
+    public function createNew(Quote $quote): CompanyInformation
+    {
+        $companyInformation = $this->companyInformationFactory->create();
+        $companyInformation->vatNumber = $this->getOrderTaxvatNew($quote);
+        if ($companyInformation->vatNumber !== null || !$quote->getCustomerId()) {
+            return $companyInformation;
+        }
+
+        $companyInformation->vatNumber = $this->getCustomerTaxvat((int) $quote->getCustomerId());
+        return $companyInformation;
+    }
+
     protected function getOrderTaxvat(OrderInterface $order): ?string
     {
         if ($order->getBillingAddress() && $order->getBillingAddress()->getVatId() !== '') {
             return $order->getBillingAddress()->getVatId();
+        }
+
+        return null;
+    }
+
+    protected function getOrderTaxvatNew(Quote $quote): ?string
+    {
+        if ($quote->getBillingAddress() && $quote->getBillingAddress()->getVatId() !== '') {
+            return $quote->getBillingAddress()->getVatId();
         }
 
         return null;
@@ -58,7 +80,7 @@ class CompanyInformationBuilder
         try {
             $customer = $this->customerRepository->getById($customerId);
             return $customer->getTaxvat();
-        // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
+            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
         } catch (\Exception $exception) {
             // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
             $this->logger->error(sprintf('Exception while retrieving customer taxvat: %s', $exception->getMessage()));

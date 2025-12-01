@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="navigation.sections" remove="true"/>
+        <referenceBlock name="minicart" remove="true"/>
+        <referenceBlock name="top.search" remove="true"/>
+        <referenceContainer name="content">
+            <block name="worldline_pending_page" template="Worldline_Connect::pending.phtml">
+                <arguments>
+                    <argument name="pending_page_data_provider" xsi:type="object">Worldline\Connect\ViewModel\PendingPageDataProvider</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

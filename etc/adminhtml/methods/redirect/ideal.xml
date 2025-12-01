@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
     <group id="ideal" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
-        <label>iDeal</label>
+        <label>iDEAL</label>
         <field id="active" translate="label comment" type="Worldline\Connect\Data\Form\Element\Toggle" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Enabled</label>
             <config_path>payment/worldline_ideal/active</config_path>

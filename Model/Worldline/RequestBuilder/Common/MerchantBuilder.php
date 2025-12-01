@@ -5,6 +5,7 @@ namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Module\Manager;
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
@@ -70,7 +71,27 @@ class MerchantBuilder
                     $merchant->contactWebsiteUrl = $store->getUrl('contact');
                 }
             }
-        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+            // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (NoSuchEntityException $exception) {
+            // Do nothing
+        }
+
+        return $merchant;
+    }
+
+    public function createNew(Quote $quote): Merchant
+    {
+        $merchant = $this->merchantFactory->create();
+
+        try {
+            $store = $this->storeManager->getStore($quote->getStoreId());
+            if ($store instanceof Store) {
+                $merchant->websiteUrl = $this->format->limit($store->getBaseUrl(), 60);
+                if ($this->isContactModuleEnabled()) {
+                    $merchant->contactWebsiteUrl = $store->getUrl('contact');
+                }
+            }
+            // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (NoSuchEntityException $exception) {
             // Do nothing
         }

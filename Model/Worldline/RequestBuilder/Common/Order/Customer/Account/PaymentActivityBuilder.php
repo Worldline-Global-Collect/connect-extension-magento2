@@ -6,6 +6,7 @@ use DateTime;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Intl\DateTimeFactory;
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\ResourceModel\Order\Payment\CollectionFactory as PaymentCollectionFactory;
@@ -72,7 +73,29 @@ class PaymentActivityBuilder
                 $this->dateTimeFactory->create('now -1 year')
             );
             $paymentActivity->numberOfPurchasesLast6Months = $this->getNumberOfPurchasesLastSixMonths($order);
-        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+            // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (LocalizedException $exception) {
+            // Do nothing
+        }
+
+        return $paymentActivity;
+    }
+
+    public function createNew(Quote $quote): CustomerPaymentActivity
+    {
+        $paymentActivity = $this->paymentActivityFactory->create();
+
+        try {
+            $paymentActivity->numberOfPaymentAttemptsLast24Hours = $this->getNumberOfPaymentAttemptsSinceNew(
+                $quote,
+                $this->dateTimeFactory->create('now -1 day')
+            );
+            $paymentActivity->numberOfPaymentAttemptsLastYear = $this->getNumberOfPaymentAttemptsSinceNew(
+                $quote,
+                $this->dateTimeFactory->create('now -1 year')
+            );
+            $paymentActivity->numberOfPurchasesLast6Months = $this->getNumberOfPurchasesLastSixMonthsNew($quote);
+            // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (LocalizedException $exception) {
             // Do nothing
         }
@@ -112,6 +135,37 @@ class PaymentActivityBuilder
     }
 
     /**
+     * @param Quote $quote
+     * @param DateTime $dateTime
+     * @return int
+     * @throws LocalizedException
+     */
+    private function getNumberOfPaymentAttemptsSinceNew(Quote $quote, DateTime $dateTime): int
+    {
+        if ($quote->getCustomerIsGuest()) {
+            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+            throw new LocalizedException(__('Cannot get number of payment attempts for a guest order'));
+        }
+        if (!$quote->getCustomerId()) {
+            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+            throw new LocalizedException(__('No customer ID found'));
+        }
+        // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
+        /** @var \Magento\Sales\Model\ResourceModel\Order\Payment\Collection $paymentCollection */
+        $paymentCollection = $this->paymentCollectionFactory->create();
+        $paymentCollection
+            ->join(
+                ['o' => 'sales_order'],
+                'main_table.parent_id = o.entity_id',
+                ['customer_id' => 'o.customer_id']
+            )
+            ->addFieldToFilter('o.customer_id', (string) $quote->getCustomerId())
+            ->addFieldToFilter('o.entity_id', ['neq' => $quote->getEntityId()])
+            ->addFieldToFilter('o.created_at', ['gt' => $dateTime->format('Y-m-d H:i:s')]);
+        return $paymentCollection->getSize();
+    }
+
+    /**
      * @param OrderInterface $order
      * @return int
      * @throws LocalizedException
@@ -131,6 +185,37 @@ class PaymentActivityBuilder
             ->addFilter(OrderInterface::CUSTOMER_ID, $order->getCustomerId())
             ->addFilter(OrderInterface::TOTAL_DUE, 0.01, 'lt')
             ->addFilter(OrderInterface::ENTITY_ID, $order->getEntityId(), 'neq')
+            ->addFilter(
+                'created_at',
+                $this->dateTimeFactory->create('now -6 months')->format('Y-m-d H:i:s'),
+                'gt'
+            )
+            ->create();
+
+        $searchResults = $this->orderRepository->getList($searchCriteria);
+        return $searchResults->getTotalCount();
+    }
+
+    /**
+     * @param Quote $quote
+     * @return int
+     * @throws LocalizedException
+     */
+    private function getNumberOfPurchasesLastSixMonthsNew(Quote $quote): int
+    {
+        if ($quote->getCustomerIsGuest()) {
+            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+            throw new LocalizedException(__('Cannot get number of purchases during the last six months for a guest'));
+        }
+        if (!$quote->getCustomerId()) {
+            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+            throw new LocalizedException(__('No customer ID found'));
+        }
+
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter(OrderInterface::CUSTOMER_ID, $quote->getCustomerId())
+            ->addFilter(OrderInterface::TOTAL_DUE, 0.01, 'lt')
+            ->addFilter(OrderInterface::ENTITY_ID, $quote->getEntityId(), 'neq')
             ->addFilter(
                 'created_at',
                 $this->dateTimeFactory->create('now -6 months')->format('Y-m-d H:i:s'),

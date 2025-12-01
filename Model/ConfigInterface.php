@@ -180,4 +180,26 @@ interface ConfigInterface
     public function getSaveForLaterVisible(int $storeId): bool;
 
     public function getRedirectText(int $storeId): string;
+
+    /**
+     * Returns type of the order creation flow (before or after)
+     *
+     * @param int $storeId
+     * @return string
+     */
+    public function getOrderCreationFlow(int $storeId): string;
+
+    /**
+     * Returns order creation flow before value
+     *
+     * @return string
+     */
+    public function getOrderCreationFlowBefore(): string;
+
+    /**
+     * Returns order creation flow after value
+     *
+     * @return string
+     */
+    public function getOrderCreationFlowAfter(): string;
 }

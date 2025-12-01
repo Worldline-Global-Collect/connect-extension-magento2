@@ -1,0 +1,155 @@
+<?php
+/**
+ * @var Magento\Framework\View\Element\Template $block
+ * @var Worldline\Connect\ViewModel\WaitingPageDataProvider $pageDataProvider
+ * phpcs:disable Generic.Files.LineLength.TooLong
+ */
+
+$pageDataProvider = $block->getWaitingPageDataProvider();
+$quote = $pageDataProvider->getQuote();
+?>
+
+<div data-bind="scope: 'waitingPageScope'" class="waiting-page-container">
+    <div class="opc-waiting-loader">
+        <div class="message" style="display: none"></div>
+        <div class="waiting-loader-wrapper">
+            <div id="waiting-notification-message">
+                <span><?= $block->escapeHtml($pageDataProvider->getNotificationMessage()) ?></span>
+            </div>
+            <div id="waiting-loader" data-role="waiting-loader" class="waiting-mask">
+                <div class="loader">
+                    <img src="<?= $block->escapeUrl($block->getViewFileUrl('images/loader-1.gif')) ?>"
+                         alt="<?= $block->escapeHtml(__('Loading...')) ?>">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="opc-block-summary" style="float: right; width: 40%">
+        <span class="title"><?= $block->escapeHtml(__('Order Summary')) ?></span>
+        <table class="data table table-totals">
+            <caption class="table-caption"><?= $block->escapeHtml(__('Order Summary')) ?></caption>
+            <tbody>
+            <tr class="totals sub">
+                <th class="mark"><?= $block->escapeHtml(__('Cart Subtotal')) ?></th>
+                <td class="amount">
+                    <?= /* @noEscape */ $pageDataProvider->formatPrice((float)$quote->getSubtotal()) ?>
+                </td>
+            </tr>
+            <?php if ((int)$quote->getShippingAddress()->getDiscountAmount() !== 0): ?>
+                <tr class="totals discount">
+                    <th class="mark" scope="row">
+                        <span class="title"><?= $block->escapeHtml(__('Discount')) ?></span>
+                        <span class="discount coupon"></span>
+                    </th>
+                    <td class="amount">
+                        <?= /* @noEscape */ $pageDataProvider->formatPrice((float)$quote->getShippingAddress()->getDiscountAmount()) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <tr class="totals shipping excl">
+                <th class="mark">
+                    <span class="label"><?= $block->escapeHtml(__('Shipping')) ?></span>
+                    <span class="value"><?= $block->escapeHtml($quote->getShippingAddress()->getShippingDescription()) ?></span>
+                </th>
+                <td class="amount">
+                    <?= /* @noEscape */ $pageDataProvider->formatPrice((float)$quote->getShippingAddress()->getShippingAmount()) ?>
+                </td>
+            </tr>
+            <?php if ($pageDataProvider->getSurchargeAmount() > 0.00001): ?>
+                <tr class="totals-surcharging">
+                    <th class="mark" scope="row"><?= $block->escapeHtml(__('Surcharging')) ?></th>
+                    <td class="amount">
+                        <?= /* @noEscape */ $pageDataProvider->formatPrice($pageDataProvider->getSurchargeAmount()) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <?php if ((float)$quote->getShippingAddress()->getTaxAmount() > 0.00001): ?>
+                <tr class="totals-tax">
+                    <th class="mark" scope="row"><?= $block->escapeHtml(__('Tax')) ?></th>
+                    <td class="amount">
+                        <?= /* @noEscape */ $pageDataProvider->formatPrice((float)$quote->getShippingAddress()->getTaxAmount()) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+            <tr class="grand totals">
+                <th class="mark">
+                    <strong><?= $block->escapeHtml(__('Order Total')) ?></strong>
+                </th>
+                <td class="amount">
+                    <strong><?= /* @noEscape */ $pageDataProvider->formatPrice((float)$quote->getGrandTotal()) ?></strong>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="block items-in-cart active" role="tablist">
+            <div class="title" role="tab" aria-selected="true" aria-expanded="true" tabindex="0">
+                <strong role="heading" aria-level="1">
+                    <span><?= $block->escapeHtml($quote->getItemsCount()) ?></span><span><?= $block->escapeHtml(__('Item in Cart')) ?></span>
+                </strong>
+            </div>
+            <div class="content minicart-items" role="tabpanel" aria-hidden="false" style="">
+                <div class="minicart-items-wrapper">
+                    <ol class="minicart-items">
+                        <?php foreach ($quote->getAllItems() as $item): ?>
+                            <?php
+                            if ($item->getParentItem()):
+                                continue;
+                            endif;
+                            ?>
+                            <li class="product-item">
+                            <div class="product">
+                                <span class="product-image-container">
+                                    <img src="<?= $block->escapeUrl($pageDataProvider->getResizedImageUrl($item->getProduct())) ?>"
+                                         style="display: block;width: 100%; height: auto; max-height: none;"
+                                         alt="<?= $block->escapeHtml($item->getName()) ?>"
+                                         title="<?= $block->escapeHtml($item->getName()) ?>">
+                                </span>
+                                <div class="product-item-details">
+                                    <div class="product-item-inner">
+                                        <div class="product-item-name-block">
+                                            <strong class="product-item-name"><?= $block->escapeHtml($item->getName()) ?></strong>
+                                            <div class="details-qty">
+                                                <span class="label"><span><?= $block->escapeHtml(__('Qty')) ?></span></span>
+                                                <span class="value"><?= $block->escapeHtml($item->getQty()) ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="subtotal">
+                                            <span class="price-excluding-tax">
+                                                <span class="cart-price">
+                                                    <?= /* @noEscape */ $pageDataProvider->formatPrice((float)$item->getPrice()) ?>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <?php endforeach; ?>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/x-magento-init">
+{
+    "*": {
+        "Magento_Ui/js/core/app": {
+            "components": {
+                "waitingPageScope": {
+                    "component": "Worldline_Connect/js/model/waiting-page",
+                    "storeCode": "<?= $block->escapeHtml($pageDataProvider->getStoreCode()) ?>",
+                    "incrementId": "<?= $block->escapeHtml($pageDataProvider->getIncrementId()) ?>",
+                    "checkOrderUrl": "<?= $block->escapeUrl($pageDataProvider->checkOrderUrl()) ?>",
+                    "successUrl": "<?= $block->escapeUrl($pageDataProvider->successUrl()) ?>",
+                    "failUrl": "<?= $block->escapeUrl($pageDataProvider->failUrl()) ?>",
+                    "pendingPageUrl": "<?= $block->escapeUrl($pageDataProvider->pendingPageUrl()) ?>",
+                    "pendingOrderUrl": "<?= $block->escapeUrl($pageDataProvider->pendingOrderUrl()) ?>"
+                }
+            }
+        }
+    }
+}
+</script>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\AdditionalInput;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface;
 use Worldline\Connect\Sdk\V1\Domain\OrderTypeInformation;
 use Worldline\Connect\Sdk\V1\Domain\OrderTypeInformationFactory;
@@ -59,6 +60,30 @@ class TypeInformationBuilder
                 'general/store_information/country_id',
                 'store',
                 $order->getStoreId()
+            ) === 'BR'
+        ) {
+            $typeInformation->transactionType = self::TRANSACTION_TYPE_PURCHASE;
+        }
+
+        return $typeInformation;
+    }
+
+    public function createNew(Quote $quote): OrderTypeInformation
+    {
+        $typeInformation = $this->orderTypeInformationFactory->create();
+
+        $typeInformation->purchaseType = (bool) $quote->getIsVirtual() ?
+            self::PURCHASE_TYPE_DIGITAL :
+            self::PURCHASE_TYPE_PHYSICAL;
+        $typeInformation->usageType = self::USAGE_TYPE_COMMERCIAL;
+
+        // For orders place in a Brazilian store this fields is required:
+        // phpcs:ignore PSR12.ControlStructures.ControlStructureSpacing.FirstExpressionLine
+        if ($quote->getGrandTotal() > 0 &&
+            $this->config->getValue(
+                'general/store_information/country_id',
+                'store',
+                $quote->getStoreId()
             ) === 'BR'
         ) {
             $typeInformation->transactionType = self::TRANSACTION_TYPE_PURCHASE;

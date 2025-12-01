@@ -1475,6 +1475,7 @@
                 <api_url_sandbox>https://eu.sandbox.api-ingenico.com</api_url_sandbox>
                 <api_url_pre_prod>https://api.preprod.connect.worldline-solutions.com</api_url_pre_prod>
                 <api_url_prod>https://api.connect.worldline-solutions.com</api_url_prod>
+                <order_creation_flow>worldline_connect/settings/order_creation_flow/after</order_creation_flow>
             </settings>
             <checkout>
                 <inline_payments>0</inline_payments>

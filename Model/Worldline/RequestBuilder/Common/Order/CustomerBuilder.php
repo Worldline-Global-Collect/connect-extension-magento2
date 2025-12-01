@@ -4,8 +4,11 @@ namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Locale\ResolverInterface;
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Address;
+use Magento\Quote\Model\Quote\Address\Interceptor as Address;
+use Magento\Sales\Model\Order\Address as OrderAddress;
+use Magento\Quote\Model\Quote\Address as QuoteAddress;
 use Worldline\Connect\Helper\Format;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\Customer\AccountBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\Customer\AddressBuilder as BillingAddressBuilder;
@@ -122,7 +125,8 @@ class CustomerBuilder
     }
 
     /**
-     * @throws LocalizedException
+     * @param Order $order
+     * @return Customer
      */
     public function create(Order $order): Customer
     {
@@ -134,7 +138,7 @@ class CustomerBuilder
             15
         );
 
-        /** @var Address|null $billing */
+        /** @var OrderAddress|null $billing */
         $billing = $order->getBillingAddress();
         // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
         if ($billing !== null) {
@@ -154,7 +158,41 @@ class CustomerBuilder
         return $worldlineCustomer;
     }
 
-    private function getPersonalInformation(Address $billing): PersonalInformation
+    /**
+     * @param Quote $quote
+     * @return Customer
+     */
+    public function createNew(Quote $quote): Customer
+    {
+        $worldlineCustomer = $this->customerFactory->create();
+        $worldlineCustomer->locale = $this->resolver->getLocale();
+
+        $worldlineCustomer->merchantCustomerId = $this->format->limit(
+            (string) $quote->getCustomerId() ?: rand(100000, 999999),
+            15
+        );
+
+        /** @var QuoteAddress|null $billing */
+        $billing = $quote->getBillingAddress();
+        // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
+        if ($billing !== null) {
+            $companyInformation = $this->companyInformationFactory->create();
+            $companyInformation->name = $billing->getCompany();
+            $worldlineCustomer->companyInformation = $companyInformation;
+            $worldlineCustomer->personalInformation = $this->getPersonalInformationNew($billing);
+            $worldlineCustomer->contactDetails = $this->getContactDetailsNew($billing);
+        }
+
+        $worldlineCustomer->account = $this->accountBuilder->createNew($quote);
+        $worldlineCustomer->device = $this->deviceBuilder->createNew($quote);
+        $worldlineCustomer->accountType = $this->getAccountTypeNew($quote);
+        $worldlineCustomer->companyInformation = $this->companyInformationBuilder->createNew($quote);
+        $worldlineCustomer->billingAddress = $this->billingAddressBuilder->createNew($quote);
+
+        return $worldlineCustomer;
+    }
+
+    private function getPersonalInformation(OrderAddress $billing): PersonalInformation
     {
         $personalInformation = $this->personalInformationFactory->create();
         $personalInformation->name = $this->nameBuilder->create($billing);
@@ -162,7 +200,26 @@ class CustomerBuilder
         return $personalInformation;
     }
 
-    private function getContactDetails(Address $billing): ContactDetails
+    private function getPersonalInformationNew(QuoteAddress $billing): PersonalInformation
+    {
+        $personalInformation = $this->personalInformationFactory->create();
+        $personalInformation->name = $this->nameBuilder->createNew($billing);
+
+        return $personalInformation;
+    }
+
+    private function getContactDetails(OrderAddress $billing): ContactDetails
+    {
+        $contactDetails = $this->contactDetailsFactory->create();
+        $contactDetails->emailAddress = $this->format->limit($billing->getEmail(), 70);
+        $contactDetails->emailMessageType = self::EMAIL_MESSAGE_TYPE;
+        $contactDetails->phoneNumber = $billing->getTelephone();
+        $contactDetails->faxNumber = $billing->getFax();
+
+        return $contactDetails;
+    }
+
+    private function getContactDetailsNew(QuoteAddress $billing): ContactDetails
     {
         $contactDetails = $this->contactDetailsFactory->create();
         $contactDetails->emailAddress = $this->format->limit($billing->getEmail(), 70);
@@ -176,5 +233,10 @@ class CustomerBuilder
     private function getAccountType(Order $order): string
     {
         return $order->getCustomerIsGuest() ? self::ACCOUNT_TYPE_NONE : self::ACCOUNT_TYPE_EXISTING;
+    }
+
+    private function getAccountTypeNew(Quote $quote): string
+    {
+        return $quote->getCustomerIsGuest() ? self::ACCOUNT_TYPE_NONE : self::ACCOUNT_TYPE_EXISTING;
     }
 }

@@ -2,7 +2,8 @@
 
 namespace Worldline\Connect\Model\Worldline\RequestBuilder\MethodSpecificInput\Card;
 
-use Magento\Sales\Model\Order\Payment;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Magento\Quote\Model\Quote\Payment as QuotePayment;
 use Worldline\Connect\Model\Config\Source\ExemptionRequest;
 use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Model\Worldline\RequestBuilder\MethodSpecificInput\Card\ThreeDSecure\RedirectionDataBuilder;
@@ -20,10 +21,23 @@ class ThreeDSecureBuilder
     ) {
     }
 
-    public function create(Payment $payment): ThreeDSecure
+    public function create(OrderPayment $payment): ThreeDSecure
     {
         $threeDSecure = $this->threeDSecureFactory->create();
         $threeDSecure->redirectionData = $this->redirectionDataBuilder->create($payment);
+        $threeDSecure->authenticationFlow = self::AUTHENTICATION_FLOW_BROWSER;
+
+        $requestExemptions = $this->config->get3DSRequestExemptions();
+        $threeDSecure->exemptionRequest = $requestExemptions;
+        $threeDSecure->transactionRiskLevel = $requestExemptions === ExemptionRequest::AUTOMATIC ? '' : null;
+
+        return $threeDSecure;
+    }
+
+    public function createNew(QuotePayment $payment): ThreeDSecure
+    {
+        $threeDSecure = $this->threeDSecureFactory->create();
+        $threeDSecure->redirectionData = $this->redirectionDataBuilder->createNew($payment);
         $threeDSecure->authenticationFlow = self::AUTHENTICATION_FLOW_BROWSER;
 
         $requestExemptions = $this->config->get3DSRequestExemptions();

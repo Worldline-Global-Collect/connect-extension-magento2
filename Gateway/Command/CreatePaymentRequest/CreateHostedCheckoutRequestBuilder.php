@@ -6,8 +6,10 @@ use Exception;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Framework\UrlInterface;
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
-use Magento\Sales\Model\Order\Payment;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Magento\Quote\Model\Quote\Payment as QuotePayment;
 use Worldline\Connect\Gateway\Command\CreatePaymentRequestBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\FraudFieldsBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\MerchantBuilder;
@@ -136,7 +138,7 @@ class CreateHostedCheckoutRequestBuilder implements CreatePaymentRequestBuilder
     }
 
     // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint
-    public function build(Payment $payment, bool $requiresApproval): CreateHostedCheckoutRequest
+    public function build(OrderPayment $payment, bool $requiresApproval): CreateHostedCheckoutRequest
     {
         $order = $payment->getOrder();
 
@@ -164,7 +166,37 @@ class CreateHostedCheckoutRequestBuilder implements CreatePaymentRequestBuilder
         return $request;
     }
 
-    private function buildHostedCheckoutSpecificInput(Payment $payment): HostedCheckoutSpecificInput
+    public function buildNew(QuotePayment $payment, bool $requiresApproval): CreateHostedCheckoutRequest
+    {
+        $quote = $payment->getQuote();
+
+        $input = $this->cardPaymentMethodSpecificInputFactory->create();
+        $input->threeDSecure = $this->threeDSecureBuilder->create();
+        $input->transactionChannel = 'ECOMMERCE';
+        $input->requiresApproval = $requiresApproval;
+        $input->tokenize = $payment->getAdditionalInformation('tokenize');
+
+        $orderPaymentExtension = $payment->getExtensionAttributes();
+        if ($orderPaymentExtension !== null &&
+            method_exists($orderPaymentExtension, 'getVaultPaymentToken') &&
+            method_exists($orderPaymentExtension, 'getGatewayToken')) {
+            $paymentToken = $orderPaymentExtension->getVaultPaymentToken();
+            if ($paymentToken !== null) {
+                $input->token = $paymentToken->getGatewayToken();
+            }
+        }
+
+        $request = $this->createHostedCheckoutRequestFactory->create();
+        $request->order = $this->orderBuilder->createNew($quote);
+        $request->merchant = $this->merchantBuilder->createNew($quote);
+        $request->fraudFields = $this->fraudFieldsBuilder->createNew($quote);
+        $request->hostedCheckoutSpecificInput = $this->buildHostedCheckoutSpecificInputNew($payment);
+        $request->cardPaymentMethodSpecificInput = $input;
+
+        return $request;
+    }
+
+    private function buildHostedCheckoutSpecificInput(OrderPayment $payment): HostedCheckoutSpecificInput
     {
         $specificInput = $this->hostedCheckoutSpecificInputFactory->create();
         $specificInput->locale = $this->resolver->getLocale();
@@ -174,6 +206,20 @@ class CreateHostedCheckoutRequestBuilder implements CreatePaymentRequestBuilder
         $specificInput->validateShoppingCart = true;
         $specificInput->returnCancelState = true;
         $specificInput->paymentProductFilters = $this->getPaymentProductFilters($payment);
+
+        return $specificInput;
+    }
+
+    private function buildHostedCheckoutSpecificInputNew(QuotePayment $payment): HostedCheckoutSpecificInput
+    {
+        $specificInput = $this->hostedCheckoutSpecificInputFactory->create();
+        $specificInput->locale = $this->resolver->getLocale();
+        $specificInput->returnUrl = $this->urlBuilder->getUrl(RedirectRequestBuilder::HOSTED_CHECKOUT_RETURN_URL_NEW);
+        $specificInput->showResultPage = false;
+        $specificInput->tokens = $this->getTokensNew($payment->getQuote());
+        $specificInput->validateShoppingCart = true;
+        $specificInput->returnCancelState = true;
+        $specificInput->paymentProductFilters = $this->getPaymentProductFiltersNew($payment);
 
         return $specificInput;
     }
@@ -194,8 +240,48 @@ class CreateHostedCheckoutRequestBuilder implements CreatePaymentRequestBuilder
         return $tokens === '' ? null : $tokens;
     }
 
+    /**
+     * @param Quote $quote
+     * @return null|string  String of comma separated token values
+     */
+    private function getTokensNew(Quote $quote)
+    {
+        if ($quote->getCustomerIsGuest() || !$quote->getCustomerId()) {
+            return null;
+        }
+
+        // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+        $tokens = implode(',', $this->tokenService->find($quote->getCustomerId()));
+
+        return $tokens === '' ? null : $tokens;
+    }
+
     // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint
-    private function getPaymentProductFilters(Payment $payment)
+    private function getPaymentProductFilters(OrderPayment $payment)
+    {
+        $paymentProductFilters = new PaymentProductFiltersHostedCheckout();
+        $paymentProductFilters->restrictTo = $this->filter(
+            $this->getIdentifiers($payment->getMethodInstance()->getConfigData('include_payment_product_groups')),
+            $this->getIdentifiers($payment->getMethodInstance()->getConfigData('include_payment_products')),
+        );
+
+        $paymentProductFilters->exclude = $this->filter(
+            $this->getIdentifiers($payment->getMethodInstance()->getConfigData('exclude_payment_product_groups')),
+            $this->getIdentifiers($payment->getMethodInstance()->getConfigData('exclude_payment_products')),
+        );
+
+        $productId = $payment->getMethodInstance()->getConfigData('product_id');
+        if ($productId) {
+            $filter = new PaymentProductFilter();
+            $filter->products = [$productId];
+            $paymentProductFilters->restrictTo = $filter;
+        }
+
+        return $paymentProductFilters;
+    }
+
+    // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint
+    private function getPaymentProductFiltersNew(QuotePayment $payment)
     {
         $paymentProductFilters = new PaymentProductFiltersHostedCheckout();
         $paymentProductFilters->restrictTo = $this->filter(

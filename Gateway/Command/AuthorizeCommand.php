@@ -7,6 +7,7 @@ namespace Worldline\Connect\Gateway\Command;
 use LogicException;
 use Magento\Payment\Gateway\CommandInterface;
 use Magento\Payment\Model\Method\AbstractMethod;
+use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Sales\Model\Order\Payment;
 use Worldline\Connect\Model\Config;
 use Worldline\Connect\Model\Worldline\Action\CreateHostedCheckout;

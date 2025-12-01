@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Worldline\Connect\Model\Worldline\Session;
 
+use Magento\Checkout\Model\Session;
+use Magento\Sales\Api\Data\OrderInterface;
 use Worldline\Connect\Api\Data\SessionInterface;
 use Worldline\Connect\Api\SessionManagerInterface;
 use Worldline\Connect\Model\Worldline\Api\ClientInterface;
@@ -28,16 +30,30 @@ class SessionManager implements SessionManagerInterface
     // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
     protected $sessionBuilder;
 
+    /**
+     * @var Session
+     */
+    private $checkoutSession;
+
+    /**
+     * @param ClientInterface $worldlineClient
+     * @param RequestBuilder $createSessionRequestBuilder
+     * @param TokenServiceInterface $tokenService
+     * @param SessionBuilder $sessionBuilder
+     * @param Session $checkoutSession
+     */
     public function __construct(
         ClientInterface $worldlineClient,
         RequestBuilder $createSessionRequestBuilder,
         TokenServiceInterface $tokenService,
-        SessionBuilder $sessionBuilder
+        SessionBuilder $sessionBuilder,
+        Session $checkoutSession
     ) {
         $this->worldlineClient = $worldlineClient;
         $this->createSessionRequestBuilder = $createSessionRequestBuilder;
         $this->tokenService = $tokenService;
         $this->sessionBuilder = $sessionBuilder;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -73,5 +89,16 @@ class SessionManager implements SessionManagerInterface
         }
 
         return $this->sessionBuilder->build($createSessionResponse);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setOrderData(OrderInterface $order): void
+    {
+        $this->checkoutSession->setLastOrderId((int) $order->getId());
+        $this->checkoutSession->setLastRealOrderId($order->getIncrementId());
+        $this->checkoutSession->setLastQuoteId($order->getQuoteId());
+        $this->checkoutSession->setLastSuccessQuoteId($order->getQuoteId());
     }
 }

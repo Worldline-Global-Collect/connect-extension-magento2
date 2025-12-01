@@ -6,6 +6,7 @@ namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\Shipping
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order;
+use Magento\Quote\Model\Quote;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\AddressPersonalBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\PersonalNameBuilder;
 use Worldline\Connect\Sdk\V1\Domain\AddressPersonal;
@@ -32,6 +33,22 @@ class AddressBuilder
 
         $addressPersonal = $this->addressPersonalBuilder->build($shippingAddress);
         $addressPersonal->name = $this->nameBuilder->create($shippingAddress);
+
+        return $addressPersonal;
+    }
+
+    /**
+     * @throws LocalizedException
+     */
+    public function createNew(Quote $quote): AddressPersonal
+    {
+        $shippingAddress = $quote->getShippingAddress();
+        if ($shippingAddress === null) {
+            throw new LocalizedException(__('No shipping address available for this order'));
+        }
+
+        $addressPersonal = $this->addressPersonalBuilder->buildNew($shippingAddress);
+        $addressPersonal->name = $this->nameBuilder->createNew($shippingAddress);
 
         return $addressPersonal;
     }

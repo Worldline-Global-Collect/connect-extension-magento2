@@ -2,7 +2,6 @@
 
 namespace Worldline\Connect\Model\Worldline;
 
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Event;
 use Magento\Framework\Event\Observer;
 use Magento\Quote\Model\Quote;
@@ -29,10 +28,13 @@ class EmailSender
     /**
      * @param SendInvoiceEmailObserver $sendInvoiceEmailObserver
      * @param SubmitObserver $submitObserver
+     * @param InvoiceRepositoryInterface $invoiceRepository
      */
-    public function __construct(SendInvoiceEmailObserver $sendInvoiceEmailObserver, SubmitObserver $submitObserver,
-                                InvoiceRepositoryInterface $invoiceRepository)
-    {
+    public function __construct(
+        SendInvoiceEmailObserver $sendInvoiceEmailObserver,
+        SubmitObserver $submitObserver,
+        InvoiceRepositoryInterface $invoiceRepository
+    ) {
         $this->sendInvoiceEmailObserver = $sendInvoiceEmailObserver;
         $this->submitObserver = $submitObserver;
         $this->invoiceRepository = $invoiceRepository;
@@ -40,6 +42,20 @@ class EmailSender
 
     public function sendEmails(Order $order, Quote $quote): void
     {
+        $order->setCanSendNewEmailFlag(true);
+
+        $this->sendOrderEmail($order, $quote);
+        $this->sendInvoiceEmail($order, $quote);
+    }
+
+    private function sendOrderEmail(Order $order, Quote $quote): void
+    {
+        if ($order->getEmailSent()) {
+            return;
+        }
+
+        $order->setCanSendNewEmailFlag(true);
+
         $observer = new Observer();
         $event = new Event();
         $event->setData([
@@ -48,13 +64,30 @@ class EmailSender
         ]);
         $observer->setEvent($event);
 
+        $this->submitObserver->execute($observer);
+    }
+
+    private function sendInvoiceEmail(Order $order, Quote $quote): void
+    {
+        /** @var Order\Invoice $invoice */
         $invoice = current($order->getInvoiceCollection()->getItems());
 
-        if ($invoice) {
-            $this->invoiceRepository->save($invoice);
+        if (!$invoice || $invoice->getEmailSent()) {
+            return;
         }
 
-        $this->submitObserver->execute($observer);
+        $order->setCanSendNewEmailFlag(true);
+
+        $observer = new Observer();
+        $event = new Event();
+        $event->setData([
+            'order' => $order,
+            'quote' => $quote
+        ]);
+        $observer->setEvent($event);
+
+        $this->invoiceRepository->save($invoice);
+
         $this->sendInvoiceEmailObserver->execute($observer);
     }
 }

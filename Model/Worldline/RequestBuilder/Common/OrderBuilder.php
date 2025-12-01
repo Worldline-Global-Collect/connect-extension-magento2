@@ -2,6 +2,7 @@
 
 namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common;
 
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
 use Worldline\Connect\Helper\Data as DataHelper;
 use Worldline\Connect\Helper\Format;
@@ -117,7 +118,28 @@ class OrderBuilder
 
     // phpcs:disable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
     /**
-     * @param Order $order
+     * @param Quote $quote
+     * @return \Worldline\Connect\Sdk\V1\Domain\Order
+     */
+    // phpcs:enable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
+    public function createNew(Quote $quote)
+    {
+        $worldlineOrder = $this->orderFactory->create();
+
+        $worldlineOrder->amountOfMoney = $this->getAmountOfMoneyNew($quote);
+        $worldlineOrder->customer = $this->customerBuilder->createNew($quote);
+
+        $worldlineOrder->shoppingCart = $this->shoppingCartBuilder->createNew($quote);
+        $worldlineOrder->references = $this->getReferencesNew($quote);
+        $worldlineOrder->additionalInput = $this->additionalInputBuilder->createNew($quote);
+        $worldlineOrder->shipping = $this->shippingBuilder->createNew($quote);
+
+        return $worldlineOrder;
+    }
+
+    // phpcs:disable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
+    /**
+     * @param Quote $order
      * @return \Worldline\Connect\Sdk\V1\Domain\AmountOfMoney
      */
     // phpcs:enable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
@@ -132,6 +154,21 @@ class OrderBuilder
 
     // phpcs:disable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
     /**
+     * @param Quote $quote
+     * @return \Worldline\Connect\Sdk\V1\Domain\AmountOfMoney
+     */
+    // phpcs:enable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
+    private function getAmountOfMoneyNew(Quote $quote)
+    {
+        $amountOfMoney = $this->amountOfMoneyFactory->create();
+        $amountOfMoney->amount = DataHelper::formatWorldlineAmount($quote->getGrandTotal());
+        $amountOfMoney->currencyCode = $quote->getQuoteCurrencyCode();
+
+        return $amountOfMoney;
+    }
+
+    // phpcs:disable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
+    /**
      * @param Order $order
      * @return \Worldline\Connect\Sdk\V1\Domain\OrderReferences
      */
@@ -139,10 +176,22 @@ class OrderBuilder
     private function getReferences(Order $order)
     {
         $references = $this->orderReferencesFactory->create();
-        $references->merchantReference = $this->format->limit(
-            $order->getIncrementId(),
-            30
-        );
+        $references->merchantReference = $this->format->limit($order->getIncrementId(), 30);
+        $references->descriptor = $this->ePaymentsConfig->getDescriptor();
+
+        return $references;
+    }
+
+    // phpcs:disable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
+    /**
+     * @param Quote $quote
+     * @return \Worldline\Connect\Sdk\V1\Domain\OrderReferences
+     */
+    // phpcs:enable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
+    private function getReferencesNew(Quote $quote)
+    {
+        $references = $this->orderReferencesFactory->create();
+        $references->merchantReference = $this->format->limit('Quote-' . $quote->getId(), 30);
         $references->descriptor = $this->ePaymentsConfig->getDescriptor();
 
         return $references;

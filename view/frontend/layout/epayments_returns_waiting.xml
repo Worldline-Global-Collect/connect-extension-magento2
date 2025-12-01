@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="navigation.sections" remove="true"/>
+        <referenceBlock name="minicart" remove="true"/>
+        <referenceBlock name="top.search" remove="true"/>
+        <referenceContainer name="content">
+            <block name="worldline_waiting_page" template="Worldline_Connect::waiting.phtml">
+                <arguments>
+                    <argument name="waiting_page_data_provider" xsi:type="object">Worldline\Connect\ViewModel\WaitingPageDataProvider</argument>
+                </arguments>
+            </block>
+            <block class="Magento\Framework\View\Element\Template"
+                   name="checkout.success.empty"
+                   before="-"
+                   template="Worldline_Connect::success/clean_cart.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

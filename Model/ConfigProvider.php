@@ -191,6 +191,9 @@ class ConfigProvider implements ConfigProviderInterface
                         'buttonSizeMode' => $this->config->getValue('payment/worldline_google_pay/button_size_mode'),
                         'buttonType' => $this->config->getValue('payment/worldline_google_pay/button_type'),
                     ],
+                    'orderCreationFlow' => $this->config->getOrderCreationFlow($storeId),
+                    'orderCreationFlowBefore' => $this->config->getOrderCreationFlowBefore(),
+                    'orderCreationFlowAfter' => $this->config->getOrderCreationFlowAfter(),
                 ],
             ],
         ];

@@ -3,7 +3,8 @@
 namespace Worldline\Connect\Model\Worldline\RequestBuilder\MethodSpecificInput\Card\ThreeDSecure;
 
 use Magento\Framework\UrlInterface;
-use Magento\Sales\Model\Order\Payment;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Magento\Quote\Model\Quote\Payment as QuotePayment;
 use Worldline\Connect\Gateway\Command\CreatePaymentRequest\RedirectRequestBuilder;
 use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Sdk\V1\Domain\RedirectionData;
@@ -39,7 +40,7 @@ class RedirectionDataBuilder
         $this->urlBuilder = $urlBuilder;
     }
 
-    public function create(Payment $payment): RedirectionData
+    public function create(OrderPayment $payment): RedirectionData
     {
         $redirectionData = $this->redirectionDataFactory->create();
         $redirectionData->variant = $this->getHostedCheckoutVariant($payment);
@@ -48,12 +49,31 @@ class RedirectionDataBuilder
         return $redirectionData;
     }
 
-    private function getHostedCheckoutVariant(Payment $payment): ?string
+    public function createNew(QuotePayment $payment): RedirectionData
+    {
+        $redirectionData = $this->redirectionDataFactory->create();
+        $redirectionData->variant = $this->getHostedCheckoutVariantNew($payment);
+        $redirectionData->returnUrl = $this->urlBuilder->getUrl(RedirectRequestBuilder::REDIRECT_PAYMENT_RETURN_URL);
+
+        return $redirectionData;
+    }
+
+    private function getHostedCheckoutVariant(OrderPayment $payment): ?string
     {
         $order = $payment->getOrder();
         $storeId = $order->getStoreId();
 
         return $order->getCustomerIsGuest() ?
+            $this->config->getHostedCheckoutGuestVariant($storeId) :
+            $this->config->getHostedCheckoutVariant($storeId);
+    }
+
+    private function getHostedCheckoutVariantNew(QuotePayment $payment): ?string
+    {
+        $quote = $payment->getQuote();
+        $storeId = $quote->getStoreId();
+
+        return $quote->getCustomerIsGuest() ?
             $this->config->getHostedCheckoutGuestVariant($storeId) :
             $this->config->getHostedCheckoutVariant($storeId);
     }

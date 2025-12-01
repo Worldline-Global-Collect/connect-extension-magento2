@@ -4,7 +4,8 @@ namespace Worldline\Connect\Gateway\Command\CreatePaymentRequest;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\UrlInterface;
-use Magento\Sales\Model\Order\Payment;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Magento\Quote\Model\Quote\Payment as QuotePayment;
 use Worldline\Connect\Gateway\Command\CreatePaymentRequestBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\FraudFieldsBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\MerchantBuilder;
@@ -19,6 +20,7 @@ class RedirectRequestBuilder implements CreatePaymentRequestBuilder
 {
     public const REDIRECT_PAYMENT_RETURN_URL = 'epayments/inlinePayment/processReturn';
     public const HOSTED_CHECKOUT_RETURN_URL = 'epayments/hostedCheckoutPage/processReturn';
+    public const HOSTED_CHECKOUT_RETURN_URL_NEW = 'epayments/hostedCheckoutPage/processReturnAfterFlow';
 
     /**
      * @var CreatePaymentRequestFactory
@@ -81,7 +83,7 @@ class RedirectRequestBuilder implements CreatePaymentRequestBuilder
     }
 
     // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint
-    public function build(Payment $payment, bool $requiresApproval)
+    public function build(OrderPayment $payment, bool $requiresApproval)
     {
         $order = $payment->getOrder();
 
@@ -114,6 +116,44 @@ class RedirectRequestBuilder implements CreatePaymentRequestBuilder
         $request->encryptedCustomerInput = $payload;
         $request->fraudFields = new FraudFields();
         $request->fraudFields->customerIpAddress = $order->getRemoteIp();
+
+        return $request;
+    }
+
+    // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint
+    public function buildNew(QuotePayment $payment, bool $requiresApproval)
+    {
+        $quote = $payment->getQuote();
+
+        $paymentProductId = $payment->getMethodInstance()->getConfigData('product_id');
+        if ($paymentProductId === false) {
+            throw new LocalizedException(__('Unknown payment method.'));
+        }
+
+        $request = $this->createPaymentRequestFactory->create();
+        $request->order = $this->orderBuilder->createNew($quote);
+        $request->merchant = $this->merchantBuilder->createNew($quote);
+        $request->fraudFields = $this->fraudFieldsBuilder->createNew($quote);
+        $request->encryptedCustomerInput = $payment->getAdditionalInformation('input');
+
+        $input = $this->redirectTransferPaymentMethodSpecificInputFactory->create();
+        $input->paymentProductId = $paymentProductId;
+
+        $payload = $payment->getAdditionalInformation('input');
+
+        $input->returnUrl = $payload ?
+            $this->urlBuilder->getUrl(self::REDIRECT_PAYMENT_RETURN_URL) :
+            $this->urlBuilder->getUrl(self::HOSTED_CHECKOUT_RETURN_URL);
+
+        $input->tokenize = false;
+
+        $request->redirectPaymentMethodSpecificInput = $input;
+
+        $payment->setIsTransactionPending(true);
+
+        $request->encryptedCustomerInput = $payload;
+        $request->fraudFields = new FraudFields();
+        $request->fraudFields->customerIpAddress = $quote->getRemoteIp();
 
         return $request;
     }

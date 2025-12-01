@@ -28,4 +28,19 @@
             <resource ref="anonymous"/>
         </resources>
     </route>
+
+    <route url="/V1/guest-carts/:cartId/worldline-connect/create-payment" method="POST">
+        <service class="Worldline\Connect\Api\BaseCreatePaymentManagementInterface" method="createGuestRequest"/>
+        <resources>
+            <resource ref="anonymous"/>
+        </resources>
+    </route>
+
+    <route url="/V1/carts/worldline-connect/create-payment" method="POST">
+        <service class="Worldline\Connect\Api\BaseCreatePaymentManagementInterface" method="createRequest"/>
+        <resources>
+            <resource ref="self"/>
+        </resources>
+    </route>
+
 </routes>

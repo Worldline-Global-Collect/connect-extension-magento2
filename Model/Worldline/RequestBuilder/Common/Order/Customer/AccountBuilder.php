@@ -9,6 +9,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Intl\DateTimeFactory;
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
@@ -98,7 +99,26 @@ class AccountBuilder
             $customerAccount->createDate = $this->getCustomerCreateDate($order);
             $customerAccount->changeDate = $this->getCustomerChangeDate($order);
             $customerAccount->hadSuspiciousActivity = $this->getCustomerHadSuspiciousActivity($order);
-        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+            // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (LocalizedException $exception) {
+            // Do nothing
+        }
+
+        return $customerAccount;
+    }
+
+    public function createNew(Quote $quote): CustomerAccount
+    {
+        /** @var CustomerAccount $customerAccount */
+        $customerAccount = $this->customerAccountFactory->create();
+        $customerAccount->authentication = $this->authenticationBuilder->createNew($quote);
+        $customerAccount->paymentActivity = $this->paymentActivityBuilder->createNew($quote);
+
+        try {
+            $customerAccount->createDate = $this->getCustomerCreateDateNew($quote);
+            $customerAccount->changeDate = $this->getCustomerChangeDateNew($quote);
+            $customerAccount->hadSuspiciousActivity = $this->getCustomerHadSuspiciousActivityNew($quote);
+            // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (LocalizedException $exception) {
             // Do nothing
         }
@@ -124,6 +144,23 @@ class AccountBuilder
     }
 
     /**
+     * @param Quote $quote
+     * @return string
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    private function getCustomerCreateDateNew(Quote $quote): string
+    {
+        if ($quote->getCustomerIsGuest() || !$quote->getCustomerId()) {
+            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+            throw new LocalizedException(__('Cannot get customer create date'));
+        }
+
+        $customer = $this->customerRepository->getById($quote->getCustomerId());
+        return $this->dateTimeFactory->create($customer->getCreatedAt())->format('Ymd');
+    }
+
+    /**
      * @param OrderInterface $order
      * @return string
      * @throws LocalizedException
@@ -136,6 +173,27 @@ class AccountBuilder
             throw new LocalizedException(__('Cannot get customer change date'));
         }
         $customer = $this->customerRepository->getById($order->getCustomerId());
+        $customerUpdatedAt = $this->dateTimeFactory->create($customer->getUpdatedAt());
+        $latestCustomerAddressUpdatedAt = $this->getLatestCustomerAddressUpdatedAt($customer->getId());
+
+        return $latestCustomerAddressUpdatedAt > $customerUpdatedAt ?
+            $latestCustomerAddressUpdatedAt->format('Ymd') :
+            $customerUpdatedAt->format('Ymd');
+    }
+
+    /**
+     * @param Quote $quote
+     * @return string
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
+     */
+    private function getCustomerChangeDateNew(Quote $quote): string
+    {
+        if ($quote->getCustomerIsGuest() || !$quote->getCustomerId()) {
+            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+            throw new LocalizedException(__('Cannot get customer change date'));
+        }
+        $customer = $this->customerRepository->getById($quote->getCustomerId());
         $customerUpdatedAt = $this->dateTimeFactory->create($customer->getUpdatedAt());
         $latestCustomerAddressUpdatedAt = $this->getLatestCustomerAddressUpdatedAt($customer->getId());
 
@@ -158,6 +216,27 @@ class AccountBuilder
 
         $searchCriteria = $this->searchCriteriaBuilder
             ->addFilter(OrderInterface::CUSTOMER_ID, $order->getCustomerId())
+            ->addFilter(OrderInterface::STATUS, Order::STATUS_FRAUD)
+            ->create();
+
+        $customerOrders = $this->orderRepository->getList($searchCriteria);
+        return $customerOrders->getTotalCount() > 0;
+    }
+
+    /**
+     * @param Quote $quote
+     * @return bool
+     * @throws LocalizedException
+     */
+    private function getCustomerHadSuspiciousActivityNew(Quote $quote): bool
+    {
+        if ($quote->getCustomerIsGuest() || !$quote->getCustomerId()) {
+            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+            throw new LocalizedException(__('Cannot get customer fraud for a guest'));
+        }
+
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter(OrderInterface::CUSTOMER_ID, $quote->getCustomerId())
             ->addFilter(OrderInterface::STATUS, Order::STATUS_FRAUD)
             ->create();
 

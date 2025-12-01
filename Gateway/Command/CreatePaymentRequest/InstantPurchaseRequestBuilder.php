@@ -2,7 +2,8 @@
 
 namespace Worldline\Connect\Gateway\Command\CreatePaymentRequest;
 
-use Magento\Sales\Model\Order\Payment;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Magento\Quote\Model\Quote\Payment as QuotePayment;
 use Worldline\Connect\Gateway\Command\CreatePaymentRequestBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\FraudFieldsBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\MerchantBuilder;
@@ -64,7 +65,7 @@ class InstantPurchaseRequestBuilder implements CreatePaymentRequestBuilder
     }
 
     // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint
-    public function build(Payment $payment, bool $requiresApproval): CreatePaymentRequest
+    public function build(OrderPayment $payment, bool $requiresApproval): CreatePaymentRequest
     {
         $order = $payment->getOrder();
 
@@ -72,6 +73,27 @@ class InstantPurchaseRequestBuilder implements CreatePaymentRequestBuilder
         $request->order = $this->orderBuilder->create($order);
         $request->merchant = $this->merchantBuilder->create($order);
         $request->fraudFields = $this->fraudFieldsBuilder->create($order);
+
+        /** @var MobilePaymentMethodSpecificInput $input */
+        $input = $this->mobilePaymentMethodSpecificInputFactory->create();
+        $input->paymentProductId = $payment->getAdditionalInformation('product');
+        $input->requiresApproval = $requiresApproval;
+        $input->encryptedPaymentData = $payment->getAdditionalInformation('token');
+
+        $request->mobilePaymentMethodSpecificInput = $input;
+
+        return $request;
+    }
+
+    // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint
+    public function buildNew(QuotePayment $payment, bool $requiresApproval): CreatePaymentRequest
+    {
+        $quote = $payment->getQuote();
+
+        $request = $this->createPaymentRequestFactory->create();
+        $request->order = $this->orderBuilder->createNew($quote);
+        $request->merchant = $this->merchantBuilder->createNew($quote);
+        $request->fraudFields = $this->fraudFieldsBuilder->createNew($quote);
 
         /** @var MobilePaymentMethodSpecificInput $input */
         $input = $this->mobilePaymentMethodSpecificInputFactory->create();

@@ -2,7 +2,8 @@
 
 namespace Worldline\Connect\Gateway\Command\CreatePaymentRequest;
 
-use Magento\Sales\Model\Order\Payment;
+use Magento\Sales\Model\Order\Payment as OrderPayment;
+use Magento\Quote\Model\Quote\Payment as QuotePayment;
 use Worldline\Connect\Gateway\Command\CreatePaymentRequestBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\FraudFieldsBuilder;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\MerchantBuilder;
@@ -81,7 +82,7 @@ class CardRequestBuilder implements CreatePaymentRequestBuilder
     }
 
     // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint
-    public function build(Payment $payment, bool $requiresApproval): CreatePaymentRequest
+    public function build(OrderPayment $payment, bool $requiresApproval): CreatePaymentRequest
     {
         $order = $payment->getOrder();
 
@@ -105,7 +106,55 @@ class CardRequestBuilder implements CreatePaymentRequestBuilder
         return $request;
     }
 
-    private function setUnscheduledCardOnFileInformation(CardPaymentMethodSpecificInput $input, Payment $payment): void
+    // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint
+    public function buildNew(QuotePayment $payment, bool $requiresApproval): CreatePaymentRequest
+    {
+        $quote = $payment->getQuote();
+
+        $request = $this->createPaymentRequestFactory->create();
+        $request->order = $this->orderBuilder->createNew($quote);
+        $request->merchant = $this->merchantBuilder->createNew($quote);
+        $request->fraudFields = $this->fraudFieldsBuilder->createNew($quote);
+        $request->encryptedCustomerInput = $payment->getAdditionalInformation('input');
+
+        $input = $this->cardPaymentMethodSpecificInputFactory->create();
+        $input->threeDSecure = $this->threeDSecureBuilder->createNew($payment);
+        $input->transactionChannel = self::TRANSACTION_CHANNEL;
+        $input->paymentProductId = $payment->getAdditionalInformation('product');
+        $input->requiresApproval = $requiresApproval;
+        $input->tokenize = $payment->getAdditionalInformation('tokenize');
+
+        $this->setUnscheduledCardOnFileInformationNew($input, $payment);
+
+        $request->cardPaymentMethodSpecificInput = $input;
+
+        return $request;
+    }
+
+    private function setUnscheduledCardOnFileInformation(CardPaymentMethodSpecificInput $input, OrderPayment $payment): void
+    {
+        if ($input->tokenize) {
+            $input->unscheduledCardOnFileSequenceIndicator = self::UNSCHEDULED_CARD_ON_FILE_SEQUENCE_INDICATOR_FIRST;
+            $input->unscheduledCardOnFileRequestor = self::UNSCHEDULED_CARD_ON_FILE_REQUESTOR_CARDHOLDER_INITIATED;
+            return;
+        }
+
+        $orderPaymentExtension = $payment->getExtensionAttributes();
+        if ($orderPaymentExtension === null) {
+            return;
+        }
+
+        $paymentToken = $orderPaymentExtension->getVaultPaymentToken();
+        if ($paymentToken === null) {
+            return;
+        }
+
+        $input->token = $paymentToken->getGatewayToken();
+        $input->unscheduledCardOnFileSequenceIndicator = self::UNSCHEDULED_CARD_ON_FILE_SEQUENCE_INDICATOR_SUBSEQUENT;
+        $input->unscheduledCardOnFileRequestor = self::UNSCHEDULED_CARD_ON_FILE_REQUESTOR_CARDHOLDER_INITIATED;
+    }
+
+    private function setUnscheduledCardOnFileInformationNew(CardPaymentMethodSpecificInput $input, QuotePayment $payment): void
     {
         if ($input->tokenize) {
             $input->unscheduledCardOnFileSequenceIndicator = self::UNSCHEDULED_CARD_ON_FILE_SEQUENCE_INDICATOR_FIRST;

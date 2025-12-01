@@ -11,6 +11,8 @@ use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Psr\Log\LoggerInterface;
 use Worldline\Connect\Api\Data\EventInterface;
 use Zend_Db_Exception;
+use Magento\Framework\App\Config\Storage\WriterInterface;
+use Worldline\Connect\Model\Config;
 
 use function version_compare;
 
@@ -24,7 +26,8 @@ use function version_compare;
 class UpgradeSchema implements UpgradeSchemaInterface
 {
     public function __construct(
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly WriterInterface $configWriter
     ) {
     }
 
@@ -61,6 +64,12 @@ class UpgradeSchema implements UpgradeSchemaInterface
 
         if (version_compare($context->getVersion(), '4.4.0') < 0) {
             $this->updatePaymentActionPath($setup);
+        }
+
+        // version is null if it is a fresh installation
+        // default configuration should only be set for existing users
+        if ($context->getVersion() && version_compare($context->getVersion(), '4.11.0') < 0) {
+            $this->addOrderCreationFlowConfiguration($setup);
         }
     }
 
@@ -249,5 +258,28 @@ class UpgradeSchema implements UpgradeSchemaInterface
         SET path = REPLACE(path, 'payment_action', 'capture_config')
         WHERE path LIKE 'payment/worldline%/payment_action'";
         $setup->getConnection()->query($sql);
+    }
+
+    private function addOrderCreationFlowConfiguration(SchemaSetupInterface $setup)
+    {
+        $defaultScope = 'default';
+
+        $connection = $setup->getConnection();
+        $select = $connection->select()
+            ->from($setup->getTable('core_config_data'), ['value'])
+            ->where('path = ?', Config::CONFIG_ORDER_CREATION_FLOW_KEY)
+            ->where('scope = ?', $defaultScope)
+            ->where('scope_id = ?', 0);
+
+        $currentValue = $connection->fetchOne($select);
+
+        if (empty($currentValue)) {
+            $this->configWriter->save(
+                Config::CONFIG_ORDER_CREATION_FLOW_KEY,
+                Config::CONFIG_ORDER_CREATION_FLOW_BEFORE,
+                $defaultScope,
+                0
+            );
+        }
     }
 }

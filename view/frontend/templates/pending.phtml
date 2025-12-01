@@ -1,0 +1,20 @@
+<?php
+/**
+ * @var Magento\Framework\View\Element\Template $block
+ * @var Worldline\Connect\ViewModel\PendingPageDataProvider $pageDataProvider
+ */
+
+$pageDataProvider = $block->getPendingPageDataProvider();
+?>
+
+<div data-bind="scope: 'pendingPaymentPageScope'" class="pending-payment-page-container">
+    <div id="pending-payment-notification-message">
+        <span><?= $block->escapeHtml(__($pageDataProvider->getNotificationMessage()), ['br', 'a']) ?></span>
+    </div>
+    <br/>
+    <div id="pending-payment-continue-shopping">
+        <a href="<?= $block->escapeUrl($pageDataProvider->getMainPageUrl()) ?>">
+            <span><?= $block->escapeHtml(__('Continue Shopping')) ?></span>
+        </a>
+    </div>
+</div>

@@ -5,7 +5,8 @@ namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\Customer
 use Magento\Customer\Model\Logger;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Intl\DateTimeFactory;
-use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Quote\Model\Quote;
+use Magento\Sales\Model\Order;
 use Worldline\Connect\Sdk\V1\Domain\CustomerAccountAuthentication;
 use Worldline\Connect\Sdk\V1\Domain\CustomerAccountAuthenticationFactory;
 
@@ -42,7 +43,7 @@ class AuthenticationBuilder
         $this->dateTimeFactory = $dateTimeFactory;
     }
 
-    public function create(OrderInterface $order): CustomerAccountAuthentication
+    public function create(Order $order): CustomerAccountAuthentication
     {
         /** @var CustomerAccountAuthentication $authentication */
         $authentication = $this->authenticationFactory->create();
@@ -51,7 +52,7 @@ class AuthenticationBuilder
 
         try {
             $authentication->utcTimestamp = $this->getAuthenticationUtcTimestamp($order);
-        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+            // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (LocalizedException $exception) {
             // Do nothing
         }
@@ -59,17 +60,39 @@ class AuthenticationBuilder
         return $authentication;
     }
 
-    private function getAuthenticationMethod(OrderInterface $order): string
+    public function createNew(Quote $quote): CustomerAccountAuthentication
+    {
+        /** @var CustomerAccountAuthentication $authentication */
+        $authentication = $this->authenticationFactory->create();
+
+        $authentication->method = $this->getAuthenticationMethodNew($quote);
+
+        try {
+            $authentication->utcTimestamp = $this->getAuthenticationUtcTimestampNew($quote);
+            // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (LocalizedException $exception) {
+            // Do nothing
+        }
+
+        return $authentication;
+    }
+
+    private function getAuthenticationMethod(Order $order): string
     {
         return $order->getCustomerIsGuest() ? self::GUEST : self::MERCHANT_CREDENTIALS;
     }
 
+    private function getAuthenticationMethodNew(Quote $quote): string
+    {
+        return $quote->getCustomerIsGuest() ? self::GUEST : self::MERCHANT_CREDENTIALS;
+    }
+
     /**
-     * @param OrderInterface $order
+     * @param Order $order
      * @return string
      * @throws LocalizedException
      */
-    private function getAuthenticationUtcTimestamp(OrderInterface $order): string
+    private function getAuthenticationUtcTimestamp(Order $order): string
     {
         if ($order->getCustomerIsGuest() || !$order->getCustomerId()) {
             // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
@@ -78,6 +101,23 @@ class AuthenticationBuilder
 
         return $this->dateTimeFactory
             ->create($this->customerLogger->get($order->getCustomerId())->getLastLoginAt())
+            ->format('YmdHi');
+    }
+
+    /**
+     * @param Quote $quote
+     * @return string
+     * @throws LocalizedException
+     */
+    private function getAuthenticationUtcTimestampNew(Quote $quote): string
+    {
+        if ($quote->getCustomerIsGuest() || !$quote->getCustomerId()) {
+            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+            throw new LocalizedException(__('Cannot get customer last login time'));
+        }
+
+        return $this->dateTimeFactory
+            ->create($this->customerLogger->get($quote->getCustomerId())->getLastLoginAt())
             ->format('YmdHi');
     }
 }

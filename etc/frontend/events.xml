@@ -1,0 +1,11 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="controller_action_predispatch_checkout_index_index">
+        <observer name="Worldline_Connect::shift_reserved_quote_id"
+                  instance="Worldline\Connect\Observer\ShiftReservedQuoteId" />
+    </event>
+    <event name="controller_action_predispatch_checkout_cart_index">
+        <observer name="Worldline_Connect::shift_reserved_quote_id"
+                  instance="Worldline\Connect\Observer\RestoreQuote" />
+    </event>
+</config>

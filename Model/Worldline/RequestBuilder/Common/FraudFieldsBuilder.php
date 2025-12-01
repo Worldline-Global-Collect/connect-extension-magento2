@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common;
 
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface;
 use Worldline\Connect\Sdk\V1\Domain\FraudFields;
 use Worldline\Connect\Sdk\V1\Domain\FraudFieldsFactory;
@@ -25,6 +26,14 @@ class FraudFieldsBuilder
     {
         $fraudFields = $this->fraudFieldsFactory->create();
         $fraudFields->customerIpAddress = $order->getRemoteIp();
+
+        return $fraudFields;
+    }
+
+    public function createNew(Quote $quote): FraudFields
+    {
+        $fraudFields = $this->fraudFieldsFactory->create();
+        $fraudFields->customerIpAddress = $quote->getRemoteIp();
 
         return $fraudFields;
     }

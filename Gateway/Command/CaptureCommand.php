@@ -25,6 +25,7 @@ class CaptureCommand implements CommandInterface
     {
         /** @var Payment $payment */
         $payment = $commandSubject['payment']->getPayment();
+
         if ($payment->getLastTransId()) {
             $this->capturePayment->process($payment, $commandSubject['amount']);
             return null;

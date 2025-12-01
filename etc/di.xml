@@ -2502,6 +2502,8 @@
     <preference for="Worldline\Connect\Model\Worldline\Status\Payment\PoolInterface" type="Worldline\Connect\Model\Worldline\Status\Payment\Pool"/>
     <preference for="Worldline\Connect\Model\Worldline\Status\Refund\PoolInterface" type="Worldline\Connect\Model\Worldline\Status\Refund\Pool"/>
     <preference for="Worldline\Connect\Model\Order\OrderServiceInterface" type="Worldline\Connect\Model\Order\OrderService"/>
+    <preference for="Worldline\Connect\Model\Quote\QuoteServiceInterface" type="Worldline\Connect\Model\Quote\QuoteService"/>
+    <preference for="Worldline\Connect\Model\Fallback\FallbackServiceInterface" type="Worldline\Connect\Model\Fallback\FallbackService"/>
     <preference for="Worldline\Connect\Model\Transaction\TransactionManagerInterface" type="Worldline\Connect\Model\Transaction\TransactionManager"/>
     <preference for="Worldline\Connect\Api\EventRepositoryInterface" type="Worldline\Connect\Model\Event\EventRepository"/>
     <preference for="Worldline\Connect\Api\Data\EventInterface" type="Worldline\Connect\Model\Event\DataModel"/>
@@ -2510,6 +2512,11 @@
     <preference for="Worldline\Connect\Api\Data\SessionInterface" type="Worldline\Connect\Model\Worldline\Session\Session"/>
     <preference for="Worldline\Connect\Api\OrderPaymentManagementInterface" type="Worldline\Connect\Model\Order\Payment\OrderPaymentManagement"/>
     <preference for="Worldline\Connect\Api\FrontendLoggerInterface" type="Worldline\Connect\Logger\FrontendLogger"/>
+    <preference type="Worldline\Connect\WebApi\Checkout\BaseCreatePaymentManagement" for="Worldline\Connect\Api\BaseCreatePaymentManagementInterface" />
+    <preference type="Worldline\Connect\WebApi\Checkout\WorldlineStatusChecker" for="Worldline\Connect\Api\WorldlineStatusCheckerInterface" />
+    <preference type="Worldline\Connect\WebApi\Checkout\QuoteManager" for="Worldline\Connect\Api\QuoteManagerInterface" />
+    <preference type="Worldline\Connect\WebApi\Checkout\QuoteRestoration" for="Worldline\Connect\Api\QuoteRestorationInterface" />
+    <preference type="Worldline\Connect\Model\Token\TokenManager" for="Worldline\Connect\Api\TokenManagerInterface" />
 
     <virtualType name="WorldlineAdminTokenPaymentValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
@@ -2588,6 +2595,15 @@
     <type name="Worldline\Connect\Logger\FrontendLogger">
         <arguments>
             <argument name="logger" xsi:type="object">worldlineRequestLogger</argument>
+        </arguments>
+    </type>
+
+    <type name="Worldline\Connect\WebApi\Checkout\BaseCreatePaymentManagement">
+        <arguments>
+            <argument name="dataAssignerPool" xsi:type="array">
+                <item name="createPaymentDataAssigner" xsi:type="object">Worldline\Connect\WebApi\RedirectManagement\CreatePaymentDataAssigner</item>
+                <item name="paymentMethodDataAssigner" xsi:type="object">Worldline\Connect\WebApi\RedirectManagement\PaymentMethodDataAssigner</item>
+            </argument>
         </arguments>
     </type>
 

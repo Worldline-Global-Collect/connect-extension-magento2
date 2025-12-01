@@ -2,7 +2,6 @@
 
 namespace Worldline\Connect\Model\Worldline\RequestBuilder\MethodSpecificInput\Card;
 
-use Magento\Sales\Model\Order\Payment;
 use Worldline\Connect\Model\Config\Source\ExemptionRequest;
 use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Sdk\V1\Domain\ThreeDSecureBase;
@@ -18,7 +17,7 @@ class ThreeDSecureBaseBuilder
     ) {
     }
 
-    public function create(Payment $payment): ThreeDSecureBase
+    public function create(): ThreeDSecureBase
     {
         $threeDSecure = $this->threeDSecureBaseFactory->create();
         $threeDSecure->authenticationFlow = self::AUTHENTICATION_FLOW_BROWSER;

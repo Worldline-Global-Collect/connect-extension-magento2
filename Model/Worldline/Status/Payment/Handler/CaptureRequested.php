@@ -64,10 +64,7 @@ class CaptureRequested extends AbstractHandler implements HandlerInterface
 
         $orderPayment->registerCaptureNotification($order->getBaseGrandTotal());
 
-        if (!$order->getEmailSent()) {
-            $order->setCanSendNewEmailFlag(true);
-            $this->emailSender->sendEmails($order, $this->quoteRepository->get($order->getQuoteId()));
-        }
+        $this->emailSender->sendEmails($order, $this->quoteRepository->get($order->getQuoteId()));
 
         $this->tokenService->createByOrderAndPayment($order, $status);
 

@@ -2,6 +2,7 @@
 
 namespace Worldline\Connect\Api;
 
+use Magento\Sales\Api\Data\OrderInterface;
 use Worldline\Connect\Api\Data\SessionInterface;
 
 // phpcs:ignore SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming.SuperfluousSuffix
@@ -25,4 +26,9 @@ interface SessionManagerInterface
      */
     // phpcs:enable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
     public function createAnonymousSession(): SessionInterface;
+
+    /**
+     * @param OrderInterface $order
+     */
+    public function setOrderData(OrderInterface $order): void;
 }

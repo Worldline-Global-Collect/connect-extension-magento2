@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order;
 
-use Magento\Sales\Api\Data\OrderAddressInterface;
 use Worldline\Connect\Helper\Format;
 use Worldline\Connect\Sdk\V1\Domain\PersonalName;
 use Worldline\Connect\Sdk\V1\Domain\PersonalNameFactory;
+use Magento\Sales\Model\Order\Address as OrderAddress;
+use Magento\Quote\Model\Quote\Address as QuoteAddress;
 
 class PersonalNameBuilder
 {
@@ -17,7 +18,18 @@ class PersonalNameBuilder
     ) {
     }
 
-    public function create(OrderAddressInterface $address): PersonalName
+    public function create(OrderAddress $address): PersonalName
+    {
+        $personalName = $this->personalNameFactory->create();
+        $personalName->firstName = $this->format->limit($address->getFirstname(), 15);
+        $personalName->surname = $this->format->limit($address->getLastname(), 70);
+        $personalName->surnamePrefix = $address->getMiddlename();
+        $personalName->title = $address->getPrefix();
+
+        return $personalName;
+    }
+
+    public function createNew(QuoteAddress $address): PersonalName
     {
         $personalName = $this->personalNameFactory->create();
         $personalName->firstName = $this->format->limit($address->getFirstname(), 15);

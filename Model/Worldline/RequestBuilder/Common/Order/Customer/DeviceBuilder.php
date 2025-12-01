@@ -4,6 +4,7 @@ namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\Customer
 
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\Customer\Device\BrowserDataBuilder;
 use Worldline\Connect\Sdk\V1\Domain\CustomerDevice;
@@ -46,12 +47,29 @@ class DeviceBuilder
 
         try {
             $customerDevice->acceptHeader = $this->getAcceptHeader();
-        // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+            // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
         } catch (LocalizedException $exception) {
             // Do nothing
         }
 
         $customerDevice->ipAddress = $order->getRemoteIp();
+
+        return $customerDevice;
+    }
+
+    public function createNew(Quote $quote): CustomerDevice
+    {
+        $customerDevice = $this->customerDeviceFactory->create();
+        $customerDevice->browserData = $this->browserDataBuilder->create();
+
+        try {
+            $customerDevice->acceptHeader = $this->getAcceptHeader();
+            // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+        } catch (LocalizedException $exception) {
+            // Do nothing
+        }
+
+        $customerDevice->ipAddress = $quote->getRemoteIp();
 
         return $customerDevice;
     }

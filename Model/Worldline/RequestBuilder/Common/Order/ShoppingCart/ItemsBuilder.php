@@ -2,7 +2,10 @@
 
 namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\ShoppingCart;
 
+use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
+use Magento\Quote\Model\Quote\Item as QuoteItem;
+use Magento\Sales\Model\Order\Item as OrderItem;
 use Worldline\Connect\Helper\Data as DataHelper;
 use Worldline\Connect\Sdk\V1\Domain\AmountOfMoneyFactory;
 use Worldline\Connect\Sdk\V1\Domain\LineItem;
@@ -65,7 +68,7 @@ class ItemsBuilder
     {
         $lineItems = [];
         // phpcs:ignore SlevomatCodingStandard.TypeHints.DisallowArrayTypeHintSyntax.DisallowedArrayTypeHintSyntax
-        /** @var Order\Item[] $orderItems */
+        /** @var OrderItem[] $orderItems */
         $orderItems = $order->getAllVisibleItems();
 
         foreach ($orderItems as $item) {
@@ -115,6 +118,65 @@ class ItemsBuilder
         return $lineItems;
     }
 
+    /**
+     * @param Quote $quote
+     * @return array
+     */
+    // phpcs:ignore SlevomatCodingStandard.Functions.FunctionLength.FunctionLength
+    public function createNew(Quote $quote)
+    {
+        $lineItems = [];
+        // phpcs:ignore SlevomatCodingStandard.TypeHints.DisallowArrayTypeHintSyntax.DisallowedArrayTypeHintSyntax
+        /** @var QuoteItem[] $quoteOrderItems */
+        $quoteOrderItems = $quote->getAllVisibleItems();
+
+        foreach ($quoteOrderItems as $item) {
+            if ($item->getParentItem()) {
+                /** Only add base items. */
+                continue;
+            }
+
+            $lineItem = $this->lineItemFactory->create();
+
+            $itemAmountOfMoney = $this->amountOfMoneyFactory->create();
+            $itemAmountOfMoney->amount = DataHelper::formatWorldlineAmount($item->getRowTotalInclTax());
+            $itemAmountOfMoney->currencyCode = $quote->getQuoteCurrencyCode();
+            $lineItem->amountOfMoney = $itemAmountOfMoney;
+
+            $lineItemInvoiceData = $this->lineItemInvoiceDataFactory->create();
+            $lineItemInvoiceData->nrOfItems = (string) $item->getQtyOrdered();
+            $lineItemInvoiceData->description = $item->getName();
+            $lineItemInvoiceData->pricePerItem = DataHelper::formatWorldlineAmount($item->getPriceInclTax());
+            $lineItem->invoiceData = $lineItemInvoiceData;
+
+            $orderLineDetails = $this->orderLineDetailsFactory->create();
+            $orderLineDetails->discountAmount = DataHelper::formatWorldlineAmount($item->getDiscountAmount());
+            $orderLineDetails->lineAmountTotal = DataHelper::formatWorldlineAmount($item->getRowTotalInclTax());
+            // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
+            $orderLineDetails->productCode = substr($item->getSku(), 0, 12);
+            $orderLineDetails->productPrice = DataHelper::formatWorldlineAmount($item->getPriceInclTax());
+            $orderLineDetails->productType = $item->getProductType();
+            $orderLineDetails->quantity = (int) $item->getQtyOrdered();
+            $orderLineDetails->productName = $item->getProduct()->getName();
+            $taxAmount = $item->getTaxBeforeDiscount()
+                ?: $item->getTaxAmount() + $item->getDiscountTaxCompensationAmount();
+            $orderLineDetails->taxAmount = DataHelper::formatWorldlineAmount($taxAmount);
+            $orderLineDetails->unit = '';
+            $lineItem->orderLineDetails = $orderLineDetails;
+
+            $lineItems[] = $lineItem;
+        }
+        /**
+         * Add shipping amount as fake line item
+         */
+        // phpcs:ignore SlevomatCodingStandard.Operators.DisallowEqualOperators.DisallowedNotEqualOperator
+        if ($quote->getShippingAmount() != 0) {
+            $lineItems[] = $this->getShippingItemNew($quote);
+        }
+
+        return $lineItems;
+    }
+
     private function getShippingItem(Order $order): LineItem
     {
         $formatAmountShip = DataHelper::formatWorldlineAmount($order->getShippingInclTax());
@@ -127,6 +189,34 @@ class ItemsBuilder
         $shippingDetails->productName = 'Shipping';
         $shippingDetails->quantity = 1;
         $shippingDetails->taxAmount = DataHelper::formatWorldlineAmount($order->getShippingTaxAmount());
+        $shippingDetails->lineAmountTotal = $formatAmountShip;
+        $shippingDetails->productPrice = $formatAmountShip;
+
+        $shippingInvoice = $this->lineItemInvoiceDataFactory->create();
+        $shippingInvoice->description = 'Shipping';
+        $shippingInvoice->nrOfItems = '1';
+        $shippingInvoice->pricePerItem = $formatAmountShip;
+
+        $shippingItem = $this->lineItemFactory->create();
+        $shippingItem->amountOfMoney = $shippingAmount;
+        $shippingItem->orderLineDetails = $shippingDetails;
+        $shippingItem->invoiceData = $shippingInvoice;
+
+        return $shippingItem;
+    }
+
+    private function getShippingItemNew(Quote $quote): LineItem
+    {
+        $formatAmountShip = DataHelper::formatWorldlineAmount($quote->getShippingInclTax());
+        $shippingAmount = $this->amountOfMoneyFactory->create();
+        $shippingAmount->amount = $formatAmountShip;
+        $shippingAmount->currencyCode = $quote->getQuoteCurrencyCode();
+
+        $shippingDetails = $this->orderLineDetailsFactory->create();
+        $shippingDetails->productCode = 'shipping';
+        $shippingDetails->productName = 'Shipping';
+        $shippingDetails->quantity = 1;
+        $shippingDetails->taxAmount = DataHelper::formatWorldlineAmount($quote->getShippingTaxAmount());
         $shippingDetails->lineAmountTotal = $formatAmountShip;
         $shippingDetails->productPrice = $formatAmountShip;
 

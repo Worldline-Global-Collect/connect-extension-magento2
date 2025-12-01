@@ -8,6 +8,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 interface StatusInterface
 {
     public const STATUSES = [
+        self::CREATED,
         self::REDIRECTED,
         self::PENDING_PAYMENT,
         self::PENDING_COMPLETION,
@@ -42,6 +43,21 @@ interface StatusInterface
         StatusInterface::CANCELLED,
     ];
 
+    public const UNCERTAIN_STATUSES = [
+        StatusInterface::CREATED,
+        StatusInterface::REDIRECTED,
+        StatusInterface::AUTHORIZATION_REQUESTED,
+        StatusInterface::PENDING_PAYMENT,
+        StatusInterface::PENDING_APPROVAL,
+        StatusInterface::PENDING_COMPLETION,
+        StatusInterface::PENDING_FRAUD_APPROVAL,
+    ];
+
+    public const SUCCESS_UNCERTAIN_STATUSES = [
+        StatusInterface::PENDING_APPROVAL,
+    ];
+
+    public const CREATED = 'CREATED';
     public const REDIRECTED = 'REDIRECTED';
     public const PENDING_PAYMENT = 'PENDING_PAYMENT';
     public const PENDING_COMPLETION = 'PENDING_COMPLETION';
