@@ -149,11 +149,14 @@ define(
             },
 
             getData: function () {
+                const currentProduct = paymentData.getCurrentCardPaymentProduct();
+                const productId = currentProduct ? currentProduct.id : this.code;
+
                 return {
                     'method': this.item.method,
                     'additional_data': {
                         'input': paymentData.getCurrentPayload(),
-                        'product': paymentData.getCurrentCardPaymentProduct().id,
+                        'product': productId,
                         'tokenize': paymentData.fieldData['tokenize']
                     }
                 };

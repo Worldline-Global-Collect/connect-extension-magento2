@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 4.12.0 - 2025-12-17
+
+- Add dynamic loading of card fields when updating card number
+
 ## 4.11.0 - 2025-12-01
 
 - Add a new order creation flow - Order created after payment is completed on the hosted checkout page

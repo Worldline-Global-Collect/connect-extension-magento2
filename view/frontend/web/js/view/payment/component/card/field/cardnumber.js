@@ -25,7 +25,7 @@ define([
     return Field.extend({
 
         defaults: {
-            lastValue: '',
+            lastValue: null,
             logo: '',
             logoDescription: '',
             creditCardLogos: '',
@@ -63,17 +63,18 @@ define([
         },
 
         onUpdate: function (value) {
-            if (value.length >= 6) {
-                const trimmedValue = value.replace(' ', '').substring(0, 6);
+            const cleanValue = value ? value.replace(/ /g, '') : '';
+            const trimmedValue = cleanValue.substring(0, 6);
 
-                if (trimmedValue.length < 6) {
+            if (trimmedValue.length < 6) {
+                if (this.lastValue !== null) {
                     cardPayment.clearCardType();
                     this.lastValue = null;
-                } else {
-                    if (trimmedValue !== this.lastValue) {
-                        cardPayment.updateCardType(value);
-                        this.lastValue = trimmedValue;
-                    }
+                }
+            } else {
+                if (trimmedValue !== this.lastValue) {
+                    cardPayment.updateCardType(value);
+                    this.lastValue = trimmedValue;
                 }
             }
 

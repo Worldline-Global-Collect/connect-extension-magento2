@@ -11,6 +11,12 @@ define([
 ], function ($, Collection, layout, fetchProduct, config, paymentData, $t, registry, ko) {
     'use strict';
 
+    const DEFAULT_SORT_ORDER_REDIRECT = 1;
+    const DEFAULT_SORT_ORDER_CARD_NUMBER = 2;
+    const DEFAULT_SORT_ORDER_FIELD = 3;
+    const DEFAULT_SORT_ORDER_CARDHOLDER_NAME = 500;
+    const DEFAULT_SORT_ORDER_TOKENIZE_CHECKBOX = 10000;
+
     return Collection.extend({
 
         defaults: {
@@ -34,6 +40,8 @@ define([
             this.initLoader();
             this.fieldsVisiblity(true);
 
+            paymentData.currentCardPaymentProduct.subscribe(this.onCardProductUpdate.bind(this));
+
             if (!this.fieldsLoaded) {
                 this.isLoading(true);
 
@@ -42,6 +50,51 @@ define([
                 this.fieldsLoaded = true;
                 this.isLoading(false);
             }
+        },
+
+        onCardProductUpdate: function (product) {
+            var me = this;
+            var targetFieldId = 'cardholderName';
+            var containerUid = this.uid;
+
+            const cardholderNameField = product?.paymentProductFields
+                ? product.paymentProductFields.find(f => f.id === targetFieldId)
+                : null;
+
+            registry.get('uid = ' + containerUid, function (parentComponent) {
+                const existingComponent = parentComponent.elems().find(elem => elem.field && elem.field.id === targetFieldId);
+
+                if (cardholderNameField) {
+                    if (!existingComponent) {
+                        var componentName = parentComponent.name + '.' + targetFieldId;
+
+                        layout([{
+                            component: 'Worldline_Connect/js/view/payment/component/field',
+                            parent: parentComponent.name,
+                            name: componentName,
+                            displayArea: 'elems',
+                            field: cardholderNameField,
+                            account: me.account || null,
+                            sortOrder: cardholderNameField?.displayHints?.displayOrder ?? DEFAULT_SORT_ORDER_CARDHOLDER_NAME
+                        }]);
+
+                        registry.get(componentName, function() {
+                            self.sortChildren();
+                        });
+                    }
+                } else {
+                    if (existingComponent) {
+                        existingComponent.destroy();
+                    }
+                }
+            });
+        },
+
+        sortChildren: function () {
+            var sortedElems = this.elems().sort(function (a, b) {
+                return (a.sortOrder || 0) - (b.sortOrder || 0);
+            });
+            this.elems(sortedElems);
         },
 
         createLayout: function (product) {
@@ -72,6 +125,7 @@ define([
                 component: 'Worldline_Connect/js/view/payment/component/field',
                 field: field,
                 account: this.account,
+                sortOrder: field?.displayHints?.displayOrder ?? DEFAULT_SORT_ORDER_FIELD
             }
         },
 
@@ -82,6 +136,7 @@ define([
                     component: 'Worldline_Connect/js/view/payment/component/card/field/cardnumber',
                     field: field,
                     account: this.account,
+                    sortOrder: field?.displayHints?.displayOrder ?? DEFAULT_SORT_ORDER_CARD_NUMBER
                 }
             }
         },
@@ -104,6 +159,7 @@ define([
                 enabled: this.product.id === 'cards' ? cardAllowsTokenization : true,
                 dataScope: this.name + '-tokenize',
                 description: $t('Save for later'),
+                sortOrder: DEFAULT_SORT_ORDER_TOKENIZE_CHECKBOX
             }
         },
 
@@ -113,6 +169,7 @@ define([
                 component: 'Magento_Ui/js/lib/core/element/element',
                 template: 'Worldline_Connect/payment/product/field/info',
                 text: config.redirectText(),
+                sortOrder: DEFAULT_SORT_ORDER_REDIRECT
             }
         },
 
