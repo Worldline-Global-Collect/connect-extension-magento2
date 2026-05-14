@@ -5,22 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## 4.15.0 - 2026-05-15
+## 4.15.0 - 2026-05-14
 
+- Merge generic configuration settings per payment method group
+- Rename iDEAL payment method to iDEAL | Wero
+- Set order ID as the merchant reference
 - Fix Magento status "pending payment" while "rejected" by Worldline
 - Fix cart retention failure
 - Fix invoice creation issue for 3DS payments in delayed capture configuration
 
-## 4.14.0 - 2026-03-25
-
-- Set order ID as the merchant reference
-- Rename iDEAL payment method to iDEAL | Wero
-
-## 4.13.0 - 2026-02-20
-
-- Merge generic configuration settings per payment method group
-
-## 4.12.0 - 2025-12-10
+## 4.12.0 - 2025-12-17
 
 - Add dynamic loading of card fields when updating card number
 
