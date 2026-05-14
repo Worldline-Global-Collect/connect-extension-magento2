@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Add a new order creation flow - Order created after payment is completed on the hosted checkout page
 
-## 4.10.0 - 2025-10-24 
+## 4.10.0 - 2025-10-24
 
 - Fix installation issue on version 2.4.8
 
