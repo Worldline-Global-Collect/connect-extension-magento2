@@ -3,6 +3,20 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <payment>
+            <worldline_payment_group_card>
+                <allowspecific>0</allowspecific>
+                <capture_config>authorize</capture_config>
+                <payment_flow>0</payment_flow>
+            </worldline_payment_group_card>
+            <worldline_payment_group_instant_purchase>
+                <allowspecific>0</allowspecific>
+                <capture_config>authorize</capture_config>
+            </worldline_payment_group_instant_purchase>
+            <worldline_payment_group_redirect>
+                <allowspecific>0</allowspecific>
+                <capture_config>authorize</capture_config>
+                <payment_flow>0</payment_flow>
+            </worldline_payment_group_redirect>
             <!-- Groups -->
             <worldline_cards>
                 <model>Worldline\Connect\PaymentMethod\Cards</model>
@@ -933,7 +947,7 @@
             <!-- Redirect -->
             <worldline_ideal>
                 <model>Worldline\Connect\PaymentMethod\iDeal</model>
-                <title>Worldline iDeal</title>
+                <title>Worldline iDEAL | Wero</title>
                 <active>1</active>
                 <can_initialize>0</can_initialize>
                 <can_capture>1</can_capture>

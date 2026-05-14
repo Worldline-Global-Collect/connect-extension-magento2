@@ -28,7 +28,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly WriterInterface $configWriter
-    ) {
+    )
+    {
     }
 
     /**
@@ -70,6 +71,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
         // default configuration should only be set for existing users
         if ($context->getVersion() && version_compare($context->getVersion(), '4.11.0') < 0) {
             $this->addOrderCreationFlowConfiguration($setup);
+        }
+
+        if (version_compare($context->getVersion(), '4.12.0') < 0) {
+            $this->migrateToGenericSettingsForPaymentMethods($setup);
         }
     }
 
@@ -280,6 +285,65 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 $defaultScope,
                 0
             );
+        }
+    }
+
+    private function migrateToGenericSettingsForPaymentMethods(SchemaSetupInterface $setup)
+    {
+        $tableName = $setup->getTable('core_config_data');
+        $connection = $setup->getConnection();
+
+        $connection->beginTransaction();
+
+        try {
+            $migrationSql = "INSERT INTO {$tableName} (scope, scope_id, path, value)
+            SELECT
+                source.scope,
+                source.scope_id,
+                REPLACE(source.path, 'payment/worldline_visa/', CONCAT('payment/', targets.group_name, '/')),
+                source.value
+            FROM {$tableName} AS source
+            CROSS JOIN (
+                SELECT 'worldline_payment_group_card' AS group_name
+                UNION ALL SELECT 'worldline_payment_group_instant_purchase'
+                UNION ALL SELECT 'worldline_payment_group_redirect'
+            ) AS targets
+            WHERE source.path IN (
+                'payment/worldline_visa/allowspecific',
+                'payment/worldline_visa/specificcountry',
+                'payment/worldline_visa/min_order_total',
+                'payment/worldline_visa/max_order_total',
+                'payment/worldline_visa/capture_config',
+                'payment/worldline_visa/payment_flow'
+            )
+            AND NOT (
+                source.path = 'payment/worldline_visa/payment_flow'
+                AND targets.group_name = 'worldline_payment_group_instant_purchase'
+            )
+            ON DUPLICATE KEY UPDATE value = VALUES(value);";
+
+            $connection->query($migrationSql);
+
+            $cleanupSql = "DELETE FROM {$tableName}
+            WHERE (
+                path LIKE 'payment/worldline_%/allowspecific'
+                OR path LIKE 'payment/worldline_%/specificcountry'
+                OR path LIKE 'payment/worldline_%/min_order_total'
+                OR path LIKE 'payment/worldline_%/max_order_total'
+                OR path LIKE 'payment/worldline_%/capture_config'
+                OR path LIKE 'payment/worldline_%/payment_flow'
+            )
+            AND path NOT LIKE 'payment/worldline_payment_group_%'
+            AND path NOT LIKE 'payment/worldline_hpp%'
+            AND path NOT LIKE 'payment/worldline_link_plus_%';";
+
+            $connection->query($cleanupSql);
+
+            $connection->commit();
+
+        } catch (\Exception $e) {
+            $connection->rollBack();
+            throw $e;
         }
     }
 }

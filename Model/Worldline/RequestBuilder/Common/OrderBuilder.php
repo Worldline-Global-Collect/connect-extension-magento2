@@ -191,7 +191,7 @@ class OrderBuilder
     private function getReferencesNew(Quote $quote)
     {
         $references = $this->orderReferencesFactory->create();
-        $references->merchantReference = $this->format->limit('Quote-' . $quote->getId(), 30);
+        $references->merchantReference = $this->format->limit($quote->getReservedOrderId(), 30);
         $references->descriptor = $this->ePaymentsConfig->getDescriptor();
 
         return $references;

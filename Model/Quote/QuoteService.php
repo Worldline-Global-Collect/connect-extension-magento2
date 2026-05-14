@@ -2,6 +2,7 @@
 
 namespace Worldline\Connect\Model\Quote;
 
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\CartInterface;
@@ -19,19 +20,24 @@ class QuoteService implements QuoteServiceInterface
     private $quoteRepository;
 
     /**
-     * @param CartRepositoryInterface $quoteRepository
+     * @var SearchCriteriaBuilder
      */
-    public function __construct(CartRepositoryInterface $quoteRepository)
+    // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
+    private $searchCriteriaBuilder;
+
+    /**
+     * @param CartRepositoryInterface $quoteRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     */
+    public function __construct(CartRepositoryInterface $quoteRepository, SearchCriteriaBuilder $searchCriteriaBuilder)
     {
         $this->quoteRepository = $quoteRepository;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
-     * Retrieve quote by id.
+     * @inheritDoc
      *
-     * @param int $quoteId
-     *
-     * @return CartInterface|null
      * @throws NoSuchEntityException
      */
     public function getQuoteById(int $quoteId): ?CartInterface
@@ -43,5 +49,24 @@ class QuoteService implements QuoteServiceInterface
         }
 
         return $quote;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getQuoteByReservedOrderId(string $reservedOrderId): ?CartInterface
+    {
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter('reserved_order_id', $reservedOrderId)
+            ->setPageSize(1)
+            ->create();
+
+        $quoteList = $this->quoteRepository->getList($searchCriteria)->getItems();
+
+        if (count($quoteList) > 0) {
+            return reset($quoteList);
+        }
+
+        return null;
     }
 }

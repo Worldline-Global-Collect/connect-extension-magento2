@@ -19,4 +19,13 @@ interface QuoteServiceInterface
      * @return CartInterface|null
      */
     public function getQuoteById(int $quoteId): ?CartInterface;
+
+    /**
+     * Retrieve quote by reserved order ID.
+     *
+     * @param string $reservedOrderId
+     *
+     * @return CartInterface|null
+     */
+    public function getQuoteByReservedOrderId(string $reservedOrderId): ?CartInterface;
 }

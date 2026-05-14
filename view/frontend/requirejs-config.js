@@ -29,7 +29,6 @@ var config = {
             'connectsdk.net',
             'connectsdk.PublicKeyResponse',
             'connectsdk.C2SCommunicator',
-            'connectsdk.ValidationRuleBoletoBancarioRequiredness',
             'connectsdk.ValidationRuleEmailAddress',
             'connectsdk.ValidationRuleExpirationDate',
             'connectsdk.ValidationRuleFixedList',

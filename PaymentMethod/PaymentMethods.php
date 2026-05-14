@@ -77,6 +77,9 @@ class PaymentMethods
     public const HOSTED = self::PREFIX . 'hpp';
     public const APPLE_PAY = self::PREFIX . 'apple_pay';
     public const GOOGLE_PAY = self::PREFIX . 'google_pay';
+    public const PAYMENT_GROUP_CARD = self::PREFIX . 'payment_group_card';
+    public const PAYMENT_GROUP_INSTANT_PURCHASE = self::PREFIX . 'payment_group_instant_purchase';
+    public const PAYMENT_GROUP_REDIRECT = self::PREFIX . 'payment_group_redirect';
 
     public function __construct(
         private readonly ClientInterface $client,

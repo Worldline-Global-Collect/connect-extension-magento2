@@ -55,7 +55,7 @@ class CreatePayment extends AbstractAction
 
             if ($response->payment->status === StatusInterface::REDIRECTED) {
                 $payment->getOrder()->setCanSendNewEmailFlag(false);
-                $payment->registerCaptureNotification($payment->getOrder()->getBaseGrandTotal());
+                $this->registerNotification($payment, $requiresApproval);
             }
 
             $this->postProcess($payment, $response->payment);
@@ -119,5 +119,22 @@ class CreatePayment extends AbstractAction
 
     private function paymentNoop(): void
     {
+    }
+
+    /**
+     * @param Payment $payment
+     * @param bool $requiresApproval
+     */
+    private function registerNotification(Payment $payment, bool $requiresApproval): void
+    {
+        $total = $payment->getOrder()->getBaseGrandTotal();
+
+        if ($requiresApproval) {
+            $payment->registerAuthorizationNotification($total);
+
+            return;
+        }
+
+        $payment->registerCaptureNotification($total);
     }
 }

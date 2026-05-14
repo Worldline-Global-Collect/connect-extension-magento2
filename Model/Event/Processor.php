@@ -9,6 +9,7 @@ use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Psr\Log\LoggerInterface;
@@ -21,6 +22,7 @@ use Worldline\Connect\Model\Order\SkipOrderCreationException;
 use Worldline\Connect\Model\Quote\QuoteServiceInterface;
 use Worldline\Connect\Model\Worldline\Status\Payment\ResolverInterface as PaymentResolverInterface;
 use Worldline\Connect\Model\Worldline\Status\Refund\ResolverInterface as RefundResolverInterface;
+use Worldline\Connect\Model\Worldline\StatusInterface;
 use Worldline\Connect\Sdk\V1\Domain\PaymentResponse;
 use Worldline\Connect\Sdk\V1\Domain\WebhooksEvent;
 use Worldline\Connect\Sdk\V1\Domain\WebhooksEventFactory;
@@ -31,7 +33,7 @@ use function str_starts_with;
 class Processor
 {
     public const MESSAGE_NO_ORDER_FOUND = 'webhook: no order found';
-    public const MESSAGE_NO_QUOTE_FOUND = 'webhook: no quote found';
+    public const MESSAGE_NO_QUOTE_OR_ORDER_FOUND = 'webhook: no quote or order found';
 
     /**
      * @var WebhooksEventFactory
@@ -162,14 +164,14 @@ class Processor
                     'event_id' => $event->getId(),
                 ]);
             } catch (SkipOrderCreationException $exception) {
-                $this->logger->info('Could not process event', [
+                $this->logger->info('The event should be ignored', [
                     'event_id' => $event->getId(),
                     'exception' => $exception->getMessage(),
                 ]);
                 $event->setStatus(EventInterface::STATUS_IGNORED);
                 $this->eventRepository->save($event);
             } catch (Throwable $exception) {
-                $this->logger->warning('Could not process event', [
+                $this->logger->warning('Could not process the event', [
                     'event_id' => $event->getId(),
                     'exception' => $exception->getMessage(),
                 ]);
@@ -220,51 +222,19 @@ class Processor
     private function handlePaymentEvent(WebhooksEvent $webhookEvent): Order
     {
         $payment = $webhookEvent->payment;
-        $merchantReference = $payment->paymentOutput->references->merchantReference;
-
-        if (str_contains($merchantReference, 'Quote-')) {
-            $merchantReference = $this->handleNewFlow($payment);
-        }
 
         /** @var Order $order */
-        $order = $this->orderService->getByIncrementId($merchantReference);
-
-        if (!$order) {
-            throw new LocalizedException(__(self::MESSAGE_NO_ORDER_FOUND));
-        }
+        $order = $this->getOrCreateOrder($payment);
 
         try {
+            $magentoPayment = $order->getPayment();
+            $magentoPayment->setLastTransId($payment->id);
+
             $this->paymentResolver->resolve($order, $payment);
             // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
-        } catch (Throwable) {
-        }
+        } catch (Throwable) { }
 
         return $order;
-    }
-
-    /**
-     * @param PaymentResponse $payment
-     *
-     * @return string|null
-     *
-     * @throws CouldNotSaveException
-     * @throws LocalizedException
-     * @throws SkipOrderCreationException
-     */
-    private function handleNewFlow(PaymentResponse $payment): ?string
-    {
-        $merchantReference = $payment->paymentOutput->references->merchantReference;
-        $quoteId = str_replace('Quote-', '', $merchantReference);
-
-        $quote = $this->quoteService->getQuoteById((int)$quoteId);
-
-        if (!$quote) {
-            throw new LocalizedException(__(self::MESSAGE_NO_QUOTE_FOUND));
-        }
-
-        $order = $this->orderService->createOrderAsync($quote);
-
-        return $order->getIncrementId();
     }
 
     /**
@@ -278,20 +248,11 @@ class Processor
     private function handleRefundEvent(WebhooksEvent $webhookEvent): Order
     {
         $refund = $webhookEvent->refund;
-        $merchantReference = $refund->refundOutput->references->merchantReference;
 
-        if (str_contains($merchantReference, 'Quote-')) {
-            $quoteId = str_replace('Quote-', '', $merchantReference);
-            $quote = $this->quoteService->getQuoteById((int)$quoteId);
-
-            /** @var Order $order */
-            $order = $this->orderService->getOrderByQuote($quote);
-        } else {
+        try {
             /** @var Order $order */
             $order = $this->orderService->getByIncrementId($refund->refundOutput->references->merchantReference);
-        }
-
-        if (!$order) {
+        } catch (NoSuchEntityException $e) {
             throw new LocalizedException(__(self::MESSAGE_NO_ORDER_FOUND));
         }
 
@@ -302,5 +263,54 @@ class Processor
         }
 
         return $order;
+    }
+
+    /**
+     * @param PaymentResponse $payment
+     *
+     * @return OrderInterface
+     *
+     * @throws CouldNotSaveException
+     * @throws LocalizedException
+     * @throws SkipOrderCreationException
+     */
+    private function getOrCreateOrder(PaymentResponse $payment): OrderInterface
+    {
+        $merchantReference = $payment->paymentOutput->references->merchantReference;
+
+        $quote = $this->quoteService->getQuoteByReservedOrderId($merchantReference);
+
+        if (!$quote) {
+            // order creation before redirection flow
+            return $this->skipOrderCreationAndReturnOrder($merchantReference);
+        }
+
+        try {
+            $order = $this->orderService->getByIncrementId($merchantReference);
+        } catch (NoSuchEntityException $e) {
+            if (in_array($payment->status, StatusInterface::DENIED_STATUSES)) {
+                throw new SkipOrderCreationException(__("Order should not be created for quote {$quote->getId()}. The payment was denied."));
+            }
+
+            // order creation after redirection flow (and payment status is not denied)
+            $order = $this->orderService->createOrderAsync($quote, $payment);
+        }
+
+        return $order;
+    }
+
+    /**
+     * @param string $merchantReference
+     *
+     * @return OrderInterface
+     * @throws LocalizedException
+     */
+    private function skipOrderCreationAndReturnOrder(string $merchantReference): OrderInterface
+    {
+        try {
+            return $this->orderService->getByIncrementId($merchantReference);
+        } catch (NoSuchEntityException $e) {
+            throw new LocalizedException(__(self::MESSAGE_NO_QUOTE_OR_ORDER_FOUND));
+        }
     }
 }

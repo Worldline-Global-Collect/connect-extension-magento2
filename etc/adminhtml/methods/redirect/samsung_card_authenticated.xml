@@ -10,20 +10,5 @@
             <label>Sort Order</label>
             <config_path>payment/worldline_samsung_card_authenticated/sort_order</config_path>
         </field>
-        <field id="min_order_total" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1">
-            <label>Minimum Order Total</label>
-            <validate>validate-number validate-zero-or-greater</validate>
-            <config_path>payment/worldline_samsung_card_authenticated/min_order_total</config_path>
-        </field>
-        <field id="max_order_total" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1">
-            <label>Maximum Order Total</label>
-            <validate>validate-number validate-zero-or-greater</validate>
-            <config_path>payment/worldline_samsung_card_authenticated/max_order_total</config_path>
-        </field>
-        <field id="payment_flow" translate="label" type="select" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
-            <label>Payment flow type</label>
-            <source_model>Worldline\Connect\Model\Config\Source\PaymentFlowType</source_model>
-            <config_path>payment/worldline_samsung_card_authenticated/payment_flow</config_path>
-        </field>
     </group>
 </include>

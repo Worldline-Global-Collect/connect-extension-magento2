@@ -21,6 +21,7 @@ class Rejected extends AbstractHandler implements HandlerInterface
         $orderPayment = $order->getPayment();
         $orderPayment->setIsTransactionClosed(true);
         $orderPayment->setData('is_transaction_denied', true);
+
         $orderPayment->update();
 
         $this->dispatchEvent($order, $status);

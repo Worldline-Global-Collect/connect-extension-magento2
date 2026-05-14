@@ -213,6 +213,43 @@
 
     <virtualType name="WorldlineInitializeLinkPlusPaymentLinkCommand" type="Worldline\Connect\Gateway\Command\InitializeLinkPlusPaymentLinkCommand" />
 
+    <!-- SHARED GROUPS CONFIGURATION -->
+    <virtualType name="WorldlineCardGroupConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::PAYMENT_GROUP_CARD</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineCardGroupValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineCardGroupConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineInstantPurchaseGroupConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::PAYMENT_GROUP_INSTANT_PURCHASE</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineInstantPurchaseGroupValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineInstantPurchaseGroupConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineRedirectGroupConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::PAYMENT_GROUP_REDIRECT</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineRedirectGroupValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineRedirectGroupConfig</argument>
+        </arguments>
+    </virtualType>
+
     <!-- Cards -->
     <virtualType name="Worldline\Connect\PaymentMethod\Cards" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
@@ -235,13 +272,21 @@
 
     <virtualType name="WorldlineCardsCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineCardsConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineCardsValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineCardsConfigValueHandler</item>
             </argument>
         </arguments>
@@ -281,13 +326,21 @@
 
     <virtualType name="WorldlineAmericanExpressCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineAmericanExpressConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineAmericanExpressValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineAmericanExpressConfigValueHandler</item>
             </argument>
         </arguments>
@@ -327,13 +380,21 @@
 
     <virtualType name="WorldlineBCCardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineBCCardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineBCCardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineBCCardConfigValueHandler</item>
             </argument>
         </arguments>
@@ -373,13 +434,18 @@
 
     <virtualType name="WorldlineBCCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineBCCardAuthenticatedConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineBCCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineBCCardAuthenticatedConfigValueHandler</item>
             </argument>
         </arguments>
@@ -419,13 +485,21 @@
 
     <virtualType name="WorldlineCarteBancaireCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineCarteBancaireConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineCarteBancaireValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineCarteBancaireConfigValueHandler</item>
             </argument>
         </arguments>
@@ -465,13 +539,21 @@
 
     <virtualType name="WorldlineDinersClubCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineDinersClubConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineDinersClubValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineDinersClubConfigValueHandler</item>
             </argument>
         </arguments>
@@ -511,13 +593,21 @@
 
     <virtualType name="WorldlineDiscoverCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineDiscoverConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineDiscoverValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineDiscoverConfigValueHandler</item>
             </argument>
         </arguments>
@@ -557,13 +647,21 @@
 
     <virtualType name="WorldlineHyundaiCardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineHyundaiCardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineHyundaiCardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineHyundaiCardConfigValueHandler</item>
             </argument>
         </arguments>
@@ -603,13 +701,18 @@
 
     <virtualType name="WorldlineHyundaiCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineHyundaiCardAuthenticatedConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineHyundaiCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineHyundaiCardAuthenticatedConfigValueHandler</item>
             </argument>
         </arguments>
@@ -649,13 +752,21 @@
 
     <virtualType name="WorldlineJCBCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineJCBConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineJCBValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineJCBConfigValueHandler</item>
             </argument>
         </arguments>
@@ -695,13 +806,21 @@
 
     <virtualType name="WorldlineKBKookminCardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineKBKookminCardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineKBKookminCardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineKBKookminCardConfigValueHandler</item>
             </argument>
         </arguments>
@@ -741,13 +860,18 @@
 
     <virtualType name="WorldlineKBKookminCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineKBKookminCardAuthenticatedConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineKBKookminCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineKBKookminCardAuthenticatedConfigValueHandler</item>
             </argument>
         </arguments>
@@ -787,13 +911,21 @@
 
     <virtualType name="WorldlineKEBHanaCardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineKEBHanaCardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineKEBHanaCardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineKEBHanaCardConfigValueHandler</item>
             </argument>
         </arguments>
@@ -833,13 +965,18 @@
 
     <virtualType name="WorldlineKEBHanaCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineKEBHanaCardAuthenticatedConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineKEBHanaCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineKEBHanaCardAuthenticatedConfigValueHandler</item>
             </argument>
         </arguments>
@@ -879,13 +1016,21 @@
 
     <virtualType name="WorldlineLotteCardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineLotteCardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineLotteCardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineLotteCardConfigValueHandler</item>
             </argument>
         </arguments>
@@ -925,13 +1070,18 @@
 
     <virtualType name="WorldlineLotteCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineLotteCardAuthenticatedConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineLotteCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineLotteCardAuthenticatedConfigValueHandler</item>
             </argument>
         </arguments>
@@ -971,13 +1121,21 @@
 
     <virtualType name="WorldlineUnionPayInternationalSecurePayCardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineUnionPayInternationalSecurePayCardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineUnionPayInternationalSecurePayCardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineUnionPayInternationalSecurePayCardConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1017,13 +1175,21 @@
 
     <virtualType name="WorldlineMastercardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineMastercardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineMastercardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineMastercardConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1063,13 +1229,21 @@
 
     <virtualType name="WorldlineMastercardDebitCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineMastercardDebitConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineMastercardDebitValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineMastercardDebitConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1109,13 +1283,21 @@
 
     <virtualType name="WorldlineNHCardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineNHCardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineNHCardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineNHCardConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1155,13 +1337,18 @@
 
     <virtualType name="WorldlineNHCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineNHCardAuthenticatedConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineNHCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineNHCardAuthenticatedConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1201,13 +1388,21 @@
 
     <virtualType name="WorldlineSamsungCardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineSamsungCardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineSamsungCardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineSamsungCardConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1247,13 +1442,18 @@
 
     <virtualType name="WorldlineSamsungCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineSamsungCardAuthenticatedConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineSamsungCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineSamsungCardAuthenticatedConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1293,13 +1493,21 @@
 
     <virtualType name="WorldlineShinhanCardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineShinhanCardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineShinhanCardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineShinhanCardConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1339,13 +1547,19 @@
 
     <virtualType name="WorldlineTroyCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineTroyCardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineTroyValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineTroyConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1385,13 +1599,19 @@
 
     <virtualType name="WorldlineTroyDebitCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineTroyDebitCardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineTroyDebitValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineTroyDebitConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1431,13 +1651,18 @@
 
     <virtualType name="WorldlineShinhanCardAuthenticatedCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineShinhanCardAuthenticatedConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineShinhanCardAuthenticatedValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineShinhanCardAuthenticatedConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1477,13 +1702,21 @@
 
     <virtualType name="WorldlineUnionPayExpressPayCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineUnionPayExpressPayConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineUnionPayExpressPayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineUnionPayExpressPayConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1523,13 +1756,21 @@
 
     <virtualType name="WorldlineVisaCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineVisaConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineVisaValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineVisaConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1569,13 +1810,21 @@
 
     <virtualType name="WorldlineVisaDebitCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineVisaDebitConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineVisaDebitValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineVisaDebitConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1615,13 +1864,21 @@
 
     <virtualType name="WorldlineVisaElectronCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineVisaElectronConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineVisaElectronValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineVisaElectronConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1661,13 +1918,21 @@
 
     <virtualType name="WorldlineMaestroCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineMaestroConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineCardGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineMaestroValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineMaestroConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1708,13 +1973,20 @@
 
     <virtualType name="WorldlineApplePayCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineApplePayConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineInstantPurchaseGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineApplePayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineInstantPurchaseGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineInstantPurchaseGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineInstantPurchaseGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineInstantPurchaseGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineInstantPurchaseGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineApplePayConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1835,13 +2107,20 @@
 
     <virtualType name="WorldlineGooglePayCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineGooglePayConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineInstantPurchaseGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineGooglePayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineInstantPurchaseGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineInstantPurchaseGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineInstantPurchaseGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineInstantPurchaseGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineInstantPurchaseGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineGooglePayConfigValueHandler</item>
             </argument>
         </arguments>
@@ -1955,13 +2234,18 @@
 
     <virtualType name="WorldlineIDealCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineIDealConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineIDealValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineIDealConfigValueHandler</item>
             </argument>
         </arguments>
@@ -2001,13 +2285,20 @@
 
     <virtualType name="WorldlineAccountToAccountCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineAccountToAccountConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineAccountToAccountValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineAccountToAccountConfigValueHandler</item>
             </argument>
         </arguments>
@@ -2049,13 +2340,21 @@
 
     <virtualType name="WorldlinePayPalCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlinePayPalConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlinePayPalValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlinePayPalConfigValueHandler</item>
             </argument>
         </arguments>
@@ -2095,13 +2394,20 @@
 
     <virtualType name="WorldlinePaysafecardCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlinePaysafecardConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlinePaysafecardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlinePaysafecardConfigValueHandler</item>
             </argument>
         </arguments>
@@ -2141,13 +2447,20 @@
 
     <virtualType name="WorldlineSofortCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineSofortConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineSofortValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineSofortConfigValueHandler</item>
             </argument>
         </arguments>
@@ -2187,13 +2500,20 @@
 
     <virtualType name="WorldlineTrustlyCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
         <arguments>
-            <argument name="config" xsi:type="object">WorldlineTrustlyConfig</argument>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
         </arguments>
     </virtualType>
 
     <virtualType name="WorldlineTrustlyValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineTrustlyConfigValueHandler</item>
             </argument>
         </arguments>
@@ -2417,6 +2737,14 @@
     <virtualType name="WorldlineVaultValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
         <arguments>
             <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="capture_config" xsi:type="string">WorldlineCardGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineCardGroupValueHandler</item>
+
                 <item name="default" xsi:type="string">WorldlineVaultConfigValueHandler</item>
             </argument>
         </arguments>

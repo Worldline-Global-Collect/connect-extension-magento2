@@ -11,7 +11,43 @@
                     <label>Payment product selection</label>
                     <group id="card" translate="label" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Card</label>
-                        <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=CARDS_DEBIT_AND_CREDIT">Cards</a> payment method.]]></comment>
+
+                        <field id="allowspecific" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Allowed Countries</label>
+                            <config_path>payment/worldline_payment_group_card/allowspecific</config_path>
+                            <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                            <comment>If set to specific, guest customers will not have a billing country and may not be able to checkout.</comment>
+                        </field>
+                        <field id="specificcountry" translate="label" type="multiselect" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Payment from Specific countries</label>
+                            <config_path>payment/worldline_payment_group_card/specificcountry</config_path>
+                            <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                            <depends>
+                                <field id="allowspecific">1</field>
+                            </depends>
+                        </field>
+                        <field id="min_order_total" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1">
+                            <label>Minimum Order Total</label>
+                            <validate>validate-number validate-zero-or-greater</validate>
+                            <config_path>payment/worldline_payment_group_card/min_order_total</config_path>
+                        </field>
+                        <field id="max_order_total" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1">
+                            <label>Maximum Order Total</label>
+                            <validate>validate-number validate-zero-or-greater</validate>
+                            <config_path>payment/worldline_payment_group_card/max_order_total</config_path>
+                        </field>
+                        <field id="capture_config" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Payment Action</label>
+                            <source_model>Worldline\Connect\Model\Config\Source\CaptureConfig</source_model>
+                            <config_path>payment/worldline_payment_group_card/capture_config</config_path>
+                        </field>
+                        <field id="payment_flow" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Payment flow type</label>
+                            <source_model>Worldline\Connect\Model\Config\Source\PaymentFlowType</source_model>
+                            <config_path>payment/worldline_payment_group_card/payment_flow</config_path>
+                        </field>
+
+                        <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=CARDS_DEBIT_AND_CREDIT">Cards</a> payment method.<br/>For large one-time transactions or setting specific min/max limits per payment product, contact the Worldline team.]]></comment>
                         <include path="Worldline_Connect::methods/cards.xml"/>
                         <include path="Worldline_Connect::methods/vault.xml"/>
                         <include path="Worldline_Connect::methods/card/american_express.xml"/>
@@ -40,13 +76,80 @@
                     </group>
                     <group id="instant_purchase" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Mobile</label>
-                        <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=MOBILE">Mobile</a> payment method.]]></comment>
+
+                        <field id="allowspecific" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Allowed Countries</label>
+                            <config_path>payment/worldline_payment_group_instant_purchase/allowspecific</config_path>
+                            <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                            <comment>If set to specific, guest customers will not have a billing country and may not be able to checkout.</comment>
+                        </field>
+                        <field id="specificcountry" translate="label" type="multiselect" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Payment from Specific countries</label>
+                            <config_path>payment/worldline_payment_group_instant_purchase/specificcountry</config_path>
+                            <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                            <depends>
+                                <field id="allowspecific">1</field>
+                            </depends>
+                        </field>
+                        <field id="min_order_total" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1">
+                            <label>Minimum Order Total</label>
+                            <validate>validate-number validate-zero-or-greater</validate>
+                            <config_path>payment/worldline_payment_group_instant_purchase/min_order_total</config_path>
+                        </field>
+                        <field id="max_order_total" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1">
+                            <label>Maximum Order Total</label>
+                            <validate>validate-number validate-zero-or-greater</validate>
+                            <config_path>payment/worldline_payment_group_instant_purchase/max_order_total</config_path>
+                        </field>
+                        <field id="capture_config" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Payment Action</label>
+                            <source_model>Worldline\Connect\Model\Config\Source\CaptureConfig</source_model>
+                            <config_path>payment/worldline_payment_group_instant_purchase/capture_config</config_path>
+                        </field>
+
+                        <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=MOBILE">Mobile</a> payment method.<br/>For large one-time transactions or setting specific min/max limits per payment product, contact the Worldline team.]]></comment>
                         <include path="Worldline_Connect::methods/instant_purchase/apple_pay.xml"/>
                         <include path="Worldline_Connect::methods/instant_purchase/google_pay.xml"/>
                     </group>
                     <group id="redirect" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
                         <label>Real-time banking</label>
-                        <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=REAL-TIME_BANKING">Real-time banking</a> payment method.]]></comment>
+
+                        <field id="allowspecific" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Allowed Countries</label>
+                            <config_path>payment/worldline_payment_group_redirect/allowspecific</config_path>
+                            <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                            <comment>If set to specific, guest customers will not have a billing country and may not be able to checkout.</comment>
+                        </field>
+                        <field id="specificcountry" translate="label" type="multiselect" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Payment from Specific countries</label>
+                            <config_path>payment/worldline_payment_group_redirect/specificcountry</config_path>
+                            <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                            <depends>
+                                <field id="allowspecific">1</field>
+                            </depends>
+                        </field>
+                        <field id="min_order_total" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1">
+                            <label>Minimum Order Total</label>
+                            <validate>validate-number validate-zero-or-greater</validate>
+                            <config_path>payment/worldline_payment_group_redirect/min_order_total</config_path>
+                        </field>
+                        <field id="max_order_total" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="1">
+                            <label>Maximum Order Total</label>
+                            <validate>validate-number validate-zero-or-greater</validate>
+                            <config_path>payment/worldline_payment_group_redirect/max_order_total</config_path>
+                        </field>
+                        <field id="capture_config" translate="label" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Payment Action</label>
+                            <source_model>Worldline\Connect\Model\Config\Source\CaptureConfig</source_model>
+                            <config_path>payment/worldline_payment_group_redirect/capture_config</config_path>
+                        </field>
+                        <field id="payment_flow" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Payment flow type</label>
+                            <source_model>Worldline\Connect\Model\Config\Source\PaymentFlowType</source_model>
+                            <config_path>payment/worldline_payment_group_redirect/payment_flow</config_path>
+                        </field>
+
+                        <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=REAL-TIME_BANKING">Real-time banking</a> payment method.<br/>For large one-time transactions or setting specific min/max limits per payment product, contact the Worldline team.]]></comment>
                         <include path="Worldline_Connect::methods/redirect/ideal.xml"/>
                         <include path="Worldline_Connect::methods/redirect/account_to_account.xml"/>
                         <include path="Worldline_Connect::methods/redirect/paypal.xml"/>

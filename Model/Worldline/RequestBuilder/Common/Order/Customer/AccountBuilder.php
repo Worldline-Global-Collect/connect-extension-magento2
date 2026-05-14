@@ -140,6 +140,7 @@ class AccountBuilder
         }
 
         $customer = $this->customerRepository->getById($order->getCustomerId());
+
         return $this->dateTimeFactory->create($customer->getCreatedAt())->format('Ymd');
     }
 
@@ -157,6 +158,7 @@ class AccountBuilder
         }
 
         $customer = $this->customerRepository->getById($quote->getCustomerId());
+
         return $this->dateTimeFactory->create($customer->getCreatedAt())->format('Ymd');
     }
 
@@ -172,13 +174,15 @@ class AccountBuilder
             // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
             throw new LocalizedException(__('Cannot get customer change date'));
         }
+
         $customer = $this->customerRepository->getById($order->getCustomerId());
+
         $customerUpdatedAt = $this->dateTimeFactory->create($customer->getUpdatedAt());
         $latestCustomerAddressUpdatedAt = $this->getLatestCustomerAddressUpdatedAt($customer->getId());
 
-        return $latestCustomerAddressUpdatedAt > $customerUpdatedAt ?
-            $latestCustomerAddressUpdatedAt->format('Ymd') :
-            $customerUpdatedAt->format('Ymd');
+        return !$latestCustomerAddressUpdatedAt || $latestCustomerAddressUpdatedAt < $customerUpdatedAt
+            ? $customerUpdatedAt->format('Ymd')
+            : $latestCustomerAddressUpdatedAt->format('Ymd');
     }
 
     /**
@@ -197,9 +201,9 @@ class AccountBuilder
         $customerUpdatedAt = $this->dateTimeFactory->create($customer->getUpdatedAt());
         $latestCustomerAddressUpdatedAt = $this->getLatestCustomerAddressUpdatedAt($customer->getId());
 
-        return $latestCustomerAddressUpdatedAt > $customerUpdatedAt ?
-            $latestCustomerAddressUpdatedAt->format('Ymd') :
-            $customerUpdatedAt->format('Ymd');
+        return !$latestCustomerAddressUpdatedAt || $latestCustomerAddressUpdatedAt < $customerUpdatedAt
+            ? $customerUpdatedAt->format('Ymd')
+            : $latestCustomerAddressUpdatedAt->format('Ymd');
     }
 
     /**
@@ -220,6 +224,7 @@ class AccountBuilder
             ->create();
 
         $customerOrders = $this->orderRepository->getList($searchCriteria);
+
         return $customerOrders->getTotalCount() > 0;
     }
 
@@ -241,10 +246,16 @@ class AccountBuilder
             ->create();
 
         $customerOrders = $this->orderRepository->getList($searchCriteria);
+
         return $customerOrders->getTotalCount() > 0;
     }
 
-    private function getLatestCustomerAddressUpdatedAt(int $customerId): DateTime
+    /**
+     * @param int $customerId
+     *
+     * @return DateTime|null
+     */
+    private function getLatestCustomerAddressUpdatedAt(int $customerId): ?DateTime
     {
         $collection = $this->customerAddressCollectionFactory->create();
         $collection->addFieldToFilter('parent_id', $customerId);
@@ -252,6 +263,10 @@ class AccountBuilder
         $collection->setPageSize(1);
 
         $dateTime = $collection->getFirstItem()->getData('updated_at');
+
+        if (!$dateTime) {
+            return null;
+        }
 
         return $this->dateTimeFactory->create($dateTime);
     }
