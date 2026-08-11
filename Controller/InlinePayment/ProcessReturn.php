@@ -24,6 +24,7 @@ use Worldline\Connect\Model\Worldline\Api\ClientInterface;
 use Worldline\Connect\Model\Worldline\StatusInterface;
 
 use function __;
+use function in_array;
 use function mb_strtolower;
 
 class ProcessReturn extends Action
@@ -102,14 +103,8 @@ class ProcessReturn extends Action
 
         /** @var Order\Payment $orderPayment */
         $orderPayment = $order->getPayment();
-        if ($payment->status === StatusInterface::REJECTED) {
+        if (in_array($payment->status, StatusInterface::DENIED_STATUSES, true)) {
             $this->inlinePaymentStatus->process($order, $payment);
-
-            $order->setState(Order::STATE_PAYMENT_REVIEW);
-
-            $orderPayment->setIsTransactionClosed(true);
-            $orderPayment->setData('is_transaction_denied', true);
-            $orderPayment->update();
 
             $this->orderService->save($order);
 

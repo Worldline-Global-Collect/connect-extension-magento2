@@ -8,7 +8,7 @@ To use this extension you need to have a Worldline Connect account. This can be 
 
 ## Compatibility
 
-This module is compatible with Magento 2.4.5 to 2.4.8 and PHP 8.1 to 8.3.
+This module is compatible with Magento 2.4.5 to 2.4.9 and PHP 8.1 to 8.5.
 
 ## Installation Instructions
 

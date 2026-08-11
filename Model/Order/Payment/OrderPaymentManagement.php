@@ -114,7 +114,7 @@ class OrderPaymentManagement implements OrderPaymentManagementInterface
         Payment $payment,
         string $key,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        string $nestedKey = null
+        ?string $nestedKey = null
     ): ?string {
         if ($status = $this->statusResponseManager->get($payment, $payment->getLastTransId())) {
             // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName

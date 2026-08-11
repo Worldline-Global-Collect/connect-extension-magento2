@@ -17,6 +17,7 @@ interface StatusInterface
         self::AUTHORIZATION_REQUESTED,
         self::PENDING_APPROVAL,
         self::PENDING_CAPTURE,
+        self::CAPTURE_IN_PROGRESS,
         self::CAPTURE_REQUESTED,
         self::CAPTURED,
         self::PAID,
@@ -66,6 +67,7 @@ interface StatusInterface
     public const AUTHORIZATION_REQUESTED = 'AUTHORIZATION_REQUESTED';
     public const PENDING_APPROVAL = 'PENDING_APPROVAL';
     public const PENDING_CAPTURE = 'PENDING_CAPTURE';
+    public const CAPTURE_IN_PROGRESS = 'CAPTURE_IN_PROGRESS';
     public const CAPTURE_REQUESTED = 'CAPTURE_REQUESTED';
     public const CAPTURED = 'CAPTURED';
     public const PAID = 'PAID';

@@ -2935,6 +2935,12 @@
         </arguments>
     </type>
 
+    <type name="Worldline\Connect\WebApi\RedirectManagement\CreatePaymentDataAssigner">
+        <arguments>
+            <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Card</argument>
+        </arguments>
+    </type>
+
     <!-- Auto order update setup-->
     <virtualType name="realTimeHandler" type="Worldline\Connect\Logger\Handler\InfoHandler">
         <arguments>

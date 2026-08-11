@@ -38,7 +38,7 @@ class Vault extends BaseVault
         OrderPaymentExtensionInterfaceFactory $paymentExtensionFactory,
         $code,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        Json $jsonSerializer = null
+        ?Json $jsonSerializer = null
     ) {
         parent::__construct(
             $config,

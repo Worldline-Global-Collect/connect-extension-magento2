@@ -53,6 +53,11 @@ define([
         },
 
         onCardProductUpdate: function (product) {
+
+            if (this.product.id !== 'cards') {
+                return;
+            }
+
             var me = this;
             var targetFieldId = 'cardholderName';
             var containerUid = this.uid;
@@ -130,12 +135,13 @@ define([
         },
 
         getCustomProductFieldLayout: function (field, product) {
-            if (product.id === 'cards' && field.id === 'cardNumber') {
+            if ((product.id === 'cards' || product.paymentMethod === 'card') && field.id === 'cardNumber') {
                 return {
                     parent: this.name,
                     component: 'Worldline_Connect/js/view/payment/component/card/field/cardnumber',
                     field: field,
                     account: this.account,
+                    showBrandLogos: product.id === 'cards',
                     sortOrder: field?.displayHints?.displayOrder ?? DEFAULT_SORT_ORDER_CARD_NUMBER
                 }
             }

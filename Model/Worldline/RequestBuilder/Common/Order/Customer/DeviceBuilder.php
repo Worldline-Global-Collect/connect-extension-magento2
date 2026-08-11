@@ -4,6 +4,7 @@ namespace Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\Customer
 
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Api\Data\OrderInterface;
 use Worldline\Connect\Model\Worldline\RequestBuilder\Common\Order\Customer\Device\BrowserDataBuilder;
@@ -30,14 +31,22 @@ class DeviceBuilder
     // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
     private $request;
 
+    /**
+     * @var RemoteAddress
+     */
+    // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
+    private $remoteAddress;
+
     public function __construct(
         CustomerDeviceFactory $customerDeviceFactory,
         BrowserDataBuilder $browserDataBuilder,
-        Http $request
+        Http $request,
+        RemoteAddress $remoteAddress
     ) {
         $this->customerDeviceFactory = $customerDeviceFactory;
         $this->browserDataBuilder = $browserDataBuilder;
         $this->request = $request;
+        $this->remoteAddress = $remoteAddress;
     }
 
     public function create(OrderInterface $order): CustomerDevice
@@ -52,7 +61,7 @@ class DeviceBuilder
             // Do nothing
         }
 
-        $customerDevice->ipAddress = $order->getRemoteIp();
+        $customerDevice->ipAddress = $this->resolveIpAddress($order->getRemoteIp());
 
         return $customerDevice;
     }
@@ -69,9 +78,26 @@ class DeviceBuilder
             // Do nothing
         }
 
-        $customerDevice->ipAddress = $quote->getRemoteIp();
+        $customerDevice->ipAddress = $this->resolveIpAddress($quote->getRemoteIp());
 
         return $customerDevice;
+    }
+
+    /**
+     * Resolve the customer IP address for the Worldline request.
+     *
+     * The persisted quote/order `remote_ip` is only populated as a side effect of the Luma
+     * checkout session (or at order placement), so in the "order created after redirection" flow
+     * the create-payment request can be built from a quote whose `remote_ip` is still empty
+     * (notably logged-in customers using grouped cards). Fall back to the live request address so
+     * the IP is always sent — the create-payment call runs inside the customer's HTTP request.
+     *
+     * @param string|null $persistedIp
+     * @return string|null
+     */
+    private function resolveIpAddress(?string $persistedIp): ?string
+    {
+        return $persistedIp ?: ($this->remoteAddress->getRemoteAddress() ?: null);
     }
 
     /**

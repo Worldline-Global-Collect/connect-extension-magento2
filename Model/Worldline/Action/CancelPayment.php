@@ -6,6 +6,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment\Transaction;
+use Worldline\Connect\Model\Config;
 use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Model\StatusResponseManager;
 use Worldline\Connect\Model\Transaction\TransactionManager;
@@ -83,7 +84,23 @@ class CancelPayment extends AbstractAction implements ActionInterface
             return;
         }
 
-        $response = $this->worldlineClient->worldlinePaymentCancel($transactionId);
+        /**
+         * Cancel must target the real Worldline payment id, never a
+         * hosted-checkout id / UUID. If no payment id is available (e.g. the consumer
+         * cancelled the hosted checkout before a payment was created) there is nothing to
+         * cancel remotely — settle the order locally instead of looping on 404.
+         */
+        $worldlinePaymentId = (string) $payment->getAdditionalInformation(Config::PAYMENT_ID_KEY);
+        if ($worldlinePaymentId === '') {
+            if (ctype_digit((string) $transactionId)) {
+                $worldlinePaymentId = (string) $transactionId;
+            } else {
+                $this->orderRepository->save($order);
+                return;
+            }
+        }
+
+        $response = $this->worldlineClient->worldlinePaymentCancel($worldlinePaymentId);
         $this->statusResolver->resolve($order, $response->payment);
 
         $this->orderRepository->save($order);

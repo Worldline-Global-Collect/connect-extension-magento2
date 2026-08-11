@@ -10,6 +10,7 @@ use Worldline\Connect\Sdk\CallContext;
 use Worldline\Connect\Sdk\Communication\RequestObject;
 use Worldline\Connect\Sdk\Communication\ResponseClassMap;
 use Worldline\Connect\Sdk\CommunicatorConfiguration;
+use Worldline\Connect\Sdk\Domain\DataObject;
 use Worldline\Connect\Sdk\V1\ResponseExceptionFactory;
 
 // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
@@ -37,12 +38,12 @@ class Communicator extends \Worldline\Connect\Sdk\Communicator
         $relativeUriPath,
         $clientMetaInfo = '',
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        RequestObject $requestParameters = null,
+        ?RequestObject $requestParameters = null,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        CallContext $callContext = null,
+        ?CallContext $callContext = null,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        ResponseExceptionFactory $responseExceptionFactory = null
-    ) {
+        ?ResponseExceptionFactory $responseExceptionFactory = null
+    ): ?DataObject {
         try {
             // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
             return parent::get(...func_get_args());
@@ -61,12 +62,12 @@ class Communicator extends \Worldline\Connect\Sdk\Communicator
         $relativeUriPath,
         $clientMetaInfo = '',
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        RequestObject $requestParameters = null,
+        ?RequestObject $requestParameters = null,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        CallContext $callContext = null,
+        ?CallContext $callContext = null,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        ResponseExceptionFactory $responseExceptionFactory = null
-    ) {
+        ?ResponseExceptionFactory $responseExceptionFactory = null
+    ): ?DataObject {
         try {
             // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
             return parent::delete(...func_get_args());
@@ -86,12 +87,12 @@ class Communicator extends \Worldline\Connect\Sdk\Communicator
         $clientMetaInfo = '',
         $requestBodyObject = null,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        RequestObject $requestParameters = null,
+        ?RequestObject $requestParameters = null,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        CallContext $callContext = null,
+        ?CallContext $callContext = null,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        ResponseExceptionFactory $responseExceptionFactory = null
-    ) {
+        ?ResponseExceptionFactory $responseExceptionFactory = null
+    ): ?DataObject {
         try {
             // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
             return parent::post(...func_get_args());
@@ -111,12 +112,12 @@ class Communicator extends \Worldline\Connect\Sdk\Communicator
         $clientMetaInfo = '',
         $requestBodyObject = null,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        RequestObject $requestParameters = null,
+        ?RequestObject $requestParameters = null,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        CallContext $callContext = null,
+        ?CallContext $callContext = null,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        ResponseExceptionFactory $responseExceptionFactory = null
-    ) {
+        ?ResponseExceptionFactory $responseExceptionFactory = null
+    ): ?DataObject {
         try {
             // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
             return parent::put(...func_get_args());

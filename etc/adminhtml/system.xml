@@ -41,7 +41,15 @@
                             <source_model>Worldline\Connect\Model\Config\Source\CaptureConfig</source_model>
                             <config_path>payment/worldline_payment_group_card/capture_config</config_path>
                         </field>
-                        <field id="payment_flow" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <field id="auto_capture_delay_days" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Automatic Capture After</label>
+                            <source_model>Worldline\Connect\Model\Config\Source\AutoCaptureDays</source_model>
+                            <config_path>payment/worldline_payment_group_card/auto_capture_delay_days</config_path>
+                            <depends>
+                                <field id="capture_config">authorize</field>
+                            </depends>
+                        </field>
+                        <field id="payment_flow" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
                             <label>Payment flow type</label>
                             <source_model>Worldline\Connect\Model\Config\Source\PaymentFlowType</source_model>
                             <config_path>payment/worldline_payment_group_card/payment_flow</config_path>
@@ -106,6 +114,14 @@
                             <source_model>Worldline\Connect\Model\Config\Source\CaptureConfig</source_model>
                             <config_path>payment/worldline_payment_group_instant_purchase/capture_config</config_path>
                         </field>
+                        <field id="auto_capture_delay_days" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Automatic Capture After</label>
+                            <source_model>Worldline\Connect\Model\Config\Source\AutoCaptureDays</source_model>
+                            <config_path>payment/worldline_payment_group_instant_purchase/auto_capture_delay_days</config_path>
+                            <depends>
+                                <field id="capture_config">authorize</field>
+                            </depends>
+                        </field>
 
                         <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=MOBILE">Mobile</a> payment method.<br/>For large one-time transactions or setting specific min/max limits per payment product, contact the Worldline team.]]></comment>
                         <include path="Worldline_Connect::methods/instant_purchase/apple_pay.xml"/>
@@ -143,7 +159,15 @@
                             <source_model>Worldline\Connect\Model\Config\Source\CaptureConfig</source_model>
                             <config_path>payment/worldline_payment_group_redirect/capture_config</config_path>
                         </field>
-                        <field id="payment_flow" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <field id="auto_capture_delay_days" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                            <label>Automatic Capture After</label>
+                            <source_model>Worldline\Connect\Model\Config\Source\AutoCaptureDays</source_model>
+                            <config_path>payment/worldline_payment_group_redirect/auto_capture_delay_days</config_path>
+                            <depends>
+                                <field id="capture_config">authorize</field>
+                            </depends>
+                        </field>
+                        <field id="payment_flow" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="1">
                             <label>Payment flow type</label>
                             <source_model>Worldline\Connect\Model\Config\Source\PaymentFlowType</source_model>
                             <config_path>payment/worldline_payment_group_redirect/payment_flow</config_path>

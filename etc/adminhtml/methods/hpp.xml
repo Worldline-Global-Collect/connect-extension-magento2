@@ -43,6 +43,14 @@
             <source_model>Worldline\Connect\Model\Config\Source\CaptureConfig</source_model>
             <config_path>payment/worldline_hpp/capture_config</config_path>
         </field>
+        <field id="auto_capture_delay_days" translate="label" type="select" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Automatic Capture After</label>
+            <source_model>Worldline\Connect\Model\Config\Source\AutoCaptureDays</source_model>
+            <config_path>payment/worldline_hpp/auto_capture_delay_days</config_path>
+            <depends>
+                <field id="capture_config">authorize</field>
+            </depends>
+        </field>
         <field id="hosted_checkout_guest_variant" translate="label comment tooltip" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Variant ID Guest Flow</label>
             <config_path>worldline_connect/checkout/hosted_checkout_guest_variant</config_path>
@@ -57,28 +65,28 @@
                 <label>Exclude payment product groups</label>
                 <config_path>payment/worldline_hpp/exclude_payment_product_groups</config_path>
                 <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\PaymentProductList</frontend_model>
-                <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                <backend_model>Worldline\Connect\Model\Config\Backend\PaymentProductGroupList</backend_model>
                 <comment><![CDATA[Configure "cards" to exclude this product group, other groups are currently not available. Only the configured products groups will be available at the checkout.]]></comment>
             </field>
             <field id="exclude_payment_products" translate="label comment tooltip" type="text" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Exclude payment products</label>
                 <config_path>payment/worldline_hpp/exclude_payment_products</config_path>
                 <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\PaymentProductList</frontend_model>
-                <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
-                <comment><![CDATA[Exclude the configured payment products. Find the product IDs <a target="_blank" href="https://apireference.connect.worldline-solutions.com/s2sapi/v1/en_US/java/paymentproducts.html?paymentPlatform=GLOBALCOLLECT">here</a>]]></comment>
+                <backend_model>Worldline\Connect\Model\Config\Backend\PaymentProductIdList</backend_model>
+                <comment><![CDATA[Exclude the configured payment products. Find the product IDs <a target="_blank" href="https://apireference.connect.worldline-solutions.com/s2sapi/v1/en_US/java/paymentproducts.html?paymentPlatform=GLOBALCOLLECT">here</a>.]]></comment>
             </field>
             <field id="include_payment_product_groups" translate="label comment tooltip" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Include payment product groups</label>
                 <config_path>payment/worldline_hpp/include_payment_product_groups</config_path>
                 <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\PaymentProductList</frontend_model>
-                <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                <backend_model>Worldline\Connect\Model\Config\Backend\PaymentProductGroupList</backend_model>
                 <comment><![CDATA[Configure "cards" to include this product group, other groups are currently not available. Only the configured products groups will be available at the checkout.]]></comment>
             </field>
             <field id="include_payment_products" translate="label comment tooltip" type="text" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Include payment products</label>
                 <config_path>payment/worldline_hpp/include_payment_products</config_path>
                 <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\PaymentProductList</frontend_model>
-                <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                <backend_model>Worldline\Connect\Model\Config\Backend\PaymentProductIdList</backend_model>
                 <comment><![CDATA[Make only the configured payment products available. Find the product IDs here <a target="_blank" href="https://apireference.connect.worldline-solutions.com/s2sapi/v1/en_US/java/paymentproducts.html?paymentPlatform=GLOBALCOLLECT">here</a>.]]></comment>
             </field>
         </group>

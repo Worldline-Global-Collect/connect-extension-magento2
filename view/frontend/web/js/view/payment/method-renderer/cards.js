@@ -151,13 +151,15 @@ define(
             getData: function () {
                 const currentProduct = paymentData.getCurrentCardPaymentProduct();
                 const productId = currentProduct ? currentProduct.id : this.code;
+                let product = window.checkoutConfig.payment.worldline.products[this.code];
 
                 return {
                     'method': this.item.method,
                     'additional_data': {
                         'input': paymentData.getCurrentPayload(),
                         'product': productId,
-                        'tokenize': paymentData.fieldData['tokenize']
+                        'tokenize': paymentData.fieldData['tokenize'],
+                        'payment_flow': product && product.hosted ? 'hosted' : 'inline'
                     }
                 };
             },
@@ -169,7 +171,7 @@ define(
 
                 var product = window.checkoutConfig.payment.worldline.products[this.code];
 
-                if (product.hosted && window.checkoutConfig.payment.worldline.orderCreationFlow === window.checkoutConfig.payment.worldline.orderCreationFlowAfter) {
+                if (window.checkoutConfig.payment.worldline.orderCreationFlow === window.checkoutConfig.payment.worldline.orderCreationFlowAfter) {
                     var self = this;
 
                     if (event && typeof event.preventDefault === 'function') {
@@ -249,12 +251,25 @@ define(
                         });
                     };
 
-                    try {
-                        executePayment();
-                    } catch (e) {
-                        try { fullScreenLoader.stopLoader(); } catch (ee) {}
-                        console.error('placeOrder unexpected error', e);
-                        alert('Unexpected error. See console for details.');
+                    var runPayment = function () {
+                        try {
+                            executePayment();
+                        } catch (e) {
+                            try { fullScreenLoader.stopLoader(); } catch (ee) {}
+                            console.error('placeOrder unexpected error', e);
+                            alert('Unexpected error. See console for details.');
+                        }
+                    };
+
+                    if (product && product.hosted) {
+                        runPayment();
+                    } else {
+                        paymentData.setCurrentPaymentProduct(this.product);
+                        this.createPayload().then(runPayment, function (error) {
+                            try { fullScreenLoader.stopLoader(); } catch (e) {}
+                            console.error('Could not create payload.', error);
+                            alert('Payment error: ' + error);
+                        });
                     }
                 } else {
                     let parentMethod = this._super.bind(this);

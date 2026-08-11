@@ -26,7 +26,7 @@ class PsrLogger implements CommunicatorLogger
     /**
      * {@inheritdoc}
      */
-    public function log($message)
+    public function log(string $message): void
     {
         $this->logger->info($message);
     }
@@ -35,7 +35,7 @@ class PsrLogger implements CommunicatorLogger
      * {@inheritdoc}
      */
     // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
-    public function logException($message, \Exception $exception)
+    public function logException(string $message, \Exception $exception): void
     {
         $this->logger->error($message, ['exception' => $exception]);
     }

@@ -39,6 +39,14 @@
             <source_model>Worldline\Connect\Model\Config\Source\CaptureConfig</source_model>
             <config_path>payment/worldline_link_plus_payment_link/capture_config</config_path>
         </field>
+        <field id="auto_capture_delay_days" translate="label" type="select" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Automatic Capture After</label>
+            <source_model>Worldline\Connect\Model\Config\Source\AutoCaptureDays</source_model>
+            <config_path>payment/worldline_link_plus_payment_link/auto_capture_delay_days</config_path>
+            <depends>
+                <field id="capture_config">authorize</field>
+            </depends>
+        </field>
         <field id="url" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>URL</label>
             <config_path>payment/worldline_link_plus_payment_link/url</config_path>

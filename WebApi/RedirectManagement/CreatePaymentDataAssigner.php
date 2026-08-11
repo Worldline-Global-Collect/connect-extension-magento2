@@ -7,8 +7,10 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Payment\Model\Method\AbstractMethod;
 use Magento\Quote\Api\Data\PaymentInterface;
 use Worldline\Connect\Api\TokenManagerInterface;
+use Worldline\Connect\Model\Config;
 use Worldline\Connect\Model\DataAssigner\DataAssignerInterface;
 use Worldline\Connect\Model\Worldline\Action\CreateHostedCheckout;
+use Worldline\Connect\Model\Worldline\Action\CreatePayment;
 
 class CreatePaymentDataAssigner implements DataAssignerInterface
 {
@@ -18,15 +20,22 @@ class CreatePaymentDataAssigner implements DataAssignerInterface
     private $createRequest;
 
     /**
+     * @var CreatePayment
+     */
+    private $createPayment;
+
+    /**
      * @var TokenManagerInterface
      */
     private $tokenManager;
 
     public function __construct(
         CreateHostedCheckout $createRequest,
+        CreatePayment $createPayment,
         TokenManagerInterface $tokenManager
     ) {
         $this->createRequest = $createRequest;
+        $this->createPayment = $createPayment;
         $this->tokenManager = $tokenManager;
     }
 
@@ -53,6 +62,10 @@ class CreatePaymentDataAssigner implements DataAssignerInterface
         }
         $requiresApproval = $payment->getMethodInstance()->getConfigData('capture_config') === AbstractMethod::ACTION_AUTHORIZE;
 
-        $this->createRequest->processNew($quote->getPayment(), $requiresApproval);
+        $flow = $additionalInformation[Config::PAYMENT_FLOW_KEY]
+            ?? $quote->getPayment()->getAdditionalInformation(Config::PAYMENT_FLOW_KEY);
+
+        $action = $flow === 'inline' ? $this->createPayment : $this->createRequest;
+        $action->processNew($quote->getPayment(), $requiresApproval);
     }
 }

@@ -53,9 +53,9 @@ class ClientSession implements ResolverInterface
         $context,
         ResolveInfo $info,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        array $value = null,
+        ?array $value = null,
         // phpcs:ignore SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue.NullabilityTypeMissing
-        array $args = null
+        ?array $args = null
     ) {
         $session = $this->customerSession->isLoggedIn() ?
             $this->sessionManager->createCustomerSession((int) $this->customerSession->getCustomerId()) :

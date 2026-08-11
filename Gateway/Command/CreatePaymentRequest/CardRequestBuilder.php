@@ -162,12 +162,15 @@ class CardRequestBuilder implements CreatePaymentRequestBuilder
             return;
         }
 
-        $orderPaymentExtension = $payment->getExtensionAttributes();
-        if ($orderPaymentExtension === null) {
+        $quotePaymentExtension = $payment->getExtensionAttributes();
+        if (
+            $quotePaymentExtension === null
+            || !method_exists($quotePaymentExtension, 'getVaultPaymentToken')
+        ) {
             return;
         }
 
-        $paymentToken = $orderPaymentExtension->getVaultPaymentToken();
+        $paymentToken = $quotePaymentExtension->getVaultPaymentToken();
         if ($paymentToken === null) {
             return;
         }

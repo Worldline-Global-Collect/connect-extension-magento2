@@ -64,10 +64,10 @@ class ProcessEvents extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int|null|void
+     * @return int
      * @throws LocalizedException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             $this->appState->getAreaCode();
@@ -78,5 +78,7 @@ class ProcessEvents extends Command
         $output->writeln('Start processing events...');
         $this->processor->processBatch($amount);
         $output->writeln('Finished processing events');
+
+        return Command::SUCCESS;
     }
 }

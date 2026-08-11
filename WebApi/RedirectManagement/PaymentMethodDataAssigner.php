@@ -5,6 +5,7 @@ namespace Worldline\Connect\WebApi\RedirectManagement;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Quote\Api\Data\PaymentInterface;
+use Worldline\Connect\Model\Config;
 use Worldline\Connect\Model\DataAssigner\DataAssignerInterface;
 
 class PaymentMethodDataAssigner implements DataAssignerInterface
@@ -27,5 +28,10 @@ class PaymentMethodDataAssigner implements DataAssignerInterface
                 $additionalInformation['is_active_payment_token_enabler']
             );
         }
+
+        $payment->setAdditionalInformation(
+            Config::PAYMENT_FLOW_KEY,
+            $additionalInformation[Config::PAYMENT_FLOW_KEY] ?? 'hosted'
+        );
     }
 }

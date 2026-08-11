@@ -17,9 +17,11 @@ define(
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/full-screen-loader',
         'Magento_Customer/js/model/customer',
+        'Worldline_Connect/js/model/payment-method/card-brand-matcher',
+        'mage/translate',
         'Magento_Checkout/js/model/url-builder'
     ],
-    function ($, _, Component, layout, registry, paymentData, createPayload, redirectOnSuccessAction, config, getPaymentProduct, ko, quote, fullScreenLoader, customer) {
+    function ($, _, Component, layout, registry, paymentData, createPayload, redirectOnSuccessAction, config, getPaymentProduct, ko, quote, fullScreenLoader, customer, cardBrandMatcher, $t) {
         'use strict';
 
         return Component.extend({
@@ -38,6 +40,9 @@ define(
                 this._super();
                 this.title = ko.observable('');
                 this.logo = ko.observable('');
+                this.cardBrandMismatch = ko.observable(false);
+                this.cardBrandErrorMessage = $t('The entered card type does not match the selected payment method.');
+                paymentData.currentCardIinDetails.subscribe(this.checkCardBrand.bind(this));
                 this.initChildren();
                 return this;
             },
@@ -131,7 +136,35 @@ define(
                     }
                 }
 
+                if (this.cardBrandMismatch()) {
+                    fieldsValid = false;
+                }
+
                 return fieldsValid;
+            },
+
+            /**
+             * React to the brand the Worldline IIN lookup detected while the shopper types (the same
+             * detection the grouped "Cards" flow uses, published on paymentData.currentCardIinDetails).
+             *
+             * The selected product id is sent to the gateway regardless of the card actually typed and
+             * the encrypted card never reaches the server, so a mismatch can only be caught here. The
+             * card's primary product AND its co-brands are considered, so a co-branded card (e.g. Carte
+             * Bancaire + Mastercard) is accepted on any of its real brands and blocked on the rest.
+             * Runs only for the active method; unknown methods never block.
+             */
+            checkCardBrand: function () {
+                let selectedMethod = quote.paymentMethod();
+                if (!selectedMethod || selectedMethod.method !== this.getCode()) {
+                    return;
+                }
+
+                let product = window.checkoutConfig.payment.worldline.products[this.code];
+                let iinDetails = paymentData.getCurrentCardIinDetails();
+                let mismatch = Boolean(product) && !product.hosted && cardBrandMatcher.isKnownBrand(product.id)
+                    && Boolean(iinDetails) && !cardBrandMatcher.matchesByIin(product.id, iinDetails);
+
+                this.cardBrandMismatch(mismatch);
             },
 
             getData: function () {
@@ -144,7 +177,8 @@ define(
                     'additional_data': {
                         'input': paymentData.getCurrentPayload(),
                         'product': product.id,
-                        'tokenize': paymentData.tokenize().indexOf(product.id) !== -1
+                        'tokenize': paymentData.tokenize().indexOf(product.id) !== -1,
+                        'payment_flow': product.hosted ? 'hosted' : 'inline'
                     }
                 };
 
@@ -162,7 +196,7 @@ define(
 
                 var product = window.checkoutConfig.payment.worldline.products[this.code];
 
-                if (product.hosted && window.checkoutConfig.payment.worldline.orderCreationFlow === window.checkoutConfig.payment.worldline.orderCreationFlowAfter) {
+                if (window.checkoutConfig.payment.worldline.orderCreationFlow === window.checkoutConfig.payment.worldline.orderCreationFlowAfter) {
                     var self = this;
 
                     if (event && typeof event.preventDefault === 'function') {
@@ -242,12 +276,25 @@ define(
                         });
                     };
 
-                    try {
-                        executePayment();
-                    } catch (e) {
-                        try { fullScreenLoader.stopLoader(); } catch (ee) {}
-                        console.error('placeOrder unexpected error', e);
-                        alert('Unexpected error. See console for details.');
+                    var runPayment = function () {
+                        try {
+                            executePayment();
+                        } catch (e) {
+                            try { fullScreenLoader.stopLoader(); } catch (ee) {}
+                            console.error('placeOrder unexpected error', e);
+                            alert('Unexpected error. See console for details.');
+                        }
+                    };
+
+                    if (product && product.hosted) {
+                        runPayment();
+                    } else {
+                        paymentData.setCurrentPaymentProduct(this.product);
+                        this.createPayload().then(runPayment, function (error) {
+                            try { fullScreenLoader.stopLoader(); } catch (e) {}
+                            console.error('Could not create payload.', error);
+                            alert('Payment error: ' + error);
+                        });
                     }
                 } else {
                     let parentMethod = this._super.bind(this);

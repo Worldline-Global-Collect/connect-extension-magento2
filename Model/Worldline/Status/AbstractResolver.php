@@ -37,7 +37,7 @@ abstract class AbstractResolver
 
         // phpcs:ignore PSR12.ControlStructures.ControlStructureSpacing.FirstExpressionLine, SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
         if (array_key_exists(static::KEY_STATUS_CODE_CHANGE_DATE_TIME, $additionalInformation) &&
-            $additionalInformation[static::KEY_STATUS_CODE_CHANGE_DATE_TIME] >= $newStatusChangeDateTime
+            $additionalInformation[static::KEY_STATUS_CODE_CHANGE_DATE_TIME] > $newStatusChangeDateTime
         ) {
             return false;
         }
@@ -48,7 +48,7 @@ abstract class AbstractResolver
         // phpcs:ignore PSR12.ControlStructures.ControlStructureSpacing.FirstExpressionLine
         if ($existingStatus
             // phpcs:ignore PSR12.ControlStructures.ControlStructureSpacing.CloseParenthesisLine
-            && $existingStatus->statusOutput->statusCodeChangeDateTime >= $newStatusChangeDateTime) {
+            && $existingStatus->statusOutput->statusCodeChangeDateTime > $newStatusChangeDateTime) {
             return false;
         }
         // --- end

@@ -22,7 +22,7 @@ class DatabaseLogger implements CommunicatorLogger
     /**
      * {@inheritdoc}
      */
-    public function log($message)
+    public function log(string $message): void
     {
         $this->persist($message, new DateTimeImmutable('now'), EventInterface::STATUS_SUCCESS);
     }
@@ -30,7 +30,7 @@ class DatabaseLogger implements CommunicatorLogger
     /**
      * {@inheritdoc}
      */
-    public function logException($message, Exception $exception)
+    public function logException(string $message, Exception $exception): void
     {
         $this->persist($message, new DateTimeImmutable('now'), EventInterface::STATUS_FAILED);
     }

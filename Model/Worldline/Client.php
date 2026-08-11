@@ -23,6 +23,7 @@ use Worldline\Connect\Sdk\V1\Domain\PaymentProductResponse;
 use Worldline\Connect\Sdk\V1\Domain\RefundRequest;
 use Worldline\Connect\Sdk\V1\Domain\SessionRequest;
 use Worldline\Connect\Sdk\V1\Domain\TokenizePaymentRequest;
+use Worldline\Connect\Sdk\V1\Merchant\Payments\GetPaymentParams;
 use Worldline\Connect\Sdk\V1\Merchant\Productgroups\FindProductgroupsParamsFactory;
 use Worldline\Connect\Sdk\V1\Merchant\Products\GetProductParams;
 
@@ -307,7 +308,7 @@ class Client implements ClientInterface
             ->getWorldlineClient($scopeId)->v1()
             ->merchant($this->ePaymentsConfig->getMerchantId($scopeId))
             ->payments()
-            ->get($worldlinePaymentId);
+            ->get($worldlinePaymentId, new GetPaymentParams());
 
         return $paymentResponse;
     }

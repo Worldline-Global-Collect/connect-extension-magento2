@@ -35,7 +35,8 @@ define(
                 let data = {
                     'method': this.item.method,
                     'additional_data': {
-                        'input': paymentData.getCurrentPayload()
+                        'input': paymentData.getCurrentPayload(),
+                        'payment_flow': 'hosted'
                     }
                 };
 

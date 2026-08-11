@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 4.21.0 - 2026-08-11
+
+- Add compatibility with Magento 2.4.9 and PHP 8.5
+- Upgrade PHP SDK to 9.0.0 version
+- Add delayed capture cron based on payment configuration
+- Add 3DS redirection order status alignment
+- Add a fallback for the IP address fields
+- Add card brand type validation
+- Fix the Cards payment method in redirect mode
+- Validate the payment product group and payment product ID configuration fields
+
 ## 4.15.0 - 2026-05-14
 
 - Merge generic configuration settings per payment method group
@@ -374,7 +385,7 @@ an expired session token and not seeing any payment methods.
 
 ### Changed
 
-- **BC Breaking:** the namespace of the module is changed from `Netresearch\Epayments` to `Worldline\Connect`. See [the upgrade guide](doc/UPGRADE.md) for more details what this means for you.
+- **BC Breaking:** the namespace of the module is changed from `Netresearch\Epayments` to `Worldline\Connect`. See [the upgrade guide](Doc/UPGRADE.md) for more details what this means for you.
 - Updated JavaScript Client SDK from `3.9.0` to `3.13.2`
 
 ### Added

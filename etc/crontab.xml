@@ -9,5 +9,9 @@
         <job name="transaction_fallback_mechanism" instance="Worldline\Connect\Cron\TransactionFallbackTask" method="execute">
             <schedule>*/10 * * * *</schedule>
         </job>
+
+        <job name="worldline_delayed_capture" instance="Worldline\Connect\Cron\DelayedCaptureTask" method="execute">
+            <schedule>5 * * * *</schedule>
+        </job>
     </group>
 </config>

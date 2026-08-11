@@ -17,6 +17,7 @@ use RuntimeException;
 use Throwable;
 use Worldline\Connect\Api\Data\EventInterface;
 use Worldline\Connect\Api\EventRepositoryInterface;
+use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Model\Order\OrderServiceInterface;
 use Worldline\Connect\Model\Order\SkipOrderCreationException;
 use Worldline\Connect\Model\Quote\QuoteServiceInterface;
@@ -34,6 +35,9 @@ class Processor
 {
     public const MESSAGE_NO_ORDER_FOUND = 'webhook: no order found';
     public const MESSAGE_NO_QUOTE_OR_ORDER_FOUND = 'webhook: no quote or order found';
+
+    private const WEBHOOK_TYPE_PAYMENT_CREATED = 'payment.created';
+    private const WEBHOOK_TYPE_PAYMENT_REDIRECTED = 'payment.redirected';
 
     /**
      * @var WebhooksEventFactory
@@ -94,6 +98,11 @@ class Processor
      */
     private $quoteService;
 
+    /**
+     * @var ConfigInterface
+     */
+    private $config;
+
     public function __construct(
         WebhooksEventFactory $webhookEventFactory,
         EventRepositoryInterface $eventRepository,
@@ -104,7 +113,8 @@ class Processor
         OrderServiceInterface $orderService,
         PaymentResolverInterface $paymentResolver,
         RefundResolverInterface $refundResolver,
-        QuoteServiceInterface $quoteService
+        QuoteServiceInterface $quoteService,
+        ConfigInterface $config
     ) {
         $this->webhookEventFactory = $webhookEventFactory;
         $this->eventRepository = $eventRepository;
@@ -116,6 +126,7 @@ class Processor
         $this->paymentResolver = $paymentResolver;
         $this->refundResolver = $refundResolver;
         $this->quoteService = $quoteService;
+        $this->config = $config;
     }
 
     /**
@@ -221,6 +232,12 @@ class Processor
      */
     private function handlePaymentEvent(WebhooksEvent $webhookEvent): Order
     {
+        if ($this->shouldSkipInAfterFlow($webhookEvent)) {
+            throw new SkipOrderCreationException(
+                __('Event "%1" is ignored in the "order created after redirection" flow.', (string) $webhookEvent->type)
+            );
+        }
+
         $payment = $webhookEvent->payment;
 
         /** @var Order $order */
@@ -263,6 +280,41 @@ class Processor
         }
 
         return $order;
+    }
+
+    /**
+     * In the "order created after redirection" flow the order must not be created on the
+     * early, intermediate webhook events (payment.created / payment.redirected); it is
+     * created only on a real payment outcome. Such events are skipped (marked IGNORED).
+     */
+    private function shouldSkipInAfterFlow(WebhooksEvent $webhookEvent): bool
+    {
+        $type = (string) $webhookEvent->type;
+
+        if (
+            $type !== self::WEBHOOK_TYPE_PAYMENT_CREATED
+            && $type !== self::WEBHOOK_TYPE_PAYMENT_REDIRECTED
+        ) {
+            return false;
+        }
+
+        $storeId = $this->resolveStoreId($webhookEvent);
+
+        return $this->config->getOrderCreationFlow($storeId) === $this->config->getOrderCreationFlowAfter();
+    }
+
+    private function resolveStoreId(WebhooksEvent $webhookEvent): int
+    {
+        $merchantReference = $webhookEvent->payment->paymentOutput->references->merchantReference ?? null;
+
+        if ($merchantReference !== null) {
+            $quote = $this->quoteService->getQuoteByReservedOrderId($merchantReference);
+            if ($quote !== null && $quote->getStoreId() !== null) {
+                return (int) $quote->getStoreId();
+            }
+        }
+
+        return 0;
     }
 
     /**

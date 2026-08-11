@@ -29,6 +29,7 @@ define([
             logo: '',
             logoDescription: '',
             creditCardLogos: '',
+            showBrandLogos: true,
         },
 
         initialize: function () {
@@ -40,7 +41,9 @@ define([
             this.logoDescription = ko.observable('');
             this.creditCardLogos = ko.observableArray([]);
 
-            this.fetchCreditCardLogos();
+            if (this.showBrandLogos) {
+                this.fetchCreditCardLogos();
+            }
 
             return this;
         },

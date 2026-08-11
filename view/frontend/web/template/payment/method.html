@@ -18,6 +18,11 @@
       <!-- ko template: getTemplate() --><!-- /ko -->
       <!--/ko-->
     </div>
+    <!-- ko if: $data.cardBrandMismatch && $data.cardBrandMismatch() -->
+    <div class="message message-error error" role="alert">
+      <span data-bind="text: $data.cardBrandErrorMessage"></span>
+    </div>
+    <!-- /ko -->
     <div class="payment-method-billing-address">
       <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
       <!-- ko template: getTemplate() --><!-- /ko -->
@@ -35,8 +40,8 @@
                 data-bind="
 click: placeOrder,
 attr: {title: $t('Place Order')},
-css: {disabled: !isPlaceOrderActionAllowed()},
-enable: (getCode() == isChecked())
+css: {disabled: !isPlaceOrderActionAllowed() || ($data.cardBrandMismatch && $data.cardBrandMismatch())},
+enable: (getCode() == isChecked()) && !($data.cardBrandMismatch && $data.cardBrandMismatch())
 "
                 disabled>
           <span data-bind="i18n: 'Place Order'"></span>

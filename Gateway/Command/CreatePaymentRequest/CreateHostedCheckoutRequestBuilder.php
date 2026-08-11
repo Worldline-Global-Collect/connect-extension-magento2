@@ -277,6 +277,13 @@ class CreateHostedCheckoutRequestBuilder implements CreatePaymentRequestBuilder
             $paymentProductFilters->restrictTo = $filter;
         }
 
+        $productGroup = $payment->getMethodInstance()->getConfigData('product_group');
+        if ($productGroup) {
+            $filter = new PaymentProductFilter();
+            $filter->groups = [$productGroup];
+            $paymentProductFilters->restrictTo = $filter;
+        }
+
         return $paymentProductFilters;
     }
 
@@ -298,6 +305,13 @@ class CreateHostedCheckoutRequestBuilder implements CreatePaymentRequestBuilder
         if ($productId) {
             $filter = new PaymentProductFilter();
             $filter->products = [$productId];
+            $paymentProductFilters->restrictTo = $filter;
+        }
+
+        $productGroup = $payment->getMethodInstance()->getConfigData('product_group');
+        if ($productGroup) {
+            $filter = new PaymentProductFilter();
+            $filter->groups = [$productGroup];
             $paymentProductFilters->restrictTo = $filter;
         }
 
@@ -339,7 +353,12 @@ class CreateHostedCheckoutRequestBuilder implements CreatePaymentRequestBuilder
                 continue;
             }
 
-            $identifiers[] = $identifier['id'];
+            $id = trim((string) $identifier['id']);
+            if ($id === '') {
+                continue;
+            }
+
+            $identifiers[] = $id;
         }
 
         return $identifiers;

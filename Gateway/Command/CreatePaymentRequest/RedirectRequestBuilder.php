@@ -21,6 +21,7 @@ class RedirectRequestBuilder implements CreatePaymentRequestBuilder
     public const REDIRECT_PAYMENT_RETURN_URL = 'epayments/inlinePayment/processReturn';
     public const HOSTED_CHECKOUT_RETURN_URL = 'epayments/hostedCheckoutPage/processReturn';
     public const HOSTED_CHECKOUT_RETURN_URL_NEW = 'epayments/hostedCheckoutPage/processReturnAfterFlow';
+    public const INLINE_PAYMENT_RETURN_URL_NEW = 'epayments/inlinePayment/processReturnNew';
 
     /**
      * @var CreatePaymentRequestFactory

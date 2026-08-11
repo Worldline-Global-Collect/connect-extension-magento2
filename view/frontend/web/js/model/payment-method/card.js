@@ -12,6 +12,8 @@ define([
     return {
         updateCardType: function (partialCardNumber) {
             getIinDetails(partialCardNumber).then(function (response) {
+                paymentData.setCurrentCardIinDetails(response || null);
+
                 if (response.paymentProductId) {
                     getPaymentProduct(response.paymentProductId).then(function (productResponse) {
                         paymentData.setCurrentCardPaymentProduct(productResponse);
@@ -24,11 +26,13 @@ define([
 
                 paymentData.setCurrentCardPaymentProduct(null);
             }, function() {
+                paymentData.setCurrentCardIinDetails(null);
                 paymentData.setCurrentCardPaymentProduct(null);
             });
         },
 
         clearCardType: function() {
+            paymentData.setCurrentCardIinDetails(null);
             paymentData.setCurrentCardPaymentProduct(null);
         }
     }

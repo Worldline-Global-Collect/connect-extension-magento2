@@ -93,6 +93,7 @@ class Config implements ConfigInterface
     public const HOSTED_CHECKOUT_ID_TIMESTAMP_KEY = 'worldline_hosted_checkout_id_timestamp';
     public const RETURNMAC_KEY = 'worldline_returnmac';
     public const IDEMPOTENCE_KEY = 'worldline_idempotence_key';
+    public const PAYMENT_FLOW_KEY = 'payment_flow';
 
     /**
      * @var ScopeConfigInterface

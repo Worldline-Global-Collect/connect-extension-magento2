@@ -194,6 +194,19 @@ class OrderService implements OrderServiceInterface
      */
     public function createOrderAndProcessStatus(CartInterface $quote, Payment $worldlinePayment, bool $async = false): OrderInterface
     {
+        // The order for this quote may already have been created by an earlier redirect or fallback run.
+        // In that case there is nothing left to do here: re-resolving the payment and adding another status
+        // history comment would only duplicate work and spam the order with comments on every fallback pass
+        // (e.g. while a delayed-capture transaction lingers in PENDING_APPROVAL). Post-creation status changes
+        // are handled by the webhook and delayed-capture flows, not by this method.
+        $existingOrder = $this->getOrderByQuote($quote);
+        if ($existingOrder) {
+            $this->paymentResolver->resolve($existingOrder, $worldlinePayment);
+            $this->orderRepository->save($existingOrder);
+
+            return $existingOrder;
+        }
+
         $payment = $quote->getPayment();
         $payment->setAdditionalInformation(Config::PAYMENT_ID_KEY, $worldlinePayment->id);
         $payment->setAdditionalInformation(Config::PAYMENT_STATUS_KEY, $worldlinePayment->status);

@@ -81,6 +81,81 @@ class PaymentMethods
     public const PAYMENT_GROUP_INSTANT_PURCHASE = self::PREFIX . 'payment_group_instant_purchase';
     public const PAYMENT_GROUP_REDIRECT = self::PREFIX . 'payment_group_redirect';
 
+    public const PAYMENT_GROUPS = [
+        self::PAYMENT_GROUP_CARD,
+        self::PAYMENT_GROUP_INSTANT_PURCHASE,
+        self::PAYMENT_GROUP_REDIRECT,
+        self::HOSTED,
+        self::LINK_PLUS_PAYMENT_LINK,
+    ];
+
+    public const GROUP_METHODS = [
+        self::PAYMENT_GROUP_CARD => [
+            self::CARDS,
+            self::AMERICAN_EXPRESS,
+            self::BC_CARD,
+            self::CARTE_BANCAIRE,
+            self::DINERS_CLUB,
+            self::DISCOVER,
+            self::HYUNDAI_CARD,
+            self::JCB,
+            self::KB_KOOKMIN_CARD,
+            self::KEB_HANA_CARD,
+            self::LOTTE_CARD,
+            self::MAESTRO,
+            self::MASTERCARD,
+            self::MASTERCARD_DEBIT,
+            self::NH_CARD,
+            self::SAMSUNG_CARD,
+            self::SHINHAN_CARD,
+            self::TROY,
+            self::TROY_DEBIT,
+            self::UNIONPAY_EXPRESSPAY,
+            self::UNIONPAY_INTERNATIONAL_SECUREPAY,
+            self::VISA,
+            self::VISA_DEBIT,
+            self::VISA_ELECTRON,
+            self::CARDS_VAULT,
+            self::AMERICAN_EXPRESS_VAULT,
+            self::CARTE_BANCAIRE_VAULT,
+            self::DISCOVER_VAULT,
+            self::MAESTRO_VAULT,
+            self::MASTERCARD_VAULT,
+            self::MASTERCARD_DEBIT_VAULT,
+            self::TROY_VAULT,
+            self::TROY_DEBIT_VAULT,
+            self::VISA_VAULT,
+            self::VISA_DEBIT_VAULT,
+            self::VISA_ELECTRON_VAULT,
+        ],
+        self::PAYMENT_GROUP_INSTANT_PURCHASE => [
+            self::APPLE_PAY,
+            self::GOOGLE_PAY,
+        ],
+        self::PAYMENT_GROUP_REDIRECT => [
+            self::IDEAL,
+            self::ACCOUNT_TO_ACCOUNT,
+            self::PAYPAL,
+            self::PAYSAFECARD,
+            self::SOFORT,
+            self::TRUSTLY,
+            self::BC_CARD_AUTHENTICATED,
+            self::HYUNDAI_CARD_AUTHENTICATED,
+            self::KB_KOOKMIN_CARD_AUTHENTICATED,
+            self::KEB_HANA_CARD_AUTHENTICATED,
+            self::LOTTE_CARD_AUTHENTICATED,
+            self::NH_CARD_AUTHENTICATED,
+            self::SAMSUNG_CARD_AUTHENTICATED,
+            self::SHINHAN_CARD_AUTHENTICATED,
+        ],
+        self::HOSTED => [
+            self::HOSTED,
+        ],
+        self::LINK_PLUS_PAYMENT_LINK => [
+            self::LINK_PLUS_PAYMENT_LINK,
+        ],
+    ];
+
     public function __construct(
         private readonly ClientInterface $client,
         private readonly Resolver $resolver,

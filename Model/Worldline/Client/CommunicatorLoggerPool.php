@@ -48,7 +48,7 @@ class CommunicatorLoggerPool implements CommunicatorLogger
     /**
      * {@inheritdoc}
      */
-    public function log($message)
+    public function log(string $message): void
     {
         foreach ($this->communicatorLoggers as $communicatorLogger) {
             $communicatorLogger->log($message);
@@ -59,7 +59,7 @@ class CommunicatorLoggerPool implements CommunicatorLogger
      * {@inheritdoc}
      */
     // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
-    public function logException($message, \Exception $exception)
+    public function logException(string $message, \Exception $exception): void
     {
         foreach ($this->communicatorLoggers as $communicatorLogger) {
             $communicatorLogger->logException($message, $exception);

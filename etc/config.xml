@@ -6,15 +6,18 @@
             <worldline_payment_group_card>
                 <allowspecific>0</allowspecific>
                 <capture_config>authorize</capture_config>
+                <auto_capture_delay_days>never</auto_capture_delay_days>
                 <payment_flow>0</payment_flow>
             </worldline_payment_group_card>
             <worldline_payment_group_instant_purchase>
                 <allowspecific>0</allowspecific>
                 <capture_config>authorize</capture_config>
+                <auto_capture_delay_days>never</auto_capture_delay_days>
             </worldline_payment_group_instant_purchase>
             <worldline_payment_group_redirect>
                 <allowspecific>0</allowspecific>
                 <capture_config>authorize</capture_config>
+                <auto_capture_delay_days>never</auto_capture_delay_days>
                 <payment_flow>0</payment_flow>
             </worldline_payment_group_redirect>
             <!-- Groups -->
@@ -1133,6 +1136,7 @@
                 <sort_order>1000000</sort_order>
                 <order_status>pending</order_status>
                 <payment_flow>0</payment_flow>
+                <auto_capture_delay_days>never</auto_capture_delay_days>
             </worldline_hpp>
             <!-- Vault -->
             <worldline_vault>
@@ -1459,6 +1463,7 @@
                 <sort_order>1000000</sort_order>
                 <order_status>pending</order_status>
                 <payment_flow>0</payment_flow>
+                <auto_capture_delay_days>never</auto_capture_delay_days>
             </worldline_link_plus_payment_link>
         </payment>
         <worldline_connect>
