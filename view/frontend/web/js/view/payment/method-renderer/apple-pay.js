@@ -15,8 +15,10 @@ define(
         'Magento_Checkout/js/view/payment/default',
         'Magento_Checkout/js/model/quote',
         'Worldline_Connect/js/model/payment/payment-data',
+        'ko',
+        'Worldline_Connect/js/model/payment/method-availability',
     ],
-    function ($, client, localeResolver, config, getPaymentProduct, connectSDK, ApplePay, C2SCommunicator, applePaySDK, Component, quote, paymentData) {
+    function ($, client, localeResolver, config, getPaymentProduct, connectSDK, ApplePay, C2SCommunicator, applePaySDK, Component, quote, paymentData, ko, methodAvailability) {
         return Component.extend({
             config: {},
             defaults: {
@@ -78,6 +80,10 @@ define(
                 }
             },
             initialize: function () {
+                // Set before _super(): the parent initialize() already runs initChildren(), which
+                // starts the payment product lookup that reports back through this observable.
+                this.isMethodAvailable = ko.observable(true);
+
                 this._super();
 
                 this.initChildren();
@@ -89,7 +95,16 @@ define(
                 let me = this;
                 me.code = this.getCode();
                 getPaymentProduct(window.checkoutConfig.payment.worldline.products[me.code].id).then(function(product) {
+                    if (!product) {
+                        methodAvailability.markUnavailable(me, product);
+                        return;
+                    }
+
+                    methodAvailability.markAvailable(me);
+
                     me.product = product;
+                }, function (error) {
+                    methodAvailability.markUnavailable(me, error);
                 });
             },
             getData: function () {

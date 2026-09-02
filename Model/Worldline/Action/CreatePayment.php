@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Worldline\Connect\Model\Worldline\Action;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\UrlInterface;
 use Magento\Quote\Model\Quote\Payment as QuotePayment;
 use Magento\Sales\Model\Order;
@@ -15,6 +16,7 @@ use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Model\Order\OrderServiceInterface;
 use Worldline\Connect\Model\StatusResponseManager;
 use Worldline\Connect\Model\Transaction\TransactionManager;
+use Worldline\Connect\Model\Worldline\Api\ApiErrorClassifier;
 use Worldline\Connect\Model\Worldline\Api\ClientInterface;
 use Worldline\Connect\Model\Worldline\StatusInterface;
 use Worldline\Connect\Model\Worldline\Token\TokenService;
@@ -23,10 +25,13 @@ use Worldline\Connect\Sdk\V1\Domain\CreatePaymentResponse;
 use Worldline\Connect\Sdk\V1\Domain\CreatePaymentResult;
 use Worldline\Connect\Sdk\V1\ResponseException;
 
+use function __;
 use function in_array;
 
 class CreatePayment extends AbstractAction
 {
+    private const NO_PAYMENT_METHODS_URL = 'epayments/returns/nopaymentmethods';
+
     public function __construct(
         StatusResponseManager $statusResponseManager,
         ClientInterface $worldlineClient,
@@ -38,6 +43,7 @@ class CreatePayment extends AbstractAction
         private readonly ApiErrorHandler $apiErrorHandler,
         private readonly OrderServiceInterface $orderService,
         private readonly UrlInterface $urlBuilder,
+        private readonly ApiErrorClassifier $apiErrorClassifier,
     ) {
         parent::__construct(
             $statusResponseManager,
@@ -88,6 +94,17 @@ class CreatePayment extends AbstractAction
             $this->paymentCanceled($payment);
             $this->postProcess($payment, $e->getCreatePaymentResult()->payment);
         } catch (ResponseException $e) {
+            if ($this->apiErrorClassifier->isNoPaymentProductsAvailable($e)) {
+                // Thrown as a LocalizedException on purpose: that is the only exception type
+                // Magento's place-order error handling forwards to the shopper. Keep the wording
+                // identical to Controller/Returns/NoPaymentMethods.php.
+                throw new LocalizedException(__(
+                    'We\'re sorry, but we cannot process this order. Please try adjusting your cart total'
+                    . ' or selecting a different payment method. If you continue to experience issues,'
+                    . ' please contact our support team.'
+                ));
+            }
+
             $this->apiErrorHandler->handleError($e);
         }
     }
@@ -121,6 +138,15 @@ class CreatePayment extends AbstractAction
                 $this->urlBuilder->getUrl('epayments/returns/reject')
             );
         } catch (ResponseException $e) {
+            if ($this->apiErrorClassifier->isNoPaymentProductsAvailable($e)) {
+                $payment->setAdditionalInformation(
+                    Config::REDIRECT_URL_KEY,
+                    $this->urlBuilder->getUrl(self::NO_PAYMENT_METHODS_URL)
+                );
+
+                return;
+            }
+
             $this->apiErrorHandler->handleError($e);
         }
     }

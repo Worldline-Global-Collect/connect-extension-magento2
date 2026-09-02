@@ -17,8 +17,9 @@ define(
         'Magento_Checkout/js/model/quote',
         'Magento_Checkout/js/model/full-screen-loader',
         'Magento_Customer/js/model/customer',
+        'Worldline_Connect/js/model/payment/method-availability',
     ],
-    function ($, _, Component, layout, registry, paymentData, createPayload, redirectOnSuccessAction, config, getCardPaymentGroup, ko, quote, fullScreenLoader, customer) {
+    function ($, _, Component, layout, registry, paymentData, createPayload, redirectOnSuccessAction, config, getCardPaymentGroup, ko, quote, fullScreenLoader, customer, methodAvailability) {
         'use strict';
 
         return Component.extend({
@@ -38,6 +39,7 @@ define(
 
                 this.title = ko.observable('');
                 this.logo = ko.observable('');
+                this.isMethodAvailable = ko.observable(true);
 
                 this.initChildren();
 
@@ -68,6 +70,12 @@ define(
 
                     let product = window.checkoutConfig.payment.worldline.products[code];
                     getCardPaymentGroup().then(function(productResponse) {
+                        if (!productResponse || !productResponse.displayHints || !productResponse.displayHints.label) {
+                            methodAvailability.markUnavailable(me, productResponse);
+                            return;
+                        }
+
+                        methodAvailability.markAvailable(me);
 
                         productResponse.allowsTokenization = true;
 
@@ -91,6 +99,8 @@ define(
                                 product: productResponse
                             }]);
                         }
+                    }, function (error) {
+                        methodAvailability.markUnavailable(me, error);
                     });
                 }.bind(this));
 

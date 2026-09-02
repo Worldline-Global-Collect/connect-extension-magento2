@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 4.22.0 - 2026-09-02
+
+- Improve checkout error message when payment products are not available
+- Hide 'empty' payment method (radio button) when payment products are not available
+
 ## 4.21.0 - 2026-08-11
 
 - Add compatibility with Magento 2.4.9 and PHP 8.5

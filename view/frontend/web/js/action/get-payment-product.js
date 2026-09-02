@@ -27,6 +27,8 @@ define([
             let response = sdkClient.getPaymentProduct(productId, payload);
             response.then((result) => {
                 logger.logResponse(requestId, result);
+            }, (error) => {
+                logger.logResponse(requestId, error);
             })
             return response;
         } catch (error) {

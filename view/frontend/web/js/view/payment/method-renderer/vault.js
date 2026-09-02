@@ -14,8 +14,9 @@ define([
     'uiRegistry',
     'ko',
     'Magento_Checkout/js/action/redirect-on-success',
-    'Worldline_Connect/js/model/payment/config'
-], function ($, VaultComponent, quote, getPaymentProduct, paymentData, createPayload, layout, registry, ko, redirectOnSuccessAction, config) {
+    'Worldline_Connect/js/model/payment/config',
+    'Worldline_Connect/js/model/payment/method-availability'
+], function ($, VaultComponent, quote, getPaymentProduct, paymentData, createPayload, layout, registry, ko, redirectOnSuccessAction, config, methodAvailability) {
     'use strict';
 
     return VaultComponent.extend({
@@ -35,6 +36,7 @@ define([
             this.title = ko.observable('');
             this.logo = ko.observable('');
             this.maskedCard = ko.observable('');
+            this.isMethodAvailable = ko.observable(true);
 
             this.initChildren();
 
@@ -69,6 +71,13 @@ define([
                 }
 
                 getPaymentProduct(me.details.paymentProductId).then(function(productResponse) {
+                    if (!productResponse || !productResponse.displayHints || !productResponse.displayHints.label) {
+                        methodAvailability.markUnavailable(me, productResponse);
+                        return;
+                    }
+
+                    methodAvailability.markAvailable(me);
+
                     me.title(productResponse.displayHints.label);
                     me.logo(productResponse.displayHints.logo);
 
@@ -92,6 +101,8 @@ define([
                         product: productResponse,
                         account: me.account
                     }]);
+                }, function (error) {
+                    methodAvailability.markUnavailable(me, error);
                 });
             }.bind(this));
 

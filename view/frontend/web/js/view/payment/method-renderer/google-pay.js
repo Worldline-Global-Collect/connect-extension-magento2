@@ -8,7 +8,9 @@ define([
     'Worldline_Connect/js/model/client',
     'Worldline_Connect/js/model/payment/config',
     'google-pay-sdk',
-], function ($, Component, quote, redirectOnSuccessAction, paymentData, getPaymentProduct, client, config) {
+    'ko',
+    'Worldline_Connect/js/model/payment/method-availability',
+], function ($, Component, quote, redirectOnSuccessAction, paymentData, getPaymentProduct, client, config, googlePaySdk, ko, methodAvailability) {
     'use strict';
 
     return Component.extend({
@@ -28,6 +30,13 @@ define([
                 me.product = window.checkoutConfig.payment.worldline.products[me.code];
 
                 getPaymentProduct(me.product.id).then(function(product) {
+                    if (!product) {
+                        methodAvailability.markUnavailable(me, product);
+                        return;
+                    }
+
+                    methodAvailability.markAvailable(me);
+
                     const googlePayClient = new google.payments.api.PaymentsClient({
                         environment: window.checkoutConfig.payment.worldline.googlePay.environment
                     });
@@ -76,6 +85,8 @@ define([
                             element.appendChild(button);
                         }
                     })
+                }, function (error) {
+                    methodAvailability.markUnavailable(me, error);
                 });
             },
         },
@@ -136,6 +147,10 @@ define([
         },
 
         initialize: function () {
+            // Set before _super(): the template's afterRender hook (renderGooglePay) reports the
+            // payment product lookup outcome through this observable.
+            this.isMethodAvailable = ko.observable(true);
+
             this._super();
 
             this.initChildren();

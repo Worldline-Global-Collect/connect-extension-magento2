@@ -19,9 +19,10 @@ define(
         'Magento_Customer/js/model/customer',
         'Worldline_Connect/js/model/payment-method/card-brand-matcher',
         'mage/translate',
-        'Magento_Checkout/js/model/url-builder'
+        'Magento_Checkout/js/model/url-builder',
+        'Worldline_Connect/js/model/payment/method-availability'
     ],
-    function ($, _, Component, layout, registry, paymentData, createPayload, redirectOnSuccessAction, config, getPaymentProduct, ko, quote, fullScreenLoader, customer, cardBrandMatcher, $t) {
+    function ($, _, Component, layout, registry, paymentData, createPayload, redirectOnSuccessAction, config, getPaymentProduct, ko, quote, fullScreenLoader, customer, cardBrandMatcher, $t, urlBuilder, methodAvailability) {
         'use strict';
 
         return Component.extend({
@@ -40,6 +41,7 @@ define(
                 this._super();
                 this.title = ko.observable('');
                 this.logo = ko.observable('');
+                this.isMethodAvailable = ko.observable(true);
                 this.cardBrandMismatch = ko.observable(false);
                 this.cardBrandErrorMessage = $t('The entered card type does not match the selected payment method.');
                 paymentData.currentCardIinDetails.subscribe(this.checkCardBrand.bind(this));
@@ -73,6 +75,13 @@ define(
                     }
 
                     getPaymentProduct(product.id).then(function (productResponse) {
+                        if (!productResponse || !productResponse.displayHints || !productResponse.displayHints.label) {
+                            methodAvailability.markUnavailable(me, productResponse);
+                            return;
+                        }
+
+                        methodAvailability.markAvailable(me);
+
                         me.product = productResponse;
                         me.title(productResponse.displayHints.label);
                         me.logo(productResponse.displayHints.logo);
@@ -94,6 +103,8 @@ define(
                                 product: productResponse
                             }]);
                         }
+                    }, function (error) {
+                        methodAvailability.markUnavailable(me, error);
                     });
                 }.bind(this));
 

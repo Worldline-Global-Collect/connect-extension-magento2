@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Worldline\Connect\Model\Worldline\Action;
 
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\UrlInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment as OrderPayment;
@@ -13,11 +15,17 @@ use Worldline\Connect\Model\Config;
 use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Model\StatusResponseManager;
 use Worldline\Connect\Model\Transaction\TransactionManager;
+use Worldline\Connect\Model\Worldline\Api\ApiErrorClassifier;
 use Worldline\Connect\Model\Worldline\Api\ClientInterface;
 use Worldline\Connect\Model\Worldline\StatusInterface;
+use Worldline\Connect\Sdk\V1\ResponseException;
+
+use function __;
 
 class CreateHostedCheckout extends AbstractAction
 {
+    private const NO_PAYMENT_METHODS_URL = 'epayments/returns/nopaymentmethods';
+
     public function __construct(
         StatusResponseManager $statusResponseManager,
         ClientInterface $worldlineClient,
@@ -25,6 +33,8 @@ class CreateHostedCheckout extends AbstractAction
         ConfigInterface $config,
         private readonly ClientInterface $client,
         private readonly CreateHostedCheckoutRequestBuilder $createHostedCheckoutRequestBuilder,
+        private readonly ApiErrorClassifier $apiErrorClassifier,
+        private readonly UrlInterface $urlBuilder,
     ) {
         parent::__construct($statusResponseManager, $worldlineClient, $transactionManager, $config);
     }
@@ -34,10 +44,26 @@ class CreateHostedCheckout extends AbstractAction
         $payment->getOrder()->setCanSendNewEmailFlag(false);
         $storeId = $payment->getOrder()->getStoreId();
 
-        $response = $this->client->createHostedCheckout(
-            $this->createHostedCheckoutRequestBuilder->build($payment, $requiresApproval),
-            $storeId
-        );
+        try {
+            $response = $this->client->createHostedCheckout(
+                $this->createHostedCheckoutRequestBuilder->build($payment, $requiresApproval),
+                $storeId
+            );
+        } catch (ResponseException $e) {
+            if (!$this->apiErrorClassifier->isNoPaymentProductsAvailable($e)) {
+                throw $e;
+            }
+
+            // Thrown as a LocalizedException on purpose: that is the only exception type Magento's
+            // place-order error handling forwards to the shopper. Any other type is replaced by a
+            // generic "A server error stopped your order from being placed" message.
+            // Keep the wording identical to Controller/Returns/NoPaymentMethods.php.
+            throw new LocalizedException(__(
+                'We\'re sorry, but we cannot process this order. Please try adjusting your cart total or'
+                . ' selecting a different payment method. If you continue to experience issues, please'
+                . ' contact our support team.'
+            ));
+        }
 
         $url = $this->config->getHostedCheckoutSubDomain($storeId) . $response->partialRedirectUrl;
 
@@ -53,25 +79,53 @@ class CreateHostedCheckout extends AbstractAction
     {
         $storeId = $payment->getQuote()->getStoreId();
 
-        $response = $this->client->createHostedCheckout(
-            $this->createHostedCheckoutRequestBuilder->buildNew($payment, $requiresApproval),
-            $storeId
+        try {
+            $response = $this->client->createHostedCheckout(
+                $this->createHostedCheckoutRequestBuilder->buildNew($payment, $requiresApproval),
+                $storeId
+            );
+
+            $url = $this->config->getHostedCheckoutSubDomain($storeId) . $response->partialRedirectUrl;
+
+            $this->paymentRedirectedNew($payment, $url);
+
+            $payment->setTransactionId($response->hostedCheckoutId);
+
+            $payment->setAdditionalInformation(Config::HOSTED_CHECKOUT_ID_KEY, $response->hostedCheckoutId);
+            $payment->setAdditionalInformation(Config::HOSTED_CHECKOUT_ID_TIMESTAMP_KEY, time());
+            $payment->setAdditionalInformation(Config::RETURNMAC_KEY, $response->RETURNMAC);
+
+            $this->persistCreatedPaymentNew($payment, $response->hostedCheckoutId);
+        } catch (ResponseException $e) {
+            if (!$this->apiErrorClassifier->isNoPaymentProductsAvailable($e)) {
+                throw $e;
+            }
+
+            $this->paymentUnavailableNew($payment);
+        }
+    }
+
+    /**
+     * Deliberately leaves the hosted checkout / payment identifiers unset: AuthorizeCommand's
+     * reusesExistingPayment() guard keys off them, so a retry after the shopper fixes the cart
+     * must create a fresh hosted checkout rather than reuse this failed attempt.
+     */
+    private function paymentUnavailableNew(QuotePayment $payment): void
+    {
+        $payment->setAdditionalInformation(
+            Config::REDIRECT_URL_KEY,
+            $this->urlBuilder->getUrl(self::NO_PAYMENT_METHODS_URL)
         );
+    }
 
-        $url = $this->config->getHostedCheckoutSubDomain($storeId) . $response->partialRedirectUrl;
-
-        $this->paymentRedirectedNew($payment, $url);
-
-        $payment->setTransactionId($response->hostedCheckoutId);
-
-        $payment->setAdditionalInformation(Config::HOSTED_CHECKOUT_ID_KEY, $response->hostedCheckoutId);
-        $payment->setAdditionalInformation(Config::HOSTED_CHECKOUT_ID_TIMESTAMP_KEY, time());
-        $payment->setAdditionalInformation(Config::RETURNMAC_KEY, $response->RETURNMAC);
-
-        $getHostedCheckout = $this->client->getHostedCheckout($response->hostedCheckoutId);
+    private function persistCreatedPaymentNew(QuotePayment $payment, string $hostedCheckoutId): void
+    {
+        $getHostedCheckout = $this->client->getHostedCheckout($hostedCheckoutId);
         if ($getHostedCheckout->createdPaymentOutput) {
-            $payment->setAdditionalInformation(Config::PAYMENT_ID_KEY, $getHostedCheckout->createdPaymentOutput->payment->id);
-            $payment->setAdditionalInformation(Config::PAYMENT_STATUS_KEY, $getHostedCheckout->createdPaymentOutput->payment->status);
+            $createdPayment = $getHostedCheckout->createdPaymentOutput->payment;
+
+            $payment->setAdditionalInformation(Config::PAYMENT_ID_KEY, $createdPayment->id);
+            $payment->setAdditionalInformation(Config::PAYMENT_STATUS_KEY, $createdPayment->status);
         } else {
             $payment->setAdditionalInformation(Config::PAYMENT_STATUS_KEY, StatusInterface::CREATED);
         }
