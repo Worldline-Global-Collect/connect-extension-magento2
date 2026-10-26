@@ -132,7 +132,7 @@ class TokenService implements TokenServiceInterface
         $card = $cardPaymentMethodSpecificOutput->card;
         $tokenResponse = $this->client->worldlinePaymentTokenize(
             $payment->id,
-            null,
+            (int) $order->getStoreId(),
             $card->cardNumber
         );
         $token = $tokenResponse->token;

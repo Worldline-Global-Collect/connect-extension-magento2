@@ -16,6 +16,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Sales\Model\Order;
 use Psr\Log\LoggerInterface;
+use Worldline\Connect\Model\Abandoned\AbandonedPaymentSession;
 use Worldline\Connect\Model\Config;
 use Worldline\Connect\Model\ConfigInterface;
 use Worldline\Connect\Model\Order\OrderServiceInterface;
@@ -59,6 +60,7 @@ class ProcessReturn extends Action
     // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
     protected $worldlineClient;
     private OrderServiceInterface $orderService;
+    private AbandonedPaymentSession $abandonedPaymentSession;
 
     /**
      * ProcessReturn constructor.
@@ -76,7 +78,8 @@ class ProcessReturn extends Action
         LoggerInterface $logger,
         GetInlinePaymentStatus $getInlinePaymentStatus,
         ClientInterface $worldlineClient,
-        OrderServiceInterface $orderService
+        OrderServiceInterface $orderService,
+        AbandonedPaymentSession $abandonedPaymentSession
     ) {
         parent::__construct($context);
 
@@ -86,6 +89,7 @@ class ProcessReturn extends Action
         $this->inlinePaymentStatus = $getInlinePaymentStatus;
         $this->worldlineClient = $worldlineClient;
         $this->orderService = $orderService;
+        $this->abandonedPaymentSession = $abandonedPaymentSession;
     }
 
     /**
@@ -112,6 +116,7 @@ class ProcessReturn extends Action
 
             $this->messageManager->addErrorMessage($message);
             $this->logger->error(__($message)->render());
+            $this->abandonedPaymentSession->clear();
             $this->checkoutSession->restoreQuote();
 
             return $this->redirect('checkout/cart');
@@ -146,6 +151,8 @@ class ProcessReturn extends Action
 
                 $this->orderService->save($order);
 
+                $this->abandonedPaymentSession->markAwaiting($order);
+
                 $resultRedirect->setUrl($redirectUrl);
 
                 return $resultRedirect;
@@ -162,11 +169,14 @@ class ProcessReturn extends Action
                     $this->messageManager->addNoticeMessage($resultsMessage);
                 }
 
+                $this->abandonedPaymentSession->clear();
+
                 return $this->redirect('checkout/onepage/success');
             }
         } catch (Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
             $this->logger->error($e->getMessage());
+            $this->abandonedPaymentSession->clear();
             $this->checkoutSession->restoreQuote();
             return $this->redirect('checkout/cart');
         }

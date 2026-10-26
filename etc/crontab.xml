@@ -13,5 +13,9 @@
         <job name="worldline_delayed_capture" instance="Worldline\Connect\Cron\DelayedCaptureTask" method="execute">
             <schedule>5 * * * *</schedule>
         </job>
+
+        <job name="worldline_abandoned_order_reconcile" instance="Worldline\Connect\Cron\AbandonedOrderTask" method="execute">
+            <schedule>*/10 * * * *</schedule>
+        </job>
     </group>
 </config>

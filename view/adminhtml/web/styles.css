@@ -2,3 +2,8 @@
     height: 160px; width: auto; padding-left: 20rem; display:inline-block; vertical-align: middle;}
 .worldline-section .button-container {float: right;}
 .worldline-section .worldline-payment-text { display: inline-block; vertical-align: middle; width: 50%}
+
+/* Credit memo: separate the Wero refund reason field from the checkboxes above it.
+   Selected by id on purpose: Magento's `.admin__field + .admin__field {margin-top: 1.5rem}`
+   scores 0,2,0 and would beat any single-class selector here. */
+#worldline_refund_reason_field {margin-top: 2.5rem;}

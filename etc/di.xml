@@ -2531,6 +2531,59 @@
         </arguments>
     </virtualType>
 
+    <!-- Wero -->
+    <virtualType name="Worldline\Connect\PaymentMethod\Wero" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::WERO</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="infoBlockType" xsi:type="string">Worldline\Connect\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">WorldlineWeroValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">WorldlineRedirectCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">WorldlineWeroValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineWeroValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">WorldlineWeroCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineWeroCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">WorldlineRedirectGroupConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineWeroValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <!-- Shared Settings (Group) -->
+                <item name="min_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="max_order_total" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="allowspecific" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="specificcountry" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+                <item name="payment_flow" xsi:type="string">WorldlineRedirectGroupValueHandler</item>
+
+                <item name="default" xsi:type="string">WorldlineWeroConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineWeroConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">WorldlineWeroConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="WorldlineWeroConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Worldline\Connect\PaymentMethod\PaymentMethods::WERO</argument>
+        </arguments>
+    </virtualType>
+
     <!-- HPP -->
     <virtualType name="Worldline\Connect\PaymentMethod\Hpp" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
@@ -2832,6 +2885,8 @@
     <preference for="Worldline\Connect\Model\Order\OrderServiceInterface" type="Worldline\Connect\Model\Order\OrderService"/>
     <preference for="Worldline\Connect\Model\Quote\QuoteServiceInterface" type="Worldline\Connect\Model\Quote\QuoteService"/>
     <preference for="Worldline\Connect\Model\Fallback\FallbackServiceInterface" type="Worldline\Connect\Model\Fallback\FallbackService"/>
+    <preference for="Worldline\Connect\Model\Abandoned\AbandonedPaymentServiceInterface" type="Worldline\Connect\Model\Abandoned\AbandonedPaymentService"/>
+    <preference for="Worldline\Connect\Model\Abandoned\OrderReconcileServiceInterface" type="Worldline\Connect\Model\Abandoned\OrderReconcileService"/>
     <preference for="Worldline\Connect\Model\Transaction\TransactionManagerInterface" type="Worldline\Connect\Model\Transaction\TransactionManager"/>
     <preference for="Worldline\Connect\Api\EventRepositoryInterface" type="Worldline\Connect\Model\Event\EventRepository"/>
     <preference for="Worldline\Connect\Api\Data\EventInterface" type="Worldline\Connect\Model\Event\DataModel"/>
@@ -2938,6 +2993,12 @@
     <type name="Worldline\Connect\WebApi\RedirectManagement\CreatePaymentDataAssigner">
         <arguments>
             <argument name="createPayment" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Card</argument>
+            <!-- Inline flow: pick the CreatePayment variant matching the method's payment product group -->
+            <argument name="createPaymentActions" xsi:type="array">
+                <item name="worldline_payment_group_card" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Card</item>
+                <item name="worldline_payment_group_redirect" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\Redirect</item>
+                <item name="worldline_payment_group_instant_purchase" xsi:type="object">Worldline\Connect\Model\Worldline\Action\CreatePayment\InstantPurchase</item>
+            </argument>
         </arguments>
     </type>
 
@@ -3021,6 +3082,16 @@
     <type name="Worldline\Connect\Controller\HostedCheckoutPage\ProcessReturn">
         <arguments>
             <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
+    <!--
+        The observer is constructed on every cart and checkout page view, but does any work only
+        when a payment is actually awaiting a return. Proxy the payment service so the Worldline
+        client graph behind it is never built on that hot path.
+    -->
+    <type name="Worldline\Connect\Observer\RecoverAbandonedPayment">
+        <arguments>
+            <argument name="abandonedPaymentService" xsi:type="object">Worldline\Connect\Model\Abandoned\AbandonedPaymentService\Proxy</argument>
         </arguments>
     </type>
 </config>

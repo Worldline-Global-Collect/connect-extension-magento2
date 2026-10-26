@@ -8,6 +8,7 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Model\Order;
+use Worldline\Connect\Model\Abandoned\AbandonedPaymentSession;
 use Worldline\Connect\Model\Config;
 
 class Index extends Action
@@ -18,18 +19,23 @@ class Index extends Action
     // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
     private $checkoutSession;
 
+    private AbandonedPaymentSession $abandonedPaymentSession;
+
     /**
      * Index constructor.
      *
      * @param Context $context
      * @param Session $checkoutSession
+     * @param AbandonedPaymentSession $abandonedPaymentSession
      */
     public function __construct(
         Context $context,
-        Session $checkoutSession
+        Session $checkoutSession,
+        AbandonedPaymentSession $abandonedPaymentSession
     ) {
         parent::__construct($context);
         $this->checkoutSession = $checkoutSession;
+        $this->abandonedPaymentSession = $abandonedPaymentSession;
     }
 
     // phpcs:disable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
@@ -52,6 +58,8 @@ class Index extends Action
         /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         $resultRedirect->setUrl($worldlineRedirectUrl);
+
+        $this->abandonedPaymentSession->markAwaiting($order);
 
         return $resultRedirect;
     }

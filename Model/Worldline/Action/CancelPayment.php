@@ -100,7 +100,10 @@ class CancelPayment extends AbstractAction implements ActionInterface
             }
         }
 
-        $response = $this->worldlineClient->worldlinePaymentCancel($worldlinePaymentId);
+        $response = $this->worldlineClient->worldlinePaymentCancel(
+            $worldlinePaymentId,
+            (int) $order->getStoreId()
+        );
         $this->statusResolver->resolve($order, $response->payment);
 
         $this->orderRepository->save($order);

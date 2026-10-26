@@ -1,0 +1,40 @@
+<?php
+/**
+ * Refund reason selector for Worldline Wero credit memos.
+ *
+ * Rendered into the core "submit_before" container of the credit memo create page, directly
+ * above the Refund Offline / Refund buttons. The block suppresses itself for every payment
+ * method other than Wero, so no method check is needed here.
+ *
+ * @var \Worldline\Connect\Block\Adminhtml\Order\Creditmemo\RefundReason $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$selectedReason = $block->getSelectedReason();
+?>
+<div id="worldline_refund_reason_field" class="admin__field field worldline-refund-reason">
+    <label class="admin__field-label" for="<?= $escaper->escapeHtmlAttr($block->getFieldId()) ?>">
+        <span><?= $escaper->escapeHtml(__('Refund reason')) ?></span>
+    </label>
+    <div class="admin__field-control">
+        <select id="<?= $escaper->escapeHtmlAttr($block->getFieldId()) ?>"
+                name="<?= $escaper->escapeHtmlAttr($block->getFieldName()) ?>"
+                class="admin__control-select">
+            <?php foreach ($block->getOptions() as $option): ?>
+                <option value="<?= $escaper->escapeHtmlAttr($option['value']) ?>"
+                    <?php if ($option['value'] === $selectedReason): ?>selected="selected"<?php endif; ?>>
+                    <?= $escaper->escapeHtml($option['label']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <div class="admin__field-note">
+            <span><?= $escaper->escapeHtml(
+                __(
+                    'This field is mandatory for the Wero payment method and is relevant only '
+                    . 'if the refund is being processed on Worldline.'
+                )
+            ) ?></span>
+            <br>
+            <span><?= $escaper->escapeHtml(__('Refund Offline ignores this value.')) ?></span>
+        </div>
+    </div>
+</div>

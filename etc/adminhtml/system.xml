@@ -175,6 +175,7 @@
 
                         <comment><![CDATA[Payment products from the <a target="_blank" href="https://docs.connect.worldline-solutions.com/payment-methods/view-by-payment-product/?payment-method=REAL-TIME_BANKING">Real-time banking</a> payment method.<br/>For large one-time transactions or setting specific min/max limits per payment product, contact the Worldline team.]]></comment>
                         <include path="Worldline_Connect::methods/redirect/ideal.xml"/>
+                        <include path="Worldline_Connect::methods/redirect/wero.xml"/>
                         <include path="Worldline_Connect::methods/redirect/account_to_account.xml"/>
                         <include path="Worldline_Connect::methods/redirect/paypal.xml"/>
                         <include path="Worldline_Connect::methods/redirect/paysafecard.xml"/>

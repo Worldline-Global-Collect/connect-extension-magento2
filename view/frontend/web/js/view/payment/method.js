@@ -178,6 +178,10 @@ define(
                 type: 'worldline_trustly',
                 component: 'Worldline_Connect/js/view/payment/method-renderer/method'
             },
+            {
+                type: 'worldline_wero',
+                component: 'Worldline_Connect/js/view/payment/method-renderer/method'
+            },
             // HPP
             {
                 type: 'worldline_hpp',

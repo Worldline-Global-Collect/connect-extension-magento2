@@ -22,7 +22,10 @@ class FetchTransactionInfoCommand implements CommandInterface
     {
         /** @var Payment $payment */
         $payment = $commandSubject['payment']->getPayment();
-        $worldlinePayment = $this->worldlineClient->worldlinePayment($commandSubject['transactionId']);
+        $worldlinePayment = $this->worldlineClient->worldlinePayment(
+            $commandSubject['transactionId'],
+            (int) $payment->getOrder()->getStoreId()
+        );
         if (in_array($worldlinePayment->status, StatusInterface::APPROVED_STATUSES, true)) {
             if ($payment->getOrder()->getEmailSent()) {
                 $payment->getOrder()->setCanSendNewEmailFlag(false);

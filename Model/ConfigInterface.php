@@ -202,4 +202,15 @@ interface ConfigInterface
      * @return string
      */
     public function getOrderCreationFlowAfter(): string;
+
+    /**
+     * Returns how many minutes an unfinished payment is left alone before its order is cancelled
+     *
+     * The value is clamped: a blank or non-numeric setting yields the default and no setting can
+     * push the result below Config::ABANDONED_PAYMENT_GRACE_PERIOD_MINIMUM.
+     *
+     * @param int $storeId
+     * @return int
+     */
+    public function getAbandonedPaymentGracePeriod(int $storeId): int;
 }

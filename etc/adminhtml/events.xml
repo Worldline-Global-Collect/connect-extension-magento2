@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="adminhtml_sales_order_creditmemo_register_before">
+        <observer name="worldline_creditmemo_refund_reason"
+                  instance="Worldline\Connect\Observer\Adminhtml\SetCreditmemoRefundReason"/>
+    </event>
+</config>

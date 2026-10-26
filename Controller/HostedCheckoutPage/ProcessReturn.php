@@ -15,6 +15,7 @@ use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Sales\Model\Order;
 use Psr\Log\LoggerInterface;
+use Worldline\Connect\Model\Abandoned\AbandonedPaymentSession;
 use Worldline\Connect\Model\Config;
 use Worldline\Connect\Model\Order\OrderServiceInterface;
 use Worldline\Connect\Model\Worldline\Action\GetHostedCheckoutStatus;
@@ -46,6 +47,7 @@ class ProcessReturn extends Action
     private ClientInterface $client;
     private GetInlinePaymentStatus $inlinePaymentStatus;
     private OrderServiceInterface $orderService;
+    private AbandonedPaymentSession $abandonedPaymentSession;
 
     public function __construct(
         Context $context,
@@ -54,7 +56,8 @@ class ProcessReturn extends Action
         GetInlinePaymentStatus $inlinePaymentStatus,
         LoggerInterface $logger,
         ClientInterface $client,
-        OrderServiceInterface $orderService
+        OrderServiceInterface $orderService,
+        AbandonedPaymentSession $abandonedPaymentSession
     ) {
         parent::__construct($context);
 
@@ -64,6 +67,7 @@ class ProcessReturn extends Action
         $this->client = $client;
         $this->inlinePaymentStatus = $inlinePaymentStatus;
         $this->orderService = $orderService;
+        $this->abandonedPaymentSession = $abandonedPaymentSession;
     }
 
     /**
@@ -73,6 +77,8 @@ class ProcessReturn extends Action
      */
     public function execute()
     {
+        $this->abandonedPaymentSession->clear();
+
         try {
             $order = $this->checkoutSession->getLastRealOrder();
             $getHostedCheckoutResponse = $this->client->getHostedCheckout($this->retrieveHostedCheckoutId($order));

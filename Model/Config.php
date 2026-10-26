@@ -8,6 +8,8 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Store\Model\ScopeInterface;
 
+use function is_numeric;
+use function max;
 use function sprintf;
 
 // phpcs:ignore PSR12.Files.FileHeader.SpacingAfterBlock
@@ -75,6 +77,10 @@ class Config implements ConfigInterface
     public const CONFIG_ORDER_CREATION_FLOW_KEY = 'worldline_connect/settings/order_creation_flow';
     public const CONFIG_ORDER_CREATION_FLOW_BEFORE = 'worldline_connect/settings/order_creation_flow/before';
     public const CONFIG_ORDER_CREATION_FLOW_AFTER = 'worldline_connect/settings/order_creation_flow/after';
+    public const CONFIG_ABANDONED_PAYMENT_GRACE_PERIOD = 'worldline_connect/settings/abandoned_payment_grace_period';
+    public const ABANDONED_PAYMENT_GRACE_PERIOD_DEFAULT = 15;
+    /** Hard floor, so a misconfigured store can never cancel orders the moment they are placed */
+    public const ABANDONED_PAYMENT_GRACE_PERIOD_MINIMUM = 5;
 
     /** AdditionalInformation keys */
     public const PAYMENT_ID_KEY = 'worldline_payment_id';
@@ -90,6 +96,8 @@ class Config implements ConfigInterface
     public const TRANSACTION_RESULTS_KEY = 'worldline_transaction_results';
     public const REDIRECT_URL_KEY = 'worldline_redirect_url';
     public const HOSTED_CHECKOUT_ID_KEY = 'worldline_hosted_checkout_id';
+    /** Credit memo data key, set from the admin credit memo form (see ID-88) */
+    public const REFUND_REASON_KEY = 'worldline_refund_reason';
     public const HOSTED_CHECKOUT_ID_TIMESTAMP_KEY = 'worldline_hosted_checkout_id_timestamp';
     public const RETURNMAC_KEY = 'worldline_returnmac';
     public const IDEMPOTENCE_KEY = 'worldline_idempotence_key';
@@ -438,5 +446,22 @@ class Config implements ConfigInterface
     public function getOrderCreationFlowAfter(): string
     {
         return self::CONFIG_ORDER_CREATION_FLOW_AFTER;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAbandonedPaymentGracePeriod(int $storeId): int
+    {
+        $value = $this->getValue(self::CONFIG_ABANDONED_PAYMENT_GRACE_PERIOD, $storeId);
+
+        // A blank or non-numeric value must fall back to the default, and no value may push the
+        // grace period below the floor: cancelling an order while the customer is still on the
+        // ACS page would destroy a payment that is about to succeed.
+        if (!is_numeric($value)) {
+            return self::ABANDONED_PAYMENT_GRACE_PERIOD_DEFAULT;
+        }
+
+        return max((int) $value, self::ABANDONED_PAYMENT_GRACE_PERIOD_MINIMUM);
     }
 }

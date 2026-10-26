@@ -112,6 +112,12 @@ class RefundRequestBuilder
     // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
     private $emailMessageType = null;
 
+    /**
+     * @var string|null
+     */
+    // phpcs:ignore SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
+    private $refundReason = null;
+
     public function __construct(
         DateTime $dateTime,
         AmountOfMoney $amountOfMoney,
@@ -133,7 +139,7 @@ class RefundRequestBuilder
     }
 
     // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingAnyTypeHint
-    public function build(OrderInterface $order, float $amount)
+    public function build(OrderInterface $order, float $amount, ?string $refundReason = null)
     {
         if ($billing = $order->getBillingAddress()) {
             $this->setCountryCode($billing->getCountryId());
@@ -145,6 +151,7 @@ class RefundRequestBuilder
         $this->setCustomerLastname($order->getCustomerLastname() ?: '');
         $this->setEmailMessageType(self::EMAIL_MESSAGE_TYPE);
         $this->setMerchantReference($order->getIncrementId());
+        $this->setRefundReason($refundReason);
 
         return $this->create();
     }
@@ -156,6 +163,12 @@ class RefundRequestBuilder
         $this->request->refundReferences = $this->buildRefundReferences();
         $this->request->amountOfMoney = $this->buildAmountOfMoney();
         $this->request->customer = $this->buildRefundCustomer();
+        /**
+         * Assigned unconditionally: both this builder and $this->request are shared DI
+         * instances, so a value left over from a previous build() would leak into the next
+         * refund of the same request.
+         */
+        $this->request->refundReason = $this->refundReason;
 
         return $this->request;
     }
@@ -214,6 +227,17 @@ class RefundRequestBuilder
     private function setEmailMessageType(string $emailMessageType)
     {
         $this->emailMessageType = $emailMessageType;
+    }
+
+    /**
+     * An empty reason must become null: RefundRequest::toObject() leaves the field out only
+     * when it is null, so an empty string would be sent as "refundReason": "".
+     *
+     * @param string|null $refundReason
+     */
+    private function setRefundReason(?string $refundReason)
+    {
+        $this->refundReason = $refundReason !== null && $refundReason !== '' ? $refundReason : null;
     }
 
     /**

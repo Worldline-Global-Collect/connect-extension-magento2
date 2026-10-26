@@ -54,4 +54,17 @@ interface OrderPaymentManagementInterface
      * @api
      */
     public function getWorldlineRefundStatusCodeChangeDate(Payment $payment): DateTime;
+
+    /**
+     * Get the payment product that Worldline actually processed the payment with.
+     *
+     * Read from the payment response stored on the transaction, so it also covers Hosted
+     * Checkout orders where the shopper picked the product on the Worldline page and the
+     * Magento method code says nothing about it. Does not do a new API call.
+     *
+     * @param Payment $payment
+     * @return int|null Null when no payment product could be determined.
+     * @api
+     */
+    public function getWorldlinePaymentProductId(Payment $payment): ?int;
 }

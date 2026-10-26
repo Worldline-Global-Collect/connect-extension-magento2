@@ -74,6 +74,7 @@ class PaymentMethods
     public const PAYSAFECARD = self::PREFIX . 'paysafecard';
     public const SOFORT = self::PREFIX . 'sofort';
     public const TRUSTLY = self::PREFIX . 'trustly';
+    public const WERO = self::PREFIX . 'wero';
     public const HOSTED = self::PREFIX . 'hpp';
     public const APPLE_PAY = self::PREFIX . 'apple_pay';
     public const GOOGLE_PAY = self::PREFIX . 'google_pay';
@@ -139,6 +140,7 @@ class PaymentMethods
             self::PAYSAFECARD,
             self::SOFORT,
             self::TRUSTLY,
+            self::WERO,
             self::BC_CARD_AUTHENTICATED,
             self::HYUNDAI_CARD_AUTHENTICATED,
             self::KB_KOOKMIN_CARD_AUTHENTICATED,
@@ -167,6 +169,22 @@ class PaymentMethods
     public function isWorldlinePaymentMethod(string $paymentMethodCode): bool
     {
         return str_starts_with($paymentMethodCode, self::PREFIX);
+    }
+
+    /**
+     * Resolves the payment product group a Worldline payment method belongs to.
+     *
+     * Returns null for a code that is not registered in GROUP_METHODS.
+     */
+    public static function getPaymentGroup(string $paymentMethodCode): ?string
+    {
+        foreach (self::GROUP_METHODS as $groupCode => $methodCodes) {
+            if (in_array($paymentMethodCode, $methodCodes, true)) {
+                return $groupCode;
+            }
+        }
+
+        return null;
     }
 
     /**

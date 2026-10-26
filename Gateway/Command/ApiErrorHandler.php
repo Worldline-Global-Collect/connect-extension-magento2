@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Worldline\Connect\Gateway\Command;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Payment\Gateway\Command\CommandException;
 use Psr\Log\LoggerInterface;
@@ -49,5 +50,23 @@ class ApiErrorHandler
         $this->logger->error($message);
 
         throw new CommandException(__($e->getMessage()));
+    }
+
+    /**
+     * Log a locally raised (non-API) command failure and abort the command.
+     *
+     * The message is NOT pushed to the message manager here: CommandException is a
+     * LocalizedException, so Magento's credit memo / order controllers already render
+     * $e->getMessage() themselves. Adding it here as well shows it twice.
+     *
+     * @param LocalizedException $e
+     * @throws CommandException
+     */
+    public function handleLocalizedError(LocalizedException $e)
+    {
+        $message = $e->getMessage();
+        $this->logger->error($message);
+
+        throw new CommandException(__($message));
     }
 }

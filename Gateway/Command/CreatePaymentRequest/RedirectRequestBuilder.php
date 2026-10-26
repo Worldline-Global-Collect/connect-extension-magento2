@@ -142,9 +142,12 @@ class RedirectRequestBuilder implements CreatePaymentRequestBuilder
 
         $payload = $payment->getAdditionalInformation('input');
 
-        $input->returnUrl = $payload ?
-            $this->urlBuilder->getUrl(self::REDIRECT_PAYMENT_RETURN_URL) :
-            $this->urlBuilder->getUrl(self::HOSTED_CHECKOUT_RETURN_URL);
+        /**
+         * Order-created-after-redirection flow: the shopper must return to the controller that
+         * resolves the quote by payment id. The hosted-checkout return controllers key off a
+         * hostedCheckoutId, which a createPayment response never carries.
+         */
+        $input->returnUrl = $this->urlBuilder->getUrl(self::INLINE_PAYMENT_RETURN_URL_NEW);
 
         $input->tokenize = false;
 

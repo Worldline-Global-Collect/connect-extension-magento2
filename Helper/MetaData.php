@@ -61,14 +61,4 @@ class MetaData
             $this->magentoMetaDetaHelper->getEdition()
         );
     }
-
-    public function getTechnicalPartnerName(): string
-    {
-        return 'ISAAC';
-    }
-
-    public function getTechnicalPartnerUrl(): string
-    {
-        return 'https://www.isaac.nl';
-    }
 }

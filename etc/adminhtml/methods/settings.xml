@@ -14,10 +14,6 @@
             <label>Technical Support</label>
             <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\GitHub\Link</frontend_model>
         </field>
-        <field id="technical_partner" translate="label" type="link" sortOrder="20" showInDefault="1">
-            <label>Technical Partner</label>
-            <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\TechnicalPartner\Link</frontend_model>
-        </field>
         <field id="documentation_link" translate="label" type="link" sortOrder="25" showInDefault="1">
             <label>Worldline documentation</label>
             <frontend_model>Worldline\Connect\Block\Adminhtml\System\Config\Field\Documentation\Link</frontend_model>
@@ -81,6 +77,13 @@
             <source_model>Worldline\Connect\Model\Config\Source\OrderCreationFlow</source_model>
             <backend_model>Magento\Framework\App\Config\Value</backend_model>
             <config_path>worldline_connect/settings/order_creation_flow</config_path>
+        </field>
+
+        <field id="abandoned_payment_grace_period" translate="label comment" type="text" sortOrder="86" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Abandoned payment grace period (minutes)</label>
+            <comment>How long an unfinished payment is left alone before the order is cancelled and the customer's cart is restored. It applies to the scheduled clean-up of customers who never came back to the shop; a customer who does come back is handled immediately. Values below 5 minutes are treated as 5.</comment>
+            <validate>validate-digits</validate>
+            <config_path>worldline_connect/settings/abandoned_payment_grace_period</config_path>
         </field>
 
         <group id="environments" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1">

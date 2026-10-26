@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<include xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_include.xsd">
+    <group id="wero" translate="label" type="text" sortOrder="37" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label>Wero</label>
+        <field id="active" translate="label comment" type="Worldline\Connect\Data\Form\Element\Toggle" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Enabled</label>
+            <config_path>payment/worldline_wero/active</config_path>
+        </field>
+        <field id="sort_order" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Sort Order</label>
+            <config_path>payment/worldline_wero/sort_order</config_path>
+        </field>
+    </group>
+</include>

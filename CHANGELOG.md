@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 4.27.0 - 2026-10-26
+
+- Fix refund handling when order is not refundable
+- Add Wero (payment product 900) as a new payment method
+- Add a field for selecting the refund reason for orders paid with the Wero method
+- Restore the cart and settle the order when a customer abandons the payment page in the "order creation before redirection" flow
+- Remove the technical partner link from the system configuration
+
 ## 4.22.0 - 2026-09-02
 
 - Improve checkout error message when payment products are not available

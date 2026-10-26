@@ -11,6 +11,7 @@ use Worldline\Connect\Model\Config;
 use Worldline\Connect\Model\DataAssigner\DataAssignerInterface;
 use Worldline\Connect\Model\Worldline\Action\CreateHostedCheckout;
 use Worldline\Connect\Model\Worldline\Action\CreatePayment;
+use Worldline\Connect\PaymentMethod\PaymentMethods;
 
 class CreatePaymentDataAssigner implements DataAssignerInterface
 {
@@ -29,14 +30,26 @@ class CreatePaymentDataAssigner implements DataAssignerInterface
      */
     private $tokenManager;
 
+    /**
+     * CreatePayment variants keyed by payment product group code.
+     *
+     * @var array<string, CreatePayment>
+     */
+    private $createPaymentActions;
+
+    /**
+     * @param array<string, CreatePayment> $createPaymentActions
+     */
     public function __construct(
         CreateHostedCheckout $createRequest,
         CreatePayment $createPayment,
-        TokenManagerInterface $tokenManager
+        TokenManagerInterface $tokenManager,
+        array $createPaymentActions = []
     ) {
         $this->createRequest = $createRequest;
         $this->createPayment = $createPayment;
         $this->tokenManager = $tokenManager;
+        $this->createPaymentActions = $createPaymentActions;
     }
 
     /**
@@ -65,7 +78,24 @@ class CreatePaymentDataAssigner implements DataAssignerInterface
         $flow = $additionalInformation[Config::PAYMENT_FLOW_KEY]
             ?? $quote->getPayment()->getAdditionalInformation(Config::PAYMENT_FLOW_KEY);
 
-        $action = $flow === 'inline' ? $this->createPayment : $this->createRequest;
+        $action = $flow === 'inline' ? $this->resolveCreatePayment($payment) : $this->createRequest;
         $action->processNew($quote->getPayment(), $requiresApproval);
+    }
+
+    /**
+     * The inline flow must use the CreatePayment variant matching the method's payment product
+     * group. Sending a redirect product (e.g. Wero 900) through the card request builder makes
+     * Worldline reject the request with 1401 PAYMENT_PRODUCT_ID_INVALID_FOR_PAYMENT_METHOD,
+     * because the id ends up in cardPaymentMethodSpecificInput instead of
+     * redirectPaymentMethodSpecificInput.
+     */
+    private function resolveCreatePayment(PaymentInterface $payment): CreatePayment
+    {
+        $group = PaymentMethods::getPaymentGroup((string) $payment->getMethod());
+        if ($group === null) {
+            return $this->createPayment;
+        }
+
+        return $this->createPaymentActions[$group] ?? $this->createPayment;
     }
 }

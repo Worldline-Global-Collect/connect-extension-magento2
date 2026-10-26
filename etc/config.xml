@@ -1110,6 +1110,33 @@
                 <payment_flow>0</payment_flow>
                 <product_id>806</product_id>
             </worldline_trustly>
+            <worldline_wero>
+                <model>Worldline\Connect\PaymentMethod\Wero</model>
+                <title>Worldline Wero</title>
+                <active>1</active>
+                <can_initialize>0</can_initialize>
+                <can_capture>1</can_capture>
+                <can_capture_vault>1</can_capture_vault>
+                <can_capture_partial>1</can_capture_partial>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <can_use_checkout>1</can_use_checkout>
+                <can_review_payment>1</can_review_payment>
+                <can_accept_payment>1</can_accept_payment>
+                <can_fetch_transaction_info>1</can_fetch_transaction_info>
+                <can_fetch_transaction_information>1</can_fetch_transaction_information>
+                <can_deny_payment>1</can_deny_payment>
+                <can_use_internal>0</can_use_internal>
+                <can_authorize>1</can_authorize>
+                <can_cancel>1</can_cancel>
+                <can_void>1</can_void>
+                <is_gateway>1</is_gateway>
+                <payment_action>authorize</payment_action>
+                <sort_order>900</sort_order>
+                <order_status>pending</order_status>
+                <payment_flow>0</payment_flow>
+                <product_id>900</product_id>
+            </worldline_wero>
             <!-- Hpp -->
             <worldline_hpp>
                 <model>Worldline\Connect\PaymentMethod\Hpp</model>
@@ -1495,6 +1522,7 @@
                 <api_url_pre_prod>https://api.preprod.connect.worldline-solutions.com</api_url_pre_prod>
                 <api_url_prod>https://api.connect.worldline-solutions.com</api_url_prod>
                 <order_creation_flow>worldline_connect/settings/order_creation_flow/after</order_creation_flow>
+                <abandoned_payment_grace_period>15</abandoned_payment_grace_period>
             </settings>
             <checkout>
                 <inline_payments>0</inline_payments>
