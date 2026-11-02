@@ -2975,6 +2975,12 @@
         </arguments>
     </type>
 
+    <type name="Worldline\Connect\Controller\Adminhtml\Api\TestConnection">
+        <arguments>
+            <argument name="logger" xsi:type="object">worldlineRequestLogger</argument>
+        </arguments>
+    </type>
+
     <type name="Worldline\Connect\Logger\FrontendLogger">
         <arguments>
             <argument name="logger" xsi:type="object">worldlineRequestLogger</argument>

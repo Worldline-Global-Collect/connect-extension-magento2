@@ -97,6 +97,7 @@
                 </field>
                 <field id="api_url" translate="label tooltip" type="text" sortOrder="6" showInDefault="1" showInWebsite="1">
                     <label>API URL</label>
+                    <backend_model>Worldline\Connect\Model\Config\Backend\ApiUrl</backend_model>
                     <config_path>worldline_connect/settings/api_url_sandbox</config_path>
                 </field>
                 <field id="api_key" translate="label tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1">
@@ -132,6 +133,7 @@
                 </field>
                 <field id="api_url" translate="label tooltip" type="text" sortOrder="6" showInDefault="1" showInWebsite="1">
                     <label>API URL</label>
+                    <backend_model>Worldline\Connect\Model\Config\Backend\ApiUrl</backend_model>
                     <config_path>worldline_connect/settings/api_url_pre_prod</config_path>
                 </field>
                 <field id="api_key" translate="label tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1">
@@ -167,6 +169,7 @@
                 </field>
                 <field id="api_url" translate="label tooltip" type="text" sortOrder="6" showInDefault="1" showInWebsite="1">
                     <label>API URL</label>
+                    <backend_model>Worldline\Connect\Model\Config\Backend\ApiUrl</backend_model>
                     <config_path>worldline_connect/settings/api_url_prod</config_path>
                 </field>
                 <field id="api_key" translate="label tooltip" type="text" sortOrder="10" showInDefault="1" showInWebsite="1">

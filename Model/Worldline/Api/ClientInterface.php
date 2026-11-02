@@ -215,11 +215,12 @@ interface ClientInterface
     /**
      * @param int|null $scopeId
      * @param Client|null $client
+     * @param string|null $environment
      * @return TestConnection
      * @throws ResponseException
      */
     // phpcs:enable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName, SlevomatCodingStandard.TypeHints.DisallowArrayTypeHintSyntax.DisallowedArrayTypeHintSyntax
-    public function worldlineTestAccount($scopeId, ?Client $client = null);
+    public function worldlineTestAccount($scopeId, ?Client $client = null, ?string $environment = null);
 
     /**
      * @param string $worldlinePaymentId

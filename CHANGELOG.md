@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 4.28.0 - 2026-11-01
+
+- Fix the "Test API Connection" button to test the configuration scope that is open in the admin
+- Validate the API URL fields on save and require the "https://<host>" format 
+
 ## 4.27.0 - 2026-10-26
 
 - Fix refund handling when order is not refundable

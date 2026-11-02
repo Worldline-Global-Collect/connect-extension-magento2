@@ -1,6 +1,6 @@
 {
     "name": "worldline-global-collect/connect-extension-magento2",
-    "version": "4.27.0",
+    "version": "4.28.0",
     "description": "Accept Worldline Connect payments on the Magento 2 platform",
     "license": "MIT",
     "require": {

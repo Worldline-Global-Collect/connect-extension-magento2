@@ -6,13 +6,16 @@ namespace Worldline\Connect\Block\Adminhtml\System\Config\Field;
 
 use Worldline\Connect\Model\Config;
 
+use function array_merge;
+
 class TestApiConnectionSandbox extends TestApiConnection
 {
     public function getAjaxUrl(): string
     {
-        return $this->getUrl('epayments/Api/TestConnection', [
-            'environment' => Config::CONFIG_WORLDLINE_API_ENDPOINT_SANDBOX,
-        ]);
+        return $this->getUrl('epayments/Api/TestConnection', array_merge(
+            ['environment' => Config::CONFIG_WORLDLINE_API_ENDPOINT_SANDBOX],
+            $this->getScopeUrlParams()
+        ));
     }
 
     public function getId(): string

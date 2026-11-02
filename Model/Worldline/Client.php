@@ -408,14 +408,14 @@ class Client implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function worldlineTestAccount($scopeId = null, ?SdkClient $client = null)
+    public function worldlineTestAccount($scopeId = null, ?SdkClient $client = null, ?string $environment = null)
     {
         if ($client === null) {
             $client = $this->getWorldlineClient($scopeId);
         }
 
         $response = $client->v1()
-            ->merchant($this->ePaymentsConfig->getMerchantId($scopeId))
+            ->merchant($this->ePaymentsConfig->getMerchantId($scopeId, $environment))
             ->services()
             ->testconnection();
 

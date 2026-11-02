@@ -32,6 +32,16 @@ abstract class TestApiConnection extends Field
     abstract public function getId(): string;
 
     /**
+     * @return array<string, string>
+     */
+    protected function getScopeUrlParams(): array
+    {
+        $website = (string) $this->getRequest()->getParam('website', '');
+
+        return $website !== '' ? ['website' => $website] : [];
+    }
+
+    /**
      * @return string
      * @throws LocalizedException
      */
